@@ -3,7 +3,7 @@ from custom_components.target_time_periods.const import CONFIG_TARGET_HOURS_MODE
 import pytest
 
 from unit import (create_rate_data)
-from custom_components.target_time_periods.target_rates import calculate_intermittent_times, get_target_rate_info
+from custom_components.target_time_periods.entities import calculate_intermittent_times, get_target_rate_info
 import zoneinfo
 from zoneinfo import ZoneInfo
 

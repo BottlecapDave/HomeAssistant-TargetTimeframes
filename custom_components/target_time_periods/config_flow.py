@@ -6,6 +6,7 @@ from .config.target_time_period import validate_target_rate_config
 from .config.rolling_target_time_period import validate_rolling_target_rate_config
 
 from .const import (
+  CONFIG_DATA_SOURCE_ID,
   CONFIG_KIND,
   CONFIG_KIND_ROLLING_TARGET_RATE,
   CONFIG_KIND_TARGET_RATE,
@@ -34,6 +35,9 @@ class TargetTimePeriodsConfigFlow(ConfigFlow, domain=DOMAIN):
 
       # Setup our basic sensors
       if len(errors) < 1:
+        self.async_set_unique_id(user_input[CONFIG_DATA_SOURCE_ID])
+        self._abort_if_unique_id_mismatch()
+
         return self.async_create_entry(
           title=f"{user_input[CONFIG_DATA_SOURCE_NAME]}", 
           data=user_input
@@ -43,6 +47,28 @@ class TargetTimePeriodsConfigFlow(ConfigFlow, domain=DOMAIN):
       step_id="user",
       data_schema=DATA_SCHEMA_SOURCE,
       errors=errors
+    )
+  
+  async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None):
+    if user_input is not None:
+      errors = validate_source_config(user_input)
+
+      # Setup our basic sensors
+      if len(errors) < 1:
+        self.async_set_unique_id(user_input[CONFIG_DATA_SOURCE_ID])
+        self._abort_if_unique_id_mismatch()
+
+      return self.async_update_reload_and_abort(
+          self._get_reconfigure_entry(),
+          data_updates=user_input,
+      )
+
+    return self.async_show_form(
+      step_id="reconfigure",
+      data_schema=self.add_suggested_values_to_schema(
+        DATA_SCHEMA_SOURCE,
+        user_input if user_input is not None else {}
+      ),
     )
   
   @classmethod
@@ -80,6 +106,24 @@ class TargetTimePeriodSubentryFlowHandler(ConfigSubentryFlow):
       ),
       errors=errors
     )
+  
+  async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None):
+    config = dict(user_input) if user_input is not None else None
+    errors = validate_target_rate_config(config) if config is not None else {}
+
+    if len(errors) < 1 and user_input is not None:
+      return self.async_update_reload_and_abort(
+        self._get_reconfigure_entry(),
+        data_updates=config,
+      )
+
+    return self.async_show_form(
+      step_id="reconfigure",
+      data_schema=self.add_suggested_values_to_schema(
+        DATA_SCHEMA_TARGET_TIME_PERIOD,
+        user_input if user_input is not None else {}
+      ),
+    )
 
 class RollingTargetTimePeriodSubentryFlowHandler(ConfigSubentryFlow):
   async def async_step_user(
@@ -104,4 +148,22 @@ class RollingTargetTimePeriodSubentryFlowHandler(ConfigSubentryFlow):
         user_input if user_input is not None else {}
       ),
       errors=errors
+    )
+  
+  async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None):
+    config = dict(user_input) if user_input is not None else None
+    errors = validate_rolling_target_rate_config(config) if config is not None else {}
+
+    if len(errors) < 1 and user_input is not None:
+      return self.async_update_reload_and_abort(
+        self._get_reconfigure_entry(),
+        data_updates=config,
+      )
+
+    return self.async_show_form(
+      step_id="reconfigure",
+      data_schema=self.add_suggested_values_to_schema(
+        DATA_SCHEMA_ROLLING_TARGET_TIME_PERIOD,
+        user_input if user_input is not None else {}
+      ),
     )

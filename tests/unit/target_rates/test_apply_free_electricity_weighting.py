@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 import pytest
 
-from custom_components.target_time_periods.target_rates import apply_free_electricity_weighting
+from custom_components.target_time_periods.entities import apply_free_electricity_weighting
 from custom_components.target_time_periods.api_client.free_electricity_sessions import FreeElectricitySession
 from tests.unit import create_rate_data
 

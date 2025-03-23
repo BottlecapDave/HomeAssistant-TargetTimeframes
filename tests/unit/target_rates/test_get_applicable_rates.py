@@ -3,7 +3,7 @@ import pytest
 
 from unit import (create_rate_data, agile_rates)
 from custom_components.target_time_periods.api_client import rates_to_thirty_minute_increments
-from custom_components.target_time_periods.target_rates import get_fixed_applicable_time_periods
+from custom_components.target_time_periods.entities import get_fixed_applicable_time_periods
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("current_date,target_start_time,target_end_time,expected_first_valid_from,is_rolling_target,expected_number_of_rates",[

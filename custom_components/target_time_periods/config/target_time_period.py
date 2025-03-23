@@ -25,7 +25,7 @@ from ..const import (
   REGEX_WEIGHTING
 )
 
-from ..target_rates import create_weighting
+from ..entities import create_weighting
 
 async def async_migrate_target_config(version: int, data: {}, get_entries):
   new_data = {**data}

@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import pytest
 
-from custom_components.target_time_periods.target_rates import get_rolling_applicable_time_periods
+from custom_components.target_time_periods.entities import get_rolling_applicable_time_periods
 from tests.unit import create_rate_data
 
 @pytest.mark.asyncio

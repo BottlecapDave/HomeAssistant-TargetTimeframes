@@ -19,7 +19,7 @@ from ..const import (
   REGEX_VALUE,
   REGEX_WEIGHTING
 )
-from ..target_rates import create_weighting
+from ..entities import create_weighting
 
 async def async_migrate_rolling_target_config(version: int, data: {}, get_entries):
   new_data = {**data}

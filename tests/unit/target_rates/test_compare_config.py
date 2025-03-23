@@ -1,6 +1,6 @@
 import pytest
 
-from custom_components.target_time_periods.target_rates import compare_config
+from custom_components.target_time_periods.entities import compare_config
 from custom_components.target_time_periods.const import CONFIG_TARGET_HOURS, CONFIG_TARGET_TYPE
 
 @pytest.mark.asyncio

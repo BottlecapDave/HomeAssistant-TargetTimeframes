@@ -158,3 +158,5 @@ DATA_SCHEMA_ROLLING_TARGET_TIME_PERIOD = vol.Schema({
   vol.Optional(CONFIG_TARGET_MAX_VALUE): str,
   vol.Optional(CONFIG_TARGET_WEIGHTING): str,
 })
+
+EVENT_DATA_SOURCE = "target_time_period_data_source_updated"

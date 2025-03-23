@@ -7,7 +7,7 @@ from custom_components.target_time_periods.const import (
 import pytest
 
 from unit import (create_rate_data)
-from custom_components.target_time_periods.target_rates import get_target_rate_info, should_evaluate_target_rates
+from custom_components.target_time_periods.entities import get_target_rate_info, should_evaluate_target_rates
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("evaluation_mode",[
