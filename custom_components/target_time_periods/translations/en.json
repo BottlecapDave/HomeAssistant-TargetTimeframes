@@ -1,0 +1,103 @@
+{
+  "title": "Target Time Period",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Target Time Period Source",
+        "description": "Setup a data source for your target time periods. Full documentation can be found at https://bottlecapdave.github.io/homeassistant-targettimeperiods/setup/data_source",
+        "data": {
+          "source_name": "The name of the source",
+          "source_id": "The id of the source"
+        },
+        "data_description": {
+          "source_id": "This will be provided in all service calls when the source data is updated. This must be unique across all sources."
+        }
+      }
+    },
+    "error": {
+      "value_greater_than_zero": "Value must be greater or equal to 1",
+      "invalid_target_hours": "Target hours must be in half hour increments (e.g. 0.5 = 30 minutes; 1 = 60 minutes).",
+      "invalid_target_name": "Name must only include lower case alpha characters and underscore (e.g. my_target)",
+      "invalid_target_time": "Must be in the format HH:MM",
+      "invalid_offset": "Offset must be in the form of HH:MM:SS with an optional negative symbol",
+      "invalid_hours_time_frame": "The target hours do not fit in the elected target time frame",
+      "invalid_value": "Value must be in decimal format (e.g. 0.10)",
+      "invalid_weighting": "The weighting format is not supported. Please consult documentation for more information.",
+      "invalid_weighting_slots": "The number of weighting blocks does not equal the specified number of hours.",
+      "weighting_not_supported_for_type": "Weighting is only supported for continuous target rates",
+      "weighting_not_supported_for_hour_mode": "Weighting is not supported for this hour mode",
+      "minimum_or_maximum_value_not_specified": "Either minimum and/or maximum value must be specified for minimum hours mode"
+    },
+    "abort": {
+      "not_supported": "Configuration for target rates is not supported at the moment."
+    }
+  },
+  "config_subentries": {
+    "target_time_period": {
+      "title": "Target Time Period",
+      "step": {
+        "user": {
+          "title": "Target Time Period",
+          "description": "Setup a target time period period. Full documentation can be found at https://bottlecapdave.github.io/homeassistant-targettimeperiods/setup/target_rate",
+          "data": {
+            "name": "The name of your target",
+            "hours": "The hours you require in decimal format.",
+            "hours_mode": "How the defined hours should be interpreted",
+            "type": "The type of target you're after",
+            "start_time": "The minimum time to start the device",
+            "end_time": "The maximum time to stop the device",
+            "offset": "The offset to apply to the scheduled block to be considered active",
+            "rolling_target": "Re-evaluate multiple times a day",
+            "latest_values": "Find last applicable time times",
+            "target_invert_target_values": "Invert targeted values",
+            "minimum_value": "The optional minimum value for target hours",
+            "maximum_value": "The optional maximum value for target hours",
+            "weighting": "The optional weighting to apply to the discovered time period values",
+            "target_times_evaluation_mode": "When should target times be selected"
+          },
+          "data_description": {
+            "type": "Continuous target will find the continuous period for your target hours with the lowest combined value. Intermittent will find the time periods, with potential gaps, with the lowest combined value which will meet your target hours",
+            "hours": "This has to be a multiple of 0.5.",
+            "minimum_value": "This is in pounds and pence (e.g. 0.12)",
+            "maximum_value": "This is in pounds and pence (e.g. 0.12)"
+          }
+        },
+        "reconfigure": {
+          "title": "Update location",
+          "description": "..."
+        }
+      },
+      "error": {
+      },
+      "abort": {
+      }
+    },
+    "rolling_target_time_period": {
+      "title": "Rolling Target Time Period",
+      "step": {
+        "user": {
+          "title": "Target Time Period Rolling Target Rate",
+          "description": "Setup a rolling target rate period. Full documentation can be found at https://bottlecapdave.github.io/homeassistant-targettimeperiods/setup/rolling_target_rate",
+          "data": {
+            "name": "The name of your target",
+            "hours": "The hours you require in decimal format.",
+            "hours_mode": "How the defined hours should be interpreted",
+            "look_ahead_hours": "The number of hours to look ahead when evaluating the available target times",
+            "offset": "The offset to apply to the scheduled block to be considered active",
+            "last_rates": "Find last applicable time times",
+            "target_invert_target_values": "Invert targeted values",
+            "minimum_value": "The optional minimum rate for target hours",
+            "maximum_value": "The optional maximum rate for target hours",
+            "weighting": "The optional weighting to apply to the discovered time period values",
+            "target_times_evaluation_mode": "When should target times be selected"
+          }
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "invalid_rate_weightings": {
+      "message": "{error}"
+    }
+  }
+}

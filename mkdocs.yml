@@ -1,0 +1,66 @@
+site_name: Home Assistant Target Time Period
+repo_url: https://github.com/bottlecapdave/homeassistant-targettimeperiods
+docs_dir: _docs
+
+nav:
+  - Home: index.md
+  - Setup:
+    - ./setup/target_rate.md
+    - ./setup/rolling_target_rate.md
+  - services.md
+  - events.md
+  - blueprints.md
+  - faq.md
+  - sponsorship.md
+
+# extra:
+#   version:
+#     provider: mike
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - attr_list
+  - toc:
+      permalink: "#"
+
+plugins:
+  - search
+  - git-authors:
+      show_email_address: false
+
+theme:
+  name: material
+  features:
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - toc.follow
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      primary: light blue
+      toggle:
+        icon: material/brightness-7 
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: light blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+strict: true
+
+validation:
+  nav:
+    omitted_files: warn
+    not_found: warn
+    absolute_links: warn
+  links:
+    not_found: warn
+    anchors: warn
+    absolute_links: warn
+    unrecognized_links: warn

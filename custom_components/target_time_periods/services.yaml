@@ -1,0 +1,111 @@
+update_target_config:
+  name: Update target rate config
+  description: Updates a given target rate's config.
+  target:
+    entity:
+      integration: target_time_periods
+      domain: binary_sensor
+  fields:
+    target_hours:
+      name: Hours
+      description: The optional number of hours the target rate sensor should come on during a 24 hour period.
+      example: '1.5'
+      selector:
+        text:
+    target_start_time:
+      name: Start time
+      description: The optional time the evaluation period should start.
+      example: '06:00'
+      selector:
+        text:
+    target_end_time:
+      name: End time
+      description: The optional time the evaluation period should end.
+      example: '19:00'
+      selector:
+        text:
+    target_offset:
+      name: Offset
+      description:
+        The optional offset to apply to the target rate when it starts
+      selector:
+        text:
+    target_minimum_value:
+      name: Minimum rate
+      description:
+        The optional minimum rate the selected rates should not go below
+      example: '0.10'
+      selector:
+        text:
+    target_maximum_value:
+      name: Maximum rate
+      description:
+        The optional maximum rate the selected rates should not go above
+      example: '0.10'
+      selector:
+        text:
+    target_weighting:
+      name: Weighting
+      description:
+        The optional weighting that should be applied to the selected rates
+      example: '1,2,1'
+      selector:
+        text:
+    persist_changes:
+      name: Persist Changes
+      description: Determines if the changes should be persisted to the original configuration or should be temporary and reset upon integration reload.
+      selector:
+        boolean:
+
+update_rolling_target_config:
+  name: Update rolling target rate config
+  description: Updates a given rolling target rate's config.
+  target:
+    entity:
+      integration: target_time_periods
+      domain: binary_sensor
+  fields:
+    target_hours:
+      name: Hours
+      description: The optional number of hours the target rate sensor should come on during a 24 hour period.
+      example: '1.5'
+      selector:
+        text:
+    target_look_ahead_hours:
+      name: Look ahead hours
+      description: The optional number of hours worth of rates the sensor should look at for the evaluation period.
+      example: '8.5'
+      selector:
+        text:
+    target_offset:
+      name: Offset
+      description:
+        The optional offset to apply to the target rate when it starts
+      selector:
+        text:
+    target_minimum_value:
+      name: Minimum rate
+      description:
+        The optional minimum rate the selected rates should not go below
+      example: '0.10'
+      selector:
+        text:
+    target_maximum_value:
+      name: Maximum rate
+      description:
+        The optional maximum rate the selected rates should not go above
+      example: '0.10'
+      selector:
+        text:
+    target_weighting:
+      name: Weighting
+      description:
+        The optional weighting that should be applied to the selected rates
+      example: '1,2,1'
+      selector:
+        text:
+    persist_changes:
+      name: Persist Changes
+      description: Determines if the changes should be persisted to the original configuration or should be temporary and reset upon integration reload.
+      selector:
+        boolean:

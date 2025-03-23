@@ -1,0 +1,22 @@
+{
+  "domain": "target_time_periods",
+  "name": "Target Time Period",
+  "codeowners": [
+    "@bottlecapdave"
+  ],
+  "config_flow": true,
+  "dependencies": [
+    "repairs",
+    "recorder"
+  ],
+  "documentation": "https://bottlecapdave.github.io/homeassistant-targettimeperiods",
+  "homekit": {},
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/BottlecapDave/homeassistant-targettimeperiods/issues",
+  "requirements": [
+    "pydantic"
+  ],
+  "ssdp": [],
+  "version": "1.0.0",
+  "zeroconf": []
+}
