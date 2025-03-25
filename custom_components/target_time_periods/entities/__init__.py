@@ -33,7 +33,7 @@ def apply_offset(date_time: datetime, offset: str, inverse = False):
   
   return date_time + timedelta(hours=hours, minutes=minutes, seconds=seconds)
 
-def get_fixed_applicable_time_periods(current_date: datetime, target_start_time: str, target_end_time: str, rates, is_rolling_target = True):
+def get_fixed_applicable_time_periods(current_date: datetime, target_start_time: str, target_end_time: str, time_period_values: list, is_rolling_target = True):
   if (target_start_time is not None):
     target_start = parse_datetime(current_date.strftime(f"%Y-%m-%dT{target_start_time}:00%z"))
   else:
@@ -68,8 +68,8 @@ def get_fixed_applicable_time_periods(current_date: datetime, target_start_time:
 
   # Retrieve the rates that are applicable for our target rate
   applicable_rates = []
-  if rates is not None:
-    for rate in rates:
+  if time_period_values is not None:
+    for rate in time_period_values:
       if rate["start"] >= target_start and (target_end is None or rate["end"] <= target_end):
         new_rate = dict(rate)
         
@@ -85,13 +85,13 @@ def get_fixed_applicable_time_periods(current_date: datetime, target_start_time:
 
   return applicable_rates
 
-def get_rolling_applicable_time_periods(current_date: datetime, rates: list, target_hours: float):
+def get_rolling_applicable_time_periods(current_date: datetime, time_period_values: list, target_hours: float):
   # Retrieve the rates that are applicable for our target rate
   applicable_time_periods = []
   periods = target_hours * 2
 
-  if rates is not None:
-    for rate in rates:
+  if time_period_values is not None:
+    for rate in time_period_values:
       if rate["end"] >= current_date:
         new_rate = dict(rate)
         applicable_time_periods.append(new_rate)
@@ -254,7 +254,7 @@ def calculate_intermittent_times(
   
   return []
 
-def get_target_rate_info(current_date: datetime, applicable_rates, offset: str = None):
+def get_target_time_period_info(current_date: datetime, applicable_rates, offset: str = None):
   is_active = False
   next_time = None
   current_duration_in_hours = 0
@@ -409,13 +409,13 @@ def compare_config(current_config: dict, existing_config: dict):
     
   return True
 
-def should_evaluate_target_rates(current_date: datetime, target_rates: list, evaluation_mode: str) -> bool:
-  if target_rates is None or len(target_rates) < 1:
+def should_evaluate_target_time_periods(current_date: datetime, target_time_periods: list, evaluation_mode: str) -> bool:
+  if target_time_periods is None or len(target_time_periods) < 1:
     return True
   
   all_rates_in_past = True
   one_rate_in_past = False
-  for rate in target_rates:
+  for rate in target_time_periods:
     if rate["end"] > current_date:
       all_rates_in_past = False
     

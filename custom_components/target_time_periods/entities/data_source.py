@@ -18,13 +18,15 @@ from homeassistant.helpers.entity import generate_entity_id
 
 from ..utils.attributes import dict_to_typed_dict
 from ..const import DOMAIN, EVENT_DATA_SOURCE
-from ..storage.data_source_data import async_load_cached_data_source_data, async_save_cached_data_source_data
-from ..utils.data_source_data import DataSourceItem, validate_data_source_data
+from ..storage.data_source_data import async_save_cached_data_source_data
+from ..utils.data_source_data import validate_data_source_data
 
 _LOGGER = logging.getLogger(__name__)
 
 class TargetTimePeriodDataSource(RestoreSensor):
   """Sensor for displaying a target time period data source"""
+
+  _unrecorded_attributes = frozenset({ "data" })
 
   def __init__(self, hass: HomeAssistant, source_id: str):
     """Init sensor."""
@@ -79,15 +81,6 @@ class TargetTimePeriodDataSource(RestoreSensor):
     
       _LOGGER.debug(f'Restored state: {self._state}')
 
-    data = await async_load_cached_data_source_data(self._hass, self._source_id)
-    if data is not None:
-      data_dict = list(map(lambda x: x.dict(), data))
-
-      self._hass.bus.async_fire(EVENT_DATA_SOURCE, {
-        "data_source_id": self._source_id,
-        "data": data_dict
-      })
-
   @callback
   async def async_update_target_time_period_data_source(self, data):
     """Update target time period data source"""
@@ -110,5 +103,5 @@ class TargetTimePeriodDataSource(RestoreSensor):
 
     self._hass.bus.async_fire(EVENT_DATA_SOURCE, {
       "data_source_id": self._source_id,
-      "data": data_dict
+      "data_source_data": data_dict
     })

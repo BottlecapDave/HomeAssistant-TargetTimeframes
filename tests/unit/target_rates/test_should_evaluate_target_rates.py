@@ -7,7 +7,7 @@ from custom_components.target_time_periods.const import (
 import pytest
 
 from unit import (create_rate_data)
-from custom_components.target_time_periods.entities import get_target_rate_info, should_evaluate_target_rates
+from custom_components.target_time_periods.entities import get_target_time_period_info, should_evaluate_target_time_periods
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("evaluation_mode",[
@@ -21,7 +21,7 @@ async def test_when_target_rates_is_none_then_return_true(evaluation_mode: str):
   target_rates = None
 
   # Act
-  result = should_evaluate_target_rates(current_date, target_rates, evaluation_mode)
+  result = should_evaluate_target_time_periods(current_date, target_rates, evaluation_mode)
 
   # Assert
   assert result == True
@@ -38,7 +38,7 @@ async def test_when_target_rates_is_empty_then_return_true(evaluation_mode: str)
   target_rates = []
 
   # Act
-  result = should_evaluate_target_rates(current_date, target_rates, evaluation_mode)
+  result = should_evaluate_target_time_periods(current_date, target_rates, evaluation_mode)
 
   # Assert
   assert result == True
@@ -59,7 +59,7 @@ async def test_when_target_rates_is_in_the_future_then_return_expected_result(ev
   )
 
   # Act
-  result = should_evaluate_target_rates(current_date, target_rates, evaluation_mode)
+  result = should_evaluate_target_time_periods(current_date, target_rates, evaluation_mode)
 
   # Assert
   assert result == expected_result
@@ -80,7 +80,7 @@ async def test_when_target_rates_started_then_return_expected_result(evaluation_
   )
 
   # Act
-  result = should_evaluate_target_rates(current_date, target_rates, evaluation_mode)
+  result = should_evaluate_target_time_periods(current_date, target_rates, evaluation_mode)
 
   # Assert
   assert result == expected_result
@@ -101,7 +101,7 @@ async def test_when_target_rates_in_past_then_return_expected_result(evaluation_
   )
 
   # Act
-  result = should_evaluate_target_rates(current_date, target_rates, evaluation_mode)
+  result = should_evaluate_target_time_periods(current_date, target_rates, evaluation_mode)
 
   # Assert
   assert result == expected_result

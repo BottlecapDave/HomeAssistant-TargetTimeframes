@@ -156,7 +156,6 @@ The following attributes are available on each sensor
 | `target_times_evaluation_mode` | `string` | The mode that determines when/how target times are picked |
 | `last_rates` | `boolean` | Determines if `Find last applicable rates` is turned off for the sensor. |
 | `offset` | `string` | The offset configured for the sensor. |
-| `is_target_export` | `boolean` | Determines if the meter being targeted is exporting energy. This will change the behaviour of the sensor to look for the highest rates. |
 | `rates_incomplete` | `boolean` | True if rate information is incomplete and therefore target times cannot be calculated; False otherwise. |
 | `target_times` | `array` | The discovered times and rates the sensor will come on for. |
 | `overall_average_cost` | `float` | The average cost/rate of all discovered times during the current **24 hour period**. |

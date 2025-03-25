@@ -35,7 +35,7 @@ class TargetTimePeriodsConfigFlow(ConfigFlow, domain=DOMAIN):
 
       # Setup our basic sensors
       if len(errors) < 1:
-        self.async_set_unique_id(user_input[CONFIG_DATA_SOURCE_ID])
+        await self.async_set_unique_id(user_input[CONFIG_DATA_SOURCE_ID])
         self._abort_if_unique_id_mismatch()
 
         return self.async_create_entry(
@@ -55,7 +55,7 @@ class TargetTimePeriodsConfigFlow(ConfigFlow, domain=DOMAIN):
 
       # Setup our basic sensors
       if len(errors) < 1:
-        self.async_set_unique_id(user_input[CONFIG_DATA_SOURCE_ID])
+        await self.async_set_unique_id(user_input[CONFIG_DATA_SOURCE_ID])
         self._abort_if_unique_id_mismatch()
 
       return self.async_update_reload_and_abort(

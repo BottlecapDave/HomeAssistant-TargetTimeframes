@@ -3,7 +3,7 @@ from custom_components.target_time_periods.const import CONFIG_TARGET_HOURS_MODE
 import pytest
 
 from unit import (create_rate_data)
-from custom_components.target_time_periods.entities import calculate_intermittent_times, get_target_rate_info
+from custom_components.target_time_periods.entities import calculate_intermittent_times, get_target_time_period_info
 import zoneinfo
 from zoneinfo import ZoneInfo
 
@@ -31,7 +31,7 @@ async def test_when_called_before_rates_then_not_active_returned():
   current_date = datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z")
 
   # Act
-  result = get_target_rate_info(
+  result = get_target_time_period_info(
     current_date,
     rates
   )
@@ -129,7 +129,7 @@ async def test_when_called_during_rates_then_active_returned(test):
     }
   ]
 
-  result = get_target_rate_info(
+  result = get_target_time_period_info(
     test["current_date"],
     rates
   )
@@ -169,7 +169,7 @@ async def test_when_called_after_rates_then_not_active_returned():
   current_date = period_to + timedelta(minutes=15)
 
   # Act
-  result = get_target_rate_info(
+  result = get_target_time_period_info(
     current_date,
     rates
   )
@@ -217,7 +217,7 @@ async def test_when_offset_set_then_active_at_correct_current_time():
   # Check where we're before the offset
   current_date = datetime.strptime("2022-02-09T08:59:00Z", "%Y-%m-%dT%H:%M:%S%z")
 
-  result = get_target_rate_info(
+  result = get_target_time_period_info(
     current_date,
     rates,
     offset
@@ -243,7 +243,7 @@ async def test_when_offset_set_then_active_at_correct_current_time():
   for minutes_to_add in range(60):
     current_date = rates[0]["start"] - timedelta(hours=1) + timedelta(minutes=minutes_to_add)
 
-    result = get_target_rate_info(
+    result = get_target_time_period_info(
       current_date,
       rates,
       offset
@@ -268,7 +268,7 @@ async def test_when_offset_set_then_active_at_correct_current_time():
   # Check when within rate but after offset
   current_date = rates[0]["start"] + timedelta(minutes=1)
 
-  result = get_target_rate_info(
+  result = get_target_time_period_info(
     current_date,
     rates,
     offset
@@ -304,7 +304,7 @@ async def test_when_current_date_is_equal_to_last_end_date_then_not_active():
 
   current_date = datetime.strptime("2022-10-09T04:30:00Z", "%Y-%m-%dT%H:%M:%S%z")
 
-  result = get_target_rate_info(
+  result = get_target_time_period_info(
     current_date,
     rates,
     None
@@ -346,7 +346,7 @@ async def test_when_clocks_go_back_then_correct_result_returned():
   current_date = datetime(2024, 10, 27, 12, 39, tzinfo=ZoneInfo(key='Europe/London'))
 
   # Act
-  result = get_target_rate_info(
+  result = get_target_time_period_info(
     current_date,
     rates
   )

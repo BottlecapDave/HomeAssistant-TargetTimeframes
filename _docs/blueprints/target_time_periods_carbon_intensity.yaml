@@ -1,0 +1,63 @@
+blueprint:
+  name: Target Time Periods - Carbon Intensity source
+  description: Configures a targe time period data source from Carbon Intensity
+  domain: automation
+  author: BottlecapDave
+  input:
+    target_time_period_data_source_sensor:
+      name: Target time period data source sensor
+      description: The data source sensor which represents the data source to update
+      selector:
+        entity:
+          filter:
+          - domain:
+            - sensor
+            integration: target_time_periods
+          multiple: false
+    carbon_intensity_current_day_rates:
+      name: Current day rates
+      description: The current day rates event sensor supplied by Carbon Intensity
+      selector:
+        entity:
+          filter:
+          - domain:
+            - event
+            integration: carbon_intensity
+          multiple: false
+    carbon_intensity_next_day_rates:
+      name: Next day rates
+      description: The next day rates event sensor supplied by Carbon Intensity
+      selector:
+        entity:
+          filter:
+          - domain:
+            - event
+            integration: carbon_intensity
+          multiple: false
+  source_url: https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/blob/develop/_docs/blueprints/octopus_energy_spin_wheel_of_fortune_single.yml
+variables:
+  target_time_period_data_source_sensor: !input target_time_period_data_source_sensor
+  carbon_intensity_current_day_rates: !input carbon_intensity_current_day_rates
+  carbon_intensity_next_day_rates: !input carbon_intensity_next_day_rates
+mode: queued
+max: 4
+triggers:
+- platform: state
+  entity_id: !input carbon_intensity_current_day_rates
+- platform: state
+  entity_id: !input carbon_intensity_next_day_rates
+condition: []
+action:
+- action: target_time_periods.update_target_time_period_data_source
+  data: >
+    {% set all_rates = state_attr(carbon_intensity_current_day_rates, 'rates') + state_attr(carbon_intensity_next_day_rates, 'rates') %}
+    {% set data = namespace(new_rates=[]) %}
+    {% for rate in all_rates %}
+    {% set start = rate["from"] | as_timestamp | timestamp_utc %}
+    {% set end = rate["to"] | as_timestamp | timestamp_utc %}
+    {% set value = rate["intensity_forecast"] | float %}
+    {% set data.new_rates = data.new_rates + [{ 'start': start , 'end': end, 'value': value, 'metadata': { "generation_mix": rate["generation_mix"] } }] %}
+    {% endfor %}
+    {{ { 'data': data.new_rates } | to_json }}
+  target:
+    entity_id: !input target_time_period_data_source_sensor
