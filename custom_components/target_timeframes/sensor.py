@@ -15,7 +15,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
   platform = entity_platform.async_get_current_platform()
   platform.async_register_entity_service(
-    "update_target_time_period_data_source",
+    "update_target_timeframe_data_source",
     vol.All(
       cv.make_entity_service_schema(
         {
@@ -34,7 +34,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
         extra=vol.ALLOW_EXTRA,
       ),
     ),
-    "async_update_target_time_period_data_source",
+    "async_update_target_timeframe_data_source",
   )
 
   config = dict(entry.data)

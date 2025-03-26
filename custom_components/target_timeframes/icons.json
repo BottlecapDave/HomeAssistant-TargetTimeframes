@@ -1,7 +1,7 @@
 {
     "services": {
-        "update_target_config": "mdi:invoice-edit",
-        "update_rolling_target_config": "mdi:invoice-edit",
-        "update_target_time_period_data_source": "mdi:database"
+        "update_target_timeframe_config": "mdi:invoice-edit",
+        "update_rolling_target_timeframe_config": "mdi:invoice-edit",
+        "update_target_timeframe_data_source": "mdi:database"
     }
 }

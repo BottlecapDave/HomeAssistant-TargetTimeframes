@@ -82,8 +82,8 @@ class TargetTimePeriodDataSource(RestoreSensor):
       _LOGGER.debug(f'Restored state: {self._state}')
 
   @callback
-  async def async_update_target_time_period_data_source(self, data):
-    """Update target time period data source"""
+  async def async_update_target_timeframe_data_source(self, data):
+    """Update target timeframe data source"""
     result = validate_data_source_data(data, self._source_id)
     if result.success == False:
       raise ServiceValidationError(

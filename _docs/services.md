@@ -6,7 +6,7 @@ There are a few services available within this integration, which are detailed h
 
 The following services are available if you have set up at least one [target rate](./setup/target_rate.md).
 
-### target_timeframes.update_target_config
+### target_timeframes.update_target_timeframe_config
 
 For updating a given [target rate's](./setup/target_rate.md) config. This allows you to change target rates sensors dynamically based on other outside criteria (e.g. you need to adjust the target hours to top up home batteries).
 
@@ -60,7 +60,7 @@ triggers:
       - input_text.target_timeframes_target_offset
 conditions: []
 actions:
-  - action: target_timeframes.update_target_config
+  - action: target_timeframes.update_target_timeframe_config
     data:
       target_hours: >
         "{{ states('input_number.target_timeframes_target_hours') | string }}"
@@ -78,7 +78,7 @@ actions:
 
 The following services are available if you have set up at least one [rolling target rate](./setup/rolling_target_rate.md).
 
-### target_timeframes.update_rolling_target_config
+### target_timeframes.update_rolling_target_timeframe_config
 
 For updating a given [rolling target rate's](./setup/rolling_target_rate.md) config. This allows you to change rolling target rates sensors dynamically based on other outside criteria (e.g. you need to adjust the target hours to top up home batteries).
 
@@ -127,7 +127,7 @@ triggers:
       - input_text.target_timeframes_target_offset
 conditions: []
 actions:
-  - action: target_timeframes.update_target_config
+  - action: target_timeframes.update_target_timeframe_config
     data:
       target_hours: >
         "{{ states('input_number.target_timeframes_target_hours') | string }}"

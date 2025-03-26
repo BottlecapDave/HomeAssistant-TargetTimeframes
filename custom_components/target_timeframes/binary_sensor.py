@@ -42,7 +42,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
         if config[CONFIG_KIND] == CONFIG_KIND_TARGET_RATE:
           platform.async_register_entity_service(
-            "update_target_config",
+            "update_target_timeframe_config",
             vol.All(
               cv.make_entity_service_schema(
                 {
@@ -65,7 +65,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
           )
         else:
           platform.async_register_entity_service(
-            "update_rolling_target_config",
+            "update_rolling_target_timeframe_config",
             vol.All(
               cv.make_entity_service_schema(
                 {

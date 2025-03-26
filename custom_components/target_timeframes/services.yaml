@@ -1,6 +1,6 @@
-update_target_config:
-  name: Update target rate config
-  description: Updates a given target rate's config.
+update_target_timeframe_config:
+  name: Update target timeframe config
+  description: Updates a given target timeframe's config.
   target:
     entity:
       integration: target_timeframes
@@ -8,7 +8,7 @@ update_target_config:
   fields:
     target_hours:
       name: Hours
-      description: The optional number of hours the target rate sensor should come on during a 24 hour period.
+      description: The optional number of hours the target timeframe sensor should come on during a 24 hour period.
       example: '1.5'
       selector:
         text:
@@ -27,7 +27,7 @@ update_target_config:
     target_offset:
       name: Offset
       description:
-        The optional offset to apply to the target rate when it starts
+        The optional offset to apply to the target timeframe when it starts
       selector:
         text:
     target_minimum_value:
@@ -57,9 +57,9 @@ update_target_config:
       selector:
         boolean:
 
-update_rolling_target_config:
-  name: Update rolling target rate config
-  description: Updates a given rolling target rate's config.
+update_rolling_target_timeframe_config:
+  name: Update rolling target timeframe config
+  description: Updates a given rolling target timeframe's config.
   target:
     entity:
       integration: target_timeframes
@@ -67,7 +67,7 @@ update_rolling_target_config:
   fields:
     target_hours:
       name: Hours
-      description: The optional number of hours the target rate sensor should come on during a 24 hour period.
+      description: The optional number of hours the target timeframe sensor should come on during a 24 hour period.
       example: '1.5'
       selector:
         text:
@@ -80,7 +80,7 @@ update_rolling_target_config:
     target_offset:
       name: Offset
       description:
-        The optional offset to apply to the target rate when it starts
+        The optional offset to apply to the target timeframe when it starts
       selector:
         text:
     target_minimum_value:
@@ -110,9 +110,9 @@ update_rolling_target_config:
       selector:
         boolean:
 
-update_target_time_period_data_source:
-  name: Update target time period data source
-  description: Updates the source data for a given target time period. This will replace any existing data for the source.
+update_target_timeframe_data_source:
+  name: Update target timeframe data source
+  description: Updates the source data for a given targetframe period. This will replace any existing data for the source.
   target:
     entity:
       integration: target_timeframes
