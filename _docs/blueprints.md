@@ -11,3 +11,9 @@ The following blueprints can help you configure data sources provided by other i
 [Install blueprint](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FBottlecapDave%2FHomeAssistant-OctopusEnergy%2Fblob%2Fmain%2F_docs%2Fblueprints%target_timeframes_carbon_intensity.yaml) | [Source](./blueprints/target_timeframes_carbon_intensity.yaml)
 
 This blueprint will provide the data source for the UK Carbon Intensity as provided by the [Carbon Intensity](https://github.com/BottlecapDave/HomeAssistant-CarbonIntensity) integration.
+
+### Octopus Energy
+
+[Install blueprint](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FBottlecapDave%2FHomeAssistant-OctopusEnergy%2Fblob%2Fmain%2F_docs%2Fblueprints%target_timeframes_octopus_energy.yaml) | [Source](./blueprints/target_timeframes_octopus_energy.yaml)
+
+This blueprint will provide the data source for Octopus Energy rates as provided by the [Octopus Energy](https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy) integration.

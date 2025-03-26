@@ -68,6 +68,6 @@ action:
     {% set value = rate["value_inc_vat"] | float %}
     {% set data.new_rates = data.new_rates + [{ 'start': start , 'end': end, 'value': value, 'metadata': { "is_capped": rate["is_capped"] } }] %}
     {% endfor %}
-    {{ { 'data': data.new_rates } | to_json }}
+    {{ { 'data': data.new_rates } }}
   target:
     entity_id: !input target_timeframe_data_source_sensor
