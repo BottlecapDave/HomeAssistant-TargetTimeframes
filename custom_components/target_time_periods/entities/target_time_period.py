@@ -231,10 +231,8 @@ class TargetTimePeriodsTargetRate(BinarySensorEntity, RestoreEntity):
   def _async_handle_event(self, event) -> None:
     if (event.data is not None and 
         "data_source_id" in event.data and 
-        event.data["data_source_id"] == self._data_source_id and
-        "data_source_data" in event.data):
-      self._data_source_data = event.data["data_source_data"]
-      self.async_write_ha_state()
+        event.data["data_source_id"] == self._data_source_id):
+      self._data_source_data = self._hass.data[DOMAIN][self._data_source_id]
 
   async def async_added_to_hass(self):
     """Call when entity about to be added to hass."""

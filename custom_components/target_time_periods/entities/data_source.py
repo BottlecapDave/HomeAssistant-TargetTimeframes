@@ -101,7 +101,10 @@ class TargetTimePeriodDataSource(RestoreSensor):
     self._state = utcnow()
     self.async_write_ha_state()
 
+    self._hass.data.setdefault(DOMAIN, {})
+    self._hass.data[DOMAIN].setdefault(self._source_id, {})
+    self._hass.data[DOMAIN][self._source_id] = data_dict
+
     self._hass.bus.async_fire(EVENT_DATA_SOURCE, {
-      "data_source_id": self._source_id,
-      "data_source_data": data_dict
+      "data_source_id": self._source_id
     })
