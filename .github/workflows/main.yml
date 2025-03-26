@@ -67,12 +67,12 @@ jobs:
         run: |
           python -m pytest tests/integration
         env:
-          API_KEY: ${{ secrets.target_time_periods_API_TOKEN }}
-          GAS_MPRN: ${{ secrets.target_time_periods_GAS_MPRN }}
-          GAS_SN: ${{ secrets.target_time_periods_GAS_SN }}
-          ELECTRICITY_MPAN: ${{ secrets.target_time_periods_ELECTRICITY_MPAN }}
-          ELECTRICITY_SN: ${{ secrets.target_time_periods_ELECTRICITY_SN }}
-          ACCOUNT_ID: ${{ secrets.target_time_periods_ACCOUNT_ID }}
+          API_KEY: ${{ secrets.target_timeframes_API_TOKEN }}
+          GAS_MPRN: ${{ secrets.target_timeframes_GAS_MPRN }}
+          GAS_SN: ${{ secrets.target_timeframes_GAS_SN }}
+          ELECTRICITY_MPAN: ${{ secrets.target_timeframes_ELECTRICITY_MPAN }}
+          ELECTRICITY_SN: ${{ secrets.target_timeframes_ELECTRICITY_SN }}
+          ACCOUNT_ID: ${{ secrets.target_timeframes_ACCOUNT_ID }}
   release:
     name: Release
     if: ${{ github.repository_owner == 'BottlecapDave' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/beta') }}

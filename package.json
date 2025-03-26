@@ -1,7 +1,7 @@
 {
-  "name": "targettimeperiods",
+  "name": "targettimeframes",
   "version": "1.0.0",
-  "description": "Home Assistant integration for interacting with Target Time Period",
+  "description": "Home Assistant integration for interacting with Target Timeframes",
   "main": "index.js",
   "scripts": {
     "prepare": "husky || true",
@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BottlecapDave/homeassistant-targettimeperiods.git"
+    "url": "git+https://github.com/BottlecapDave/homeassistant-targettimeframes.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/BottlecapDave/homeassistant-targettimeperiods/issues"
+    "url": "https://github.com/BottlecapDave/homeassistant-targettimeframes/issues"
   },
-  "homepage": "https://github.com/BottlecapDave/homeassistant-targettimeperiods#readme",
+  "homepage": "https://github.com/BottlecapDave/homeassistant-targettimeframes#readme",
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/exec": "^6.0.3",

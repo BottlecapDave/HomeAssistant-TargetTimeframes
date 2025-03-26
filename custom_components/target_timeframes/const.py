@@ -2,7 +2,7 @@ import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers import selector
 
-DOMAIN = "target_time_periods"
+DOMAIN = "target_timeframes"
 INTEGRATION_VERSION = "1.0.0"
 
 CONFIG_VERSION = 1

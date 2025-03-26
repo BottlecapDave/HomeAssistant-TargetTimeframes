@@ -10,8 +10,8 @@ from .const import (
   CONFIG_KIND_ROLLING_TARGET_RATE,
   CONFIG_KIND_TARGET_RATE
 )
-from .entities.rolling_target_time_period import TargetTimePeriodsRollingTargetRate
-from .entities.target_time_period import TargetTimePeriodsTargetRate
+from .entities.rolling_target_timeframe import TargetTimeframesRollingTargetRate
+from .entities.target_timeframe import TargetTimeframesTargetRate
 from .storage.data_source_data import async_load_cached_data_source_data
 
 _LOGGER = logging.getLogger(__name__)
@@ -92,9 +92,9 @@ async def async_setup_target_sensors(hass, entry, config, data_source_id, async_
   entities = []
 
   if config[CONFIG_KIND] == CONFIG_KIND_TARGET_RATE:
-    entities.append(TargetTimePeriodsTargetRate(hass, data_source_id, entry, config, initial_data))
+    entities.append(TargetTimeframesTargetRate(hass, data_source_id, entry, config, initial_data))
   else:
-    entities.append(TargetTimePeriodsRollingTargetRate(hass, data_source_id, entry, config, initial_data))
+    entities.append(TargetTimeframesRollingTargetRate(hass, data_source_id, entry, config, initial_data))
 
   async_add_entities(entities)
   return

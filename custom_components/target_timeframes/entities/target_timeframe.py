@@ -49,16 +49,16 @@ from . import (
   extract_config,
   get_fixed_applicable_time_periods,
   get_target_time_period_info,
-  should_evaluate_target_time_periods
+  should_evaluate_target_timeframes
 )
 
-from ..config.target_time_period import validate_target_rate_config
+from ..config.target_timeframe import validate_target_rate_config
 from .repairs import check_for_errors
 from ..utils.attributes import dict_to_typed_dict
 
 _LOGGER = logging.getLogger(__name__)
 
-class TargetTimePeriodsTargetRate(BinarySensorEntity, RestoreEntity):
+class TargetTimeframesTargetRate(BinarySensorEntity, RestoreEntity):
   """Sensor for calculating when a target should be turned on or off."""
 
   def __init__(self, hass: HomeAssistant, data_source_id: str, config_entry, config, initial_data):
@@ -82,7 +82,7 @@ class TargetTimePeriodsTargetRate(BinarySensorEntity, RestoreEntity):
     self._attributes[CONFIG_TARGET_LATEST_VALUES] = find_last_rates
 
     self._data_source_data = initial_data if initial_data is not None else []
-    self._target_time_periods = []
+    self._target_timeframes = []
     
     self._hass = hass
     self.entity_id = generate_entity_id("binary_sensor.{}", self.unique_id, hass=hass)
@@ -90,7 +90,7 @@ class TargetTimePeriodsTargetRate(BinarySensorEntity, RestoreEntity):
   @property
   def unique_id(self):
     """The id of the sensor."""
-    return f"target_time_periods_{self._data_source_id}_{self._config[CONFIG_TARGET_NAME]}"
+    return f"target_timeframes_{self._data_source_id}_{self._config[CONFIG_TARGET_NAME]}"
     
   @property
   def name(self):
@@ -127,7 +127,7 @@ class TargetTimePeriodsTargetRate(BinarySensorEntity, RestoreEntity):
     # Find the current rate. Rates change a maximum of once every 30 minutes.
     current_date = utcnow()
 
-    should_evaluate = should_evaluate_target_time_periods(current_date, self._target_time_periods, self._config[CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE] if CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE in self._config else CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALL_IN_PAST)
+    should_evaluate = should_evaluate_target_timeframes(current_date, self._target_timeframes, self._config[CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE] if CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE in self._config else CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALL_IN_PAST)
     if should_evaluate:
       _LOGGER.debug(f'{len(self._data_source_data) if self._data_source_data is not None else None} time periods found')
 
@@ -176,7 +176,7 @@ class TargetTimePeriodsTargetRate(BinarySensorEntity, RestoreEntity):
           weighting = create_weighting(self._config[CONFIG_TARGET_WEIGHTING] if CONFIG_TARGET_WEIGHTING in self._config else None, number_of_slots)
 
           if (self._config[CONFIG_TARGET_TYPE] == CONFIG_TARGET_TYPE_CONTINUOUS):
-            self._target_time_periods = calculate_continuous_times(
+            self._target_timeframes = calculate_continuous_times(
               applicable_time_periods,
               target_hours,
               find_highest_values,
@@ -187,7 +187,7 @@ class TargetTimePeriodsTargetRate(BinarySensorEntity, RestoreEntity):
               hours_mode = self._config[CONFIG_TARGET_HOURS_MODE]
             )
           elif (self._config[CONFIG_TARGET_TYPE] == CONFIG_TARGET_TYPE_INTERMITTENT):
-            self._target_time_periods = calculate_intermittent_times(
+            self._target_timeframes = calculate_intermittent_times(
               applicable_time_periods,
               target_hours,
               find_highest_values,
@@ -199,13 +199,13 @@ class TargetTimePeriodsTargetRate(BinarySensorEntity, RestoreEntity):
           else:
             _LOGGER.error(f"Unexpected target type: {self._config[CONFIG_TARGET_TYPE]}")
 
-          self._attributes["target_times"] = self._target_time_periods
+          self._attributes["target_times"] = self._target_timeframes
           self._attributes["target_times_last_evaluated"] = current_date
-          _LOGGER.debug(f"calculated rates: {self._target_time_periods}")
+          _LOGGER.debug(f"calculated rates: {self._target_timeframes}")
         
         self._attributes["time_periods_incomplete"] = applicable_time_periods is None
 
-    active_result = get_target_time_period_info(current_date, self._target_time_periods, offset)
+    active_result = get_target_time_period_info(current_date, self._target_timeframes, offset)
 
     self._attributes["overall_average_value"] = active_result["overall_average_value"]
     self._attributes["overall_min_value"] = active_result["overall_min_value"]
@@ -247,15 +247,15 @@ class TargetTimePeriodsTargetRate(BinarySensorEntity, RestoreEntity):
         []
       )
 
-      self._target_time_periods = self._attributes["target_times"] if "target_times" in self._attributes else []
+      self._target_timeframes = self._attributes["target_times"] if "target_times" in self._attributes else []
 
       # Reset everything if our settings have changed
       if compare_config(self._config, self._attributes) == False:
         self._state = False
         self._attributes = self._config.copy()
-        self._target_time_periods = None
+        self._target_timeframes = None
     
-      _LOGGER.debug(f'Restored TargetTimePeriodsTargetRate state: {self._state}')
+      _LOGGER.debug(f'Restored TargetTimeframesTargetRate state: {self._state}')
 
     self.async_on_remove(
       self._hass.bus.async_listen(EVENT_DATA_SOURCE, self._async_handle_event)
@@ -323,7 +323,7 @@ class TargetTimePeriodsTargetRate(BinarySensorEntity, RestoreEntity):
 
     self._config = config
     self._attributes = self._config.copy()
-    self._target_time_periods = []
+    self._target_timeframes = []
     self.async_write_ha_state()
 
     if persist_changes:

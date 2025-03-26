@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta
-from custom_components.target_time_periods.const import CONFIG_TARGET_HOURS_MODE_MAXIMUM
+from custom_components.target_timeframes.const import CONFIG_TARGET_HOURS_MODE_MAXIMUM
 import pytest
 
-from unit import (create_rate_data)
-from custom_components.target_time_periods.entities import calculate_intermittent_times, get_target_time_period_info
+from unit import (create_data_source_data)
+from custom_components.target_timeframes.entities import calculate_intermittent_times, get_target_time_period_info
 import zoneinfo
 from zoneinfo import ZoneInfo
 
@@ -158,12 +158,12 @@ async def test_when_called_after_rates_then_not_active_returned():
   # Arrange
   period_from = datetime.strptime("2022-02-09T10:00:00Z", "%Y-%m-%dT%H:%M:%S%z")
   period_to = datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z")
-  expected_rates = [0.1, 0.2]
+  expected_values = [0.1, 0.2]
 
-  rates = create_rate_data(
+  rates = create_data_source_data(
     period_from,
     period_to,
-    expected_rates
+    expected_values
   )
 
   current_date = period_to + timedelta(minutes=15)
@@ -295,11 +295,11 @@ async def test_when_current_date_is_equal_to_last_end_date_then_not_active():
   # Arrange
   period_from = datetime.strptime("2022-10-09T00:30:00Z", "%Y-%m-%dT%H:%M:%S%z")
   period_to = datetime.strptime("2022-10-09T04:30:00Z", "%Y-%m-%dT%H:%M:%S%z")
-  expected_rates = [0.16511, 0.16512, 0.16999]
-  rates = create_rate_data(
+  expected_values = [0.16511, 0.16512, 0.16999]
+  rates = create_data_source_data(
     period_from,
     period_to,
-    expected_rates
+    expected_values
   )
 
   current_date = datetime.strptime("2022-10-09T04:30:00Z", "%Y-%m-%dT%H:%M:%S%z")

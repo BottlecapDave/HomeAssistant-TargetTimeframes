@@ -1,5 +1,5 @@
-site_name: Home Assistant Target Time Period
-repo_url: https://github.com/bottlecapdave/homeassistant-targettimeperiods
+site_name: Home Assistant Target Timeframes
+repo_url: https://github.com/bottlecapdave/homeassistant-targettimeframes
 docs_dir: _docs
 
 nav:

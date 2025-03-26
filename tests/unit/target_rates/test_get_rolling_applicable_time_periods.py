@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 import pytest
 
-from custom_components.target_time_periods.entities import get_rolling_applicable_time_periods
-from tests.unit import create_rate_data
+from custom_components.target_timeframes.entities import get_rolling_applicable_time_periods
+from tests.unit import create_data_source_data
 
 @pytest.mark.asyncio
 async def test_when_rates_is_none_then_none_returned():
@@ -21,7 +21,7 @@ async def test_when_rates_is_none_then_none_returned():
 async def test_when_not_enough_rates_available_then_none_returned():
   # Arrange
   current_datetime = datetime.strptime("2024-10-19T10:15:00+01:00", "%Y-%m-%dT%H:%M:%S%z")
-  all_rates = create_rate_data(
+  all_rates = create_data_source_data(
     datetime.strptime("2024-10-19T10:00:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
     datetime.strptime("2024-10-19T11:00:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
     [1]
@@ -38,7 +38,7 @@ async def test_when_not_enough_rates_available_then_none_returned():
 async def test_when_rates_available_then_target_rates_returned():
   # Arrange
   current_datetime = datetime.strptime("2024-10-19T10:15:00+01:00", "%Y-%m-%dT%H:%M:%S%z")
-  all_rates = create_rate_data(
+  all_rates = create_data_source_data(
     datetime.strptime("2024-10-19T00:00:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
     datetime.strptime("2024-10-20T00:00:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
     [1, 2, 3]

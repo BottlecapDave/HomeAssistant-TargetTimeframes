@@ -27,12 +27,12 @@ from ..const import (
 
 from ..entities import create_weighting
 
-async def async_migrate_target_config(version: int, data: {}, get_entries):
+async def async_migrate_target_timeframe_config(version: int, data: {}, get_entries):
   new_data = {**data}
 
   return new_data
 
-def merge_target_rate_config(data: dict, options: dict, updated_config: dict = None):
+def merge_target_timeframe_config(data: dict, options: dict, updated_config: dict = None):
   config = dict(data)
   if options is not None:
     config.update(options)

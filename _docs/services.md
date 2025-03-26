@@ -6,7 +6,7 @@ There are a few services available within this integration, which are detailed h
 
 The following services are available if you have set up at least one [target rate](./setup/target_rate.md).
 
-### target_time_periods.update_target_config
+### target_timeframes.update_target_config
 
 For updating a given [target rate's](./setup/target_rate.md) config. This allows you to change target rates sensors dynamically based on other outside criteria (e.g. you need to adjust the target hours to top up home batteries).
 
@@ -28,21 +28,21 @@ This can be used via automations in the following way. Assuming we have the foll
 
 ```yaml
 input_number:
-  target_time_periods_target_hours:
-    name: Target Time Period Target Hours
+  target_timeframes_target_hours:
+    name: Target Timeframes Target Hours
     min: 0
     max: 24
 
 input_text:
   # From/to would ideally use input_datetime, but we need the time in a different format
-  target_time_periods_target_from:
-    name: Target Time Period Target From
+  target_timeframes_target_from:
+    name: Target Timeframes Target From
     initial: "00:00"
-  target_time_periods_target_to:
-    name: Target Time Period Target To
+  target_timeframes_target_to:
+    name: Target Timeframes Target To
     initial: "00:00"
-  target_time_periods_target_offset:
-    name: Target Time Period Target Offset
+  target_timeframes_target_offset:
+    name: Target Timeframes Target Offset
     initial: "-00:00:00"
 ```
 
@@ -54,31 +54,31 @@ alias: Update target rate config
 triggers:
   - trigger: state
     entity_id:
-      - input_number.target_time_periods_target_hours
-      - input_text.target_time_periods_target_from
-      - input_text.target_time_periods_target_to
-      - input_text.target_time_periods_target_offset
+      - input_number.target_timeframes_target_hours
+      - input_text.target_timeframes_target_from
+      - input_text.target_timeframes_target_to
+      - input_text.target_timeframes_target_offset
 conditions: []
 actions:
-  - action: target_time_periods.update_target_config
+  - action: target_timeframes.update_target_config
     data:
       target_hours: >
-        "{{ states('input_number.target_time_periods_target_hours') | string }}"
+        "{{ states('input_number.target_timeframes_target_hours') | string }}"
       target_start_time: >
-        {{ states('input_text.target_time_periods_target_from') }}
+        {{ states('input_text.target_timeframes_target_from') }}
       target_end_time: >
-        {{ states('input_text.target_time_periods_target_to') }}
+        {{ states('input_text.target_timeframes_target_to') }}
       target_offset: >
-        {{ states('input_text.target_time_periods_target_offset') }}
+        {{ states('input_text.target_timeframes_target_offset') }}
     target:
-      entity_id: binary_sensor.target_time_periods_target_example
+      entity_id: binary_sensor.target_timeframes_target_example
 ```
 
 ## Rolling Target Rates
 
 The following services are available if you have set up at least one [rolling target rate](./setup/rolling_target_rate.md).
 
-### target_time_periods.update_rolling_target_config
+### target_timeframes.update_rolling_target_config
 
 For updating a given [rolling target rate's](./setup/rolling_target_rate.md) config. This allows you to change rolling target rates sensors dynamically based on other outside criteria (e.g. you need to adjust the target hours to top up home batteries).
 
@@ -99,18 +99,18 @@ This can be used via automations in the following way. Assuming we have the foll
 
 ```yaml
 input_number:
-  target_time_periods_rolling_target_hours:
-    name: Target Time Period Rolling Target Hours
+  target_timeframes_rolling_target_hours:
+    name: Target Timeframes Rolling Target Hours
     min: 0
     max: 24
-  target_time_periods_rolling_target_look_ahead_hours:
-    name: Target Time Period Rolling Target Look Ahead Hours
+  target_timeframes_rolling_target_look_ahead_hours:
+    name: Target Timeframes Rolling Target Look Ahead Hours
     min: 0
     max: 24
 
 input_text:
-  target_time_periods_target_offset:
-    name: Target Time Period Target Offset
+  target_timeframes_target_offset:
+    name: Target Timeframes Target Offset
     initial: "-00:00:00"
 ```
 
@@ -122,19 +122,19 @@ alias: Update target rate config
 triggers:
   - trigger: state
     entity_id:
-      - input_number.target_time_periods_rolling_target_hours
-      - input_number.target_time_periods_rolling_target_look_ahead_hours
-      - input_text.target_time_periods_target_offset
+      - input_number.target_timeframes_rolling_target_hours
+      - input_number.target_timeframes_rolling_target_look_ahead_hours
+      - input_text.target_timeframes_target_offset
 conditions: []
 actions:
-  - action: target_time_periods.update_target_config
+  - action: target_timeframes.update_target_config
     data:
       target_hours: >
-        "{{ states('input_number.target_time_periods_target_hours') | string }}"
+        "{{ states('input_number.target_timeframes_target_hours') | string }}"
       target_look_ahead_hours: >
-        "{{ states('input_number.target_time_periods_rolling_target_look_ahead_hours') | string }}"
+        "{{ states('input_number.target_timeframes_rolling_target_look_ahead_hours') | string }}"
       target_offset: >
-        {{ states('input_text.target_time_periods_target_offset') }}
+        {{ states('input_text.target_timeframes_target_offset') }}
     target:
-      entity_id: binary_sensor.target_time_periods_rolling_target_example
+      entity_id: binary_sensor.target_timeframes_rolling_target_example
 ```

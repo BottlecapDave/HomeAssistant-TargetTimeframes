@@ -409,13 +409,13 @@ def compare_config(current_config: dict, existing_config: dict):
     
   return True
 
-def should_evaluate_target_time_periods(current_date: datetime, target_time_periods: list, evaluation_mode: str) -> bool:
-  if target_time_periods is None or len(target_time_periods) < 1:
+def should_evaluate_target_timeframes(current_date: datetime, target_timeframes: list, evaluation_mode: str) -> bool:
+  if target_timeframes is None or len(target_timeframes) < 1:
     return True
   
   all_rates_in_past = True
   one_rate_in_past = False
-  for rate in target_time_periods:
+  for rate in target_timeframes:
     if rate["end"] > current_date:
       all_rates_in_past = False
     

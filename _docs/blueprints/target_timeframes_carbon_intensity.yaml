@@ -1,18 +1,18 @@
 blueprint:
-  name: Target Time Periods - Carbon Intensity source
-  description: Configures a targe time period data source from Carbon Intensity
+  name: Target Timeframess - Carbon Intensity source
+  description: Configures a targe timeframe data source from Carbon Intensity
   domain: automation
   author: BottlecapDave
   input:
-    target_time_period_data_source_sensor:
-      name: Target time period data source sensor
+    target_timeframe_data_source_sensor:
+      name: Target timeframe data source sensor
       description: The data source sensor which represents the data source to update
       selector:
         entity:
           filter:
           - domain:
             - sensor
-            integration: target_time_periods
+            integration: target_timeframes
           multiple: false
     carbon_intensity_current_day_rates:
       name: Current day rates
@@ -34,9 +34,8 @@ blueprint:
             - event
             integration: carbon_intensity
           multiple: false
-  source_url: https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/blob/develop/_docs/blueprints/octopus_energy_spin_wheel_of_fortune_single.yml
 variables:
-  target_time_period_data_source_sensor: !input target_time_period_data_source_sensor
+  target_timeframe_data_source_sensor: !input target_timeframe_data_source_sensor
   carbon_intensity_current_day_rates: !input carbon_intensity_current_day_rates
   carbon_intensity_next_day_rates: !input carbon_intensity_next_day_rates
 mode: queued
@@ -48,7 +47,7 @@ triggers:
   entity_id: !input carbon_intensity_next_day_rates
 condition: []
 action:
-- action: target_time_periods.update_target_time_period_data_source
+- action: target_timeframes.update_target_timeframe_data_source
   data: >
     {% set all_rates = state_attr(carbon_intensity_current_day_rates, 'rates') + state_attr(carbon_intensity_next_day_rates, 'rates') %}
     {% set data = namespace(new_rates=[]) %}
@@ -60,4 +59,4 @@ action:
     {% endfor %}
     {{ { 'data': data.new_rates } | to_json }}
   target:
-    entity_id: !input target_time_period_data_source_sensor
+    entity_id: !input target_timeframe_data_source_sensor

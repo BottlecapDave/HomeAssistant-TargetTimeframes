@@ -1,11 +1,11 @@
 from datetime import datetime, timedelta
 from decimal import Decimal
-from custom_components.target_time_periods.const import CONFIG_TARGET_HOURS_MODE_MAXIMUM, CONFIG_TARGET_HOURS_MODE_MINIMUM
+from custom_components.target_timeframes.const import CONFIG_TARGET_HOURS_MODE_MAXIMUM, CONFIG_TARGET_HOURS_MODE_MINIMUM
 import pytest
 
-from unit import (create_rate_data, agile_rates)
-from custom_components.target_time_periods.api_client import rates_to_thirty_minute_increments
-from custom_components.target_time_periods.entities import calculate_continuous_times, get_fixed_applicable_time_periods
+from unit import (create_data_source_data, agile_rates)
+from custom_components.target_timeframes.api_client import rates_to_thirty_minute_increments
+from custom_components.target_timeframes.entities import calculate_continuous_times, get_fixed_applicable_time_periods
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("current_date,target_start_time,target_end_time,expected_first_valid_from,is_rolling_target,find_last_rates",[
@@ -61,12 +61,12 @@ async def test_when_continuous_times_present_then_next_continuous_times_returned
   # Arrange
   period_from = datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z")
   period_to = datetime.strptime("2022-02-11T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z")
-  expected_rates = [0.1, 0.2, 0.3, 0.2, 0.2, 0.1]
+  expected_values = [0.1, 0.2, 0.3, 0.2, 0.2, 0.1]
 
-  rates = create_rate_data(
+  rates = create_data_source_data(
     period_from,
     period_to,
-    expected_rates
+    expected_values
   )
   
   # Restrict our time block
@@ -153,12 +153,12 @@ async def test_when_continuous_times_present_and_highest_price_required_then_nex
   # Arrange
   period_from = datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z")
   period_to = datetime.strptime("2022-02-11T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z")
-  expected_rates = [0.1, 0.2, 0.3]
+  expected_values = [0.1, 0.2, 0.3]
 
-  rates = create_rate_data(
+  rates = create_data_source_data(
     period_from,
     period_to,
-    expected_rates
+    expected_values
   )
   
   # Restrict our time block
@@ -332,7 +332,7 @@ async def test_when_applicable_rates_is_none_then_no_continuous_times_returned()
   assert result is not None
   assert len(result) == 0
 
-# Added for https://github.com/BottlecapDave/homeassistant-targettimeperiods/issues/68
+# Added for https://github.com/BottlecapDave/homeassistant-targettimeframes/issues/68
 @pytest.mark.asyncio
 @pytest.mark.parametrize("current_date",[
   (datetime.strptime("2022-10-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z")),
@@ -517,18 +517,18 @@ async def test_when_available_rates_are_too_low_then_no_times_are_returned():
   assert len(result) == 0
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("target_hours,expected_first_valid_from,expected_rates",[
+@pytest.mark.parametrize("target_hours,expected_first_valid_from,expected_values",[
   (0.5, datetime.strptime("2022-10-22T10:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.191]),
   (1, datetime.strptime("2022-10-22T09:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.2, 0.191]),
 ])
-async def test_when_min_rate_is_provided_then_result_does_not_include_any_rate_below_min_rate(target_hours: float, expected_first_valid_from: datetime, expected_rates: list):
+async def test_when_min_rate_is_provided_then_result_does_not_include_any_rate_below_min_rate(target_hours: float, expected_first_valid_from: datetime, expected_values: list):
   # Arrange
   current_date = datetime.strptime("2022-10-22T09:10:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
   target_start_time = "09:00"
   target_end_time = "22:00"
   min_rate = 0.19
 
-  rates = create_rate_data(
+  rates = create_data_source_data(
     datetime.strptime("2022-10-22T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     datetime.strptime("2022-10-23T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     [19.1, 18.9, 19.1, 20]
@@ -553,28 +553,28 @@ async def test_when_min_rate_is_provided_then_result_does_not_include_any_rate_b
 
   # Assert
   assert result is not None
-  assert len(result) == len(expected_rates)
+  assert len(result) == len(expected_values)
 
   expected_from = expected_first_valid_from
-  for index in range(0, len(expected_rates)):
+  for index in range(0, len(expected_values)):
     assert result[index]["start"] == expected_from
     expected_from = expected_from + timedelta(minutes=30)
     assert result[index]["end"] == expected_from
-    assert result[index]["value_inc_vat"] == expected_rates[index]
+    assert result[index]["value_inc_vat"] == expected_values[index]
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("target_hours,expected_first_valid_from,expected_rates",[
+@pytest.mark.parametrize("target_hours,expected_first_valid_from,expected_values",[
   (0.5, datetime.strptime("2022-10-22T10:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.191]),
   (1, datetime.strptime("2022-10-22T10:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.191, 0.189]),
 ])
-async def test_when_max_rate_is_provided_then_result_does_not_include_any_rate_above_max_rate(target_hours: float, expected_first_valid_from: datetime, expected_rates: list):
+async def test_when_max_rate_is_provided_then_result_does_not_include_any_rate_above_max_rate(target_hours: float, expected_first_valid_from: datetime, expected_values: list):
   # Arrange
   current_date = datetime.strptime("2022-10-22T09:10:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
   target_start_time = "09:00"
   target_end_time = "22:00"
   max_rate = 0.199
 
-  rates = create_rate_data(
+  rates = create_data_source_data(
     datetime.strptime("2022-10-22T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     datetime.strptime("2022-10-23T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     [19.1, 18.9, 19.1, 20]
@@ -600,17 +600,17 @@ async def test_when_max_rate_is_provided_then_result_does_not_include_any_rate_a
 
   # Assert
   assert result is not None
-  assert len(result) == len(expected_rates)
+  assert len(result) == len(expected_values)
 
   expected_from = expected_first_valid_from
-  for index in range(0, len(expected_rates)):
+  for index in range(0, len(expected_values)):
     assert result[index]["start"] == expected_from
     expected_from = expected_from + timedelta(minutes=30)
     assert result[index]["end"] == expected_from
-    assert result[index]["value_inc_vat"] == expected_rates[index]
+    assert result[index]["value_inc_vat"] == expected_values[index]
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("weighting,possible_rates,expected_first_valid_from,expected_rates",[
+@pytest.mark.parametrize("weighting,possible_rates,expected_first_valid_from,expected_values",[
   ([1, 2, 1], [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T11:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.191, 0.151, 0.20]),
   ([1, 2, 2], [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T10:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.189, 0.191, 0.151]),
   ([1, 0, 0], [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T11:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.151, 0.20, 0.191]),
@@ -619,7 +619,7 @@ async def test_when_max_rate_is_provided_then_result_does_not_include_any_rate_a
   ([Decimal('1.1'), Decimal('2.2'), Decimal('2.2')], [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T10:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.189, 0.191, 0.151]),
   ([Decimal('1.1'), Decimal('0.0'), Decimal('0.0')], [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T11:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.151, 0.20, 0.191]),
 
-  # Examples defined in https://github.com/BottlecapDave/homeassistant-targettimeperiods/issues/807
+  # Examples defined in https://github.com/BottlecapDave/homeassistant-targettimeframes/issues/807
   (None, [14, 14, 10, 7, 15, 21], datetime.strptime("2022-10-22T09:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.14, 0.1, 0.07]),
   ([1, 1, 2], [14, 14, 10, 7, 15, 21], datetime.strptime("2022-10-22T09:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.14, 0.1, 0.07]),
   ([5, 1, 1], [14, 14, 10, 7, 15, 21], datetime.strptime("2022-10-22T10:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.07, 0.15, 0.21]),
@@ -627,13 +627,13 @@ async def test_when_max_rate_is_provided_then_result_does_not_include_any_rate_a
   ([Decimal('1.1'), Decimal('1.1'), Decimal('2.2')], [14, 14, 10, 7, 15, 21], datetime.strptime("2022-10-22T09:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.14, 0.1, 0.07]),
   ([Decimal('5.5'), Decimal('1.1'), Decimal('1.1')], [14, 14, 10, 7, 15, 21], datetime.strptime("2022-10-22T10:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.07, 0.15, 0.21]),
 ])
-async def test_when_weighting_specified_then_result_is_adjusted(weighting: list, possible_rates: list, expected_first_valid_from: datetime, expected_rates: list):
+async def test_when_weighting_specified_then_result_is_adjusted(weighting: list, possible_rates: list, expected_first_valid_from: datetime, expected_values: list):
   # Arrange
   current_date = datetime.strptime("2022-10-22T09:10:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
   target_start_time = "09:00"
   target_end_time = "22:00"
 
-  rates = create_rate_data(
+  rates = create_data_source_data(
     datetime.strptime("2022-10-22T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     datetime.strptime("2022-10-23T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     possible_rates
@@ -659,14 +659,14 @@ async def test_when_weighting_specified_then_result_is_adjusted(weighting: list,
 
   # Assert
   assert result is not None
-  assert len(result) == len(expected_rates)
+  assert len(result) == len(expected_values)
 
   expected_from = expected_first_valid_from
-  for index in range(0, len(expected_rates)):
+  for index in range(0, len(expected_values)):
     assert result[index]["start"] == expected_from
     expected_from = expected_from + timedelta(minutes=30)
     assert result[index]["end"] == expected_from
-    assert result[index]["value_inc_vat"] == expected_rates[index]
+    assert result[index]["value_inc_vat"] == expected_values[index]
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("weighting",[
@@ -679,7 +679,7 @@ async def test_when_target_hours_zero_then_result_is_adjusted(weighting):
   target_start_time = "09:00"
   target_end_time = "22:00"
 
-  rates = create_rate_data(
+  rates = create_data_source_data(
     datetime.strptime("2022-10-22T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     datetime.strptime("2022-10-23T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     [19.1, 18.9, 19.1, 15.1, 20]
@@ -713,9 +713,9 @@ def test_when_hour_mode_is_maximum_and_not_enough_hours_available_then_reduced_t
   target_start_time = "09:00"
   target_end_time = "22:00"
   possible_rates = [19.1, 18.9, 21.1, 15.1, 20]
-  expected_rates = [0.191, 0.189]
+  expected_values = [0.191, 0.189]
 
-  rates = create_rate_data(
+  rates = create_data_source_data(
     datetime.strptime("2022-10-22T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     datetime.strptime("2022-10-23T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     possible_rates
@@ -748,7 +748,7 @@ def test_when_hour_mode_is_maximum_and_not_enough_hours_available_then_reduced_t
     assert result[index]["start"] == expected_from
     expected_from = expected_from + timedelta(minutes=30)
     assert result[index]["end"] == expected_from
-    assert result[index]["value_inc_vat"] == expected_rates[index]
+    assert result[index]["value_inc_vat"] == expected_values[index]
 
 def test_when_hour_mode_is_maximum_and_more_than_enough_hours_available_then_target_rates_returned():
   # Arrange
@@ -756,9 +756,9 @@ def test_when_hour_mode_is_maximum_and_more_than_enough_hours_available_then_tar
   target_start_time = "09:00"
   target_end_time = "22:00"
   possible_rates = [19.1, 18.9, 19.1, 15.1, 20]
-  expected_rates = [0.189, 0.191, 0.151]
+  expected_values = [0.189, 0.191, 0.151]
 
-  rates = create_rate_data(
+  rates = create_data_source_data(
     datetime.strptime("2022-10-22T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     datetime.strptime("2022-10-23T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     possible_rates
@@ -790,7 +790,7 @@ def test_when_hour_mode_is_maximum_and_more_than_enough_hours_available_then_tar
     assert result[index]["start"] == expected_from
     expected_from = expected_from + timedelta(minutes=30)
     assert result[index]["end"] == expected_from
-    assert result[index]["value_inc_vat"] == expected_rates[index]
+    assert result[index]["value_inc_vat"] == expected_values[index]
 
 def test_when_hour_mode_is_minimum_and_not_enough_hours_available_then_no_target_rates_returned():
   # Arrange
@@ -798,9 +798,9 @@ def test_when_hour_mode_is_minimum_and_not_enough_hours_available_then_no_target
   target_start_time = "09:00"
   target_end_time = "22:00"
   possible_rates = [19.1, 18.9, 21.1, 15.1, 20]
-  expected_rates = [0.191, 0.189]
+  expected_values = [0.191, 0.189]
 
-  rates = create_rate_data(
+  rates = create_data_source_data(
     datetime.strptime("2022-10-22T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     datetime.strptime("2022-10-23T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     possible_rates
@@ -834,9 +834,9 @@ def test_when_hour_mode_is_minimum_and_more_than_enough_hours_available_then_tar
   target_start_time = "09:00"
   target_end_time = "22:00"
   possible_rates = [19.1, 18.9, 19.1, 15.1, 20]
-  expected_rates = [0.191, 0.189, 0.191, 0.151]
+  expected_values = [0.191, 0.189, 0.191, 0.151]
 
-  rates = create_rate_data(
+  rates = create_data_source_data(
     datetime.strptime("2022-10-22T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     datetime.strptime("2022-10-23T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     possible_rates
@@ -869,7 +869,7 @@ def test_when_hour_mode_is_minimum_and_more_than_enough_hours_available_then_tar
     assert result[index]["start"] == expected_from
     expected_from = expected_from + timedelta(minutes=30)
     assert result[index]["end"] == expected_from
-    assert result[index]["value_inc_vat"] == expected_rates[index]
+    assert result[index]["value_inc_vat"] == expected_values[index]
 
 def test_when_multiple_blocks_have_same_value_then_earliest_is_picked():
   applicable_rates = [
@@ -1183,13 +1183,13 @@ def test_when_multiple_blocks_have_same_value_then_earliest_is_picked():
 
 
 def test_when_weighting_present_with_find_latest_rate_then_latest_time_is_picked():
-  applicable_rates = create_rate_data(datetime.strptime("2024-10-10T20:00:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
+  applicable_rates = create_data_source_data(datetime.strptime("2024-10-10T20:00:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
                                       datetime.strptime("2024-10-10T23:30:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
                                       [0.267159])
-  applicable_rates.extend(create_rate_data(datetime.strptime("2024-10-10T23:30:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
+  applicable_rates.extend(create_data_source_data(datetime.strptime("2024-10-10T23:30:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
                                            datetime.strptime("2024-10-11T05:30:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
                                            [0.070003]))
-  applicable_rates.extend(create_rate_data(datetime.strptime("2024-10-11T05:30:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
+  applicable_rates.extend(create_data_source_data(datetime.strptime("2024-10-11T05:30:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
                                            datetime.strptime("2024-10-11T23:30:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
                                            [0.267159]))
   
@@ -1214,7 +1214,7 @@ def test_when_weighting_present_with_find_latest_rate_then_latest_time_is_picked
 
 
 def test_when_weighting_present_in_rates_then_weighted_rate_is_picked():
-  applicable_rates = create_rate_data(datetime.strptime("2024-10-10T20:00:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
+  applicable_rates = create_data_source_data(datetime.strptime("2024-10-10T20:00:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
                                       datetime.strptime("2024-10-10T23:30:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
                                       [0.2])
   

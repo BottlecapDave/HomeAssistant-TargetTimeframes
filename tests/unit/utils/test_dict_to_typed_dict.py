@@ -1,7 +1,7 @@
 from datetime import datetime
 import pytest
 
-from custom_components.target_time_periods.utils.attributes import dict_to_typed_dict
+from custom_components.target_timeframes.utils.attributes import dict_to_typed_dict
 
 @pytest.mark.asyncio
 async def test_when_none_is_provided_then_none_is_returned():

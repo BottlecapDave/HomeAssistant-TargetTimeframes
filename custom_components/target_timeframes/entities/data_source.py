@@ -42,7 +42,7 @@ class TargetTimePeriodDataSource(RestoreSensor):
   @property
   def unique_id(self):
     """The id of the sensor."""
-    return f"target_time_periods_{self._source_id}_data_source_last_updated"
+    return f"target_timeframes_{self._source_id}_data_source_last_updated"
     
   @property
   def name(self):

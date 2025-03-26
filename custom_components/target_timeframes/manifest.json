@@ -1,6 +1,6 @@
 {
-  "domain": "target_time_periods",
-  "name": "Target Time Period",
+  "domain": "target_timeframes",
+  "name": "Target Timeframes",
   "codeowners": [
     "@bottlecapdave"
   ],
@@ -9,10 +9,10 @@
     "repairs",
     "recorder"
   ],
-  "documentation": "https://bottlecapdave.github.io/homeassistant-targettimeperiods",
+  "documentation": "https://bottlecapdave.github.io/homeassistant-targettimeframes",
   "homekit": {},
   "iot_class": "cloud_polling",
-  "issue_tracker": "https://github.com/BottlecapDave/homeassistant-targettimeperiods/issues",
+  "issue_tracker": "https://github.com/BottlecapDave/homeassistant-targettimeframes/issues",
   "requirements": [
     "pydantic"
   ],

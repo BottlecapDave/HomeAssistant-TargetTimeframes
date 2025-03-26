@@ -21,7 +21,7 @@ from ..const import (
 )
 from ..entities import create_weighting
 
-async def async_migrate_rolling_target_config(version: int, data: {}, get_entries):
+async def async_migrate_rolling_target_timeframe_config(version: int, data: {}, get_entries):
   new_data = {**data}
 
   return new_data
@@ -48,7 +48,7 @@ def merge_rolling_target_rate_config(data: dict, options: dict, updated_config: 
 
   return config
 
-def validate_rolling_target_rate_config(data):
+def validate_rolling_target_timeframe_config(data):
   errors = {}
 
   matches = re.search(REGEX_ENTITY_NAME, data[CONFIG_TARGET_NAME])

@@ -1,7 +1,7 @@
 import pytest
 
-from custom_components.target_time_periods.entities import compare_config
-from custom_components.target_time_periods.const import CONFIG_TARGET_HOURS, CONFIG_TARGET_TYPE
+from custom_components.target_timeframes.entities import compare_config
+from custom_components.target_timeframes.const import CONFIG_TARGET_HOURS, CONFIG_TARGET_TYPE
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("existing_config,expected_result",[

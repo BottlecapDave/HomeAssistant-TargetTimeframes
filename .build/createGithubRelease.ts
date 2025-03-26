@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
-const bodySuffix = "---\nEnjoying the integration? Why not make a one time or monthly [GitHub sponsorship](https://github.com/sponsors/bottlecapdave) or use my [Target Time Period referral link](https://share.octopus.energy/gray-jade-372)?"
+const bodySuffix = "---\nEnjoying the integration? Why not make a one time or monthly [GitHub sponsorship](https://github.com/sponsors/bottlecapdave)?"
 
 function getMinimumHomeAssistantVersion() {
   const hacsFilePath = join(__dirname, '../hacs.json');

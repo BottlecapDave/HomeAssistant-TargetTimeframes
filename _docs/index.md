@@ -1,4 +1,4 @@
-# Home Assistant Target Time Period
+# Home Assistant Target Timeframes
 
 ## Features
 
@@ -26,12 +26,12 @@ There are multiple ways of installing the integration. Once you've installed the
 
 This integration can be installed directly via HACS. To install:
 
-* [Add the repository](https://my.home-assistant.io/redirect/hacs_repository/?owner=BottlecapDave&repository=homeassistant-targettimeperiods&category=integration) to your HACS installation
+* [Add the repository](https://my.home-assistant.io/redirect/hacs_repository/?owner=BottlecapDave&repository=homeassistant-targettimeframes&category=integration) to your HACS installation
 * Click `Download`
 
 ### Manual
 
-You should take the latest [published release](https://github.com/BottlecapDave/homeassistant-targettimeperiods/releases). The current state of `develop` will be in flux and therefore possibly subject to change.
+You should take the latest [published release](https://github.com/BottlecapDave/homeassistant-targettimeframes/releases). The current state of `develop` will be in flux and therefore possibly subject to change.
 
 To install, place the contents of `custom_components` into the `<config directory>/custom_components` folder of your Home Assistant installation. Once installed, don't forget to restart your home assistant instance for the integration to be picked up.
 
@@ -85,7 +85,7 @@ If you are on the [intelligent tariff](https://octopus.energy/smart/intelligent-
 
 ### Octoplus
 
-To support Target Time Period's [octoplus programme](https://octopus.energy/octoplus/). [Full list of octoplus entites](./entities/octoplus.md).
+To support Target Timeframes's [octoplus programme](https://octopus.energy/octoplus/). [Full list of octoplus entites](./entities/octoplus.md).
 
 ### Wheel of Fortune
 
@@ -93,11 +93,11 @@ To support the wheel of fortune that is awarded every month to customers. [Full 
 
 ### Greenness Forecast
 
-To support Target Time Period's [greener days](https://octopus.energy/smart/greener-days/). [Full list of greenness forecast entities](./entities/greenness_forecast.md).
+To support Target Timeframes's [greener days](https://octopus.energy/smart/greener-days/). [Full list of greenness forecast entities](./entities/greenness_forecast.md).
 
 ### Heat Pumps
 
-To support heat pumps connected to Target Time Period, like the [Cosy 6](https://octopus.energy/cosy-heat-pump/). [Full list of heat pump entities](./entities/heat_pump.md).
+To support heat pumps connected to Target Timeframes, like the [Cosy 6](https://octopus.energy/cosy-heat-pump/). [Full list of heat pump entities](./entities/heat_pump.md).
 
 ## Target Rate Sensors
 
@@ -141,7 +141,7 @@ A collection of community contributions can be found on the [community contribut
 
 ## FAQ
 
-Before raising anything, please read through the [faq](./faq.md). If you have questions, then you can raise a [discussion](https://github.com/BottlecapDave/homeassistant-targettimeperiods/discussions). If you have found a bug or have a feature request please [raise it](https://github.com/BottlecapDave/homeassistant-targettimeperiods/issues) using the appropriate report template.
+Before raising anything, please read through the [faq](./faq.md). If you have questions, then you can raise a [discussion](https://github.com/BottlecapDave/homeassistant-targettimeframes/discussions). If you have found a bug or have a feature request please [raise it](https://github.com/BottlecapDave/homeassistant-targettimeframes/issues) using the appropriate report template.
 
 ## Sponsorship
 

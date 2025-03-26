@@ -1,13 +1,13 @@
-from datetime import datetime, timedelta
-from custom_components.target_time_periods.const import (
+from datetime import datetime
+from custom_components.target_timeframes.const import (
   CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALL_IN_FUTURE_OR_PAST,
   CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALL_IN_PAST,
   CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALWAYS
 )
 import pytest
 
-from unit import (create_rate_data)
-from custom_components.target_time_periods.entities import get_target_time_period_info, should_evaluate_target_time_periods
+from unit import (create_data_source_data)
+from custom_components.target_timeframes.entities import should_evaluate_target_timeframes
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("evaluation_mode",[
@@ -21,7 +21,7 @@ async def test_when_target_rates_is_none_then_return_true(evaluation_mode: str):
   target_rates = None
 
   # Act
-  result = should_evaluate_target_time_periods(current_date, target_rates, evaluation_mode)
+  result = should_evaluate_target_timeframes(current_date, target_rates, evaluation_mode)
 
   # Assert
   assert result == True
@@ -38,7 +38,7 @@ async def test_when_target_rates_is_empty_then_return_true(evaluation_mode: str)
   target_rates = []
 
   # Act
-  result = should_evaluate_target_time_periods(current_date, target_rates, evaluation_mode)
+  result = should_evaluate_target_timeframes(current_date, target_rates, evaluation_mode)
 
   # Assert
   assert result == True
@@ -52,14 +52,14 @@ async def test_when_target_rates_is_empty_then_return_true(evaluation_mode: str)
 async def test_when_target_rates_is_in_the_future_then_return_expected_result(evaluation_mode: str, expected_result: bool):
   # Arrange
   current_date = datetime.strptime("2024-09-21T10:15:00Z", "%Y-%m-%dT%H:%M:%S%z")
-  target_rates = create_rate_data(
+  target_rates = create_data_source_data(
     datetime.strptime("2024-09-21T11:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     datetime.strptime("2024-09-21T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     [0.1]
   )
 
   # Act
-  result = should_evaluate_target_time_periods(current_date, target_rates, evaluation_mode)
+  result = should_evaluate_target_timeframes(current_date, target_rates, evaluation_mode)
 
   # Assert
   assert result == expected_result
@@ -73,14 +73,14 @@ async def test_when_target_rates_is_in_the_future_then_return_expected_result(ev
 async def test_when_target_rates_started_then_return_expected_result(evaluation_mode: str, expected_result: bool):
   # Arrange
   current_date = datetime.strptime("2024-09-21T10:15:00Z", "%Y-%m-%dT%H:%M:%S%z")
-  target_rates = create_rate_data(
+  target_rates = create_data_source_data(
     datetime.strptime("2024-09-21T10:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     datetime.strptime("2024-09-21T11:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     [0.1]
   )
 
   # Act
-  result = should_evaluate_target_time_periods(current_date, target_rates, evaluation_mode)
+  result = should_evaluate_target_timeframes(current_date, target_rates, evaluation_mode)
 
   # Assert
   assert result == expected_result
@@ -94,14 +94,14 @@ async def test_when_target_rates_started_then_return_expected_result(evaluation_
 async def test_when_target_rates_in_past_then_return_expected_result(evaluation_mode: str, expected_result: bool):
   # Arrange
   current_date = datetime.strptime("2024-09-21T11:00:01Z", "%Y-%m-%dT%H:%M:%S%z")
-  target_rates = create_rate_data(
+  target_rates = create_data_source_data(
     datetime.strptime("2024-09-21T10:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     datetime.strptime("2024-09-21T11:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     [0.1]
   )
 
   # Act
-  result = should_evaluate_target_time_periods(current_date, target_rates, evaluation_mode)
+  result = should_evaluate_target_timeframes(current_date, target_rates, evaluation_mode)
 
   # Assert
   assert result == expected_result

@@ -1,8 +1,8 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
-const manifestFilePath = join(__dirname, '../custom_components/target_time_periods/manifest.json');
-const constantFilePath = join(__dirname, '../custom_components/target_time_periods/const.py');
+const manifestFilePath = join(__dirname, '../custom_components/target_timeframes/manifest.json');
+const constantFilePath = join(__dirname, '../custom_components/target_timeframes/const.py');
 
 function updateManifestVersion(version: string) {
   const buffer = readFileSync(manifestFilePath);

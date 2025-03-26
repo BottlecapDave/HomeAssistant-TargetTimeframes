@@ -2,8 +2,8 @@ from typing import Any
 from homeassistant.config_entries import (ConfigFlow, ConfigEntry, ConfigSubentryFlow, SubentryFlowResult)
 from homeassistant.core import callback
 
-from .config.target_time_period import validate_target_rate_config
-from .config.rolling_target_time_period import validate_rolling_target_rate_config
+from .config.target_timeframe import validate_target_rate_config
+from .config.rolling_target_timeframe import validate_rolling_target_timeframe_config
 
 from .const import (
   CONFIG_DATA_SOURCE_ID,
@@ -21,7 +21,7 @@ from .const import (
 
 from .config.data_source import validate_source_config
 
-class TargetTimePeriodsConfigFlow(ConfigFlow, domain=DOMAIN): 
+class TargetTimeframesConfigFlow(ConfigFlow, domain=DOMAIN): 
   """Config flow."""
 
   VERSION = CONFIG_VERSION
@@ -131,7 +131,7 @@ class RollingTargetTimePeriodSubentryFlowHandler(ConfigSubentryFlow):
   ) -> SubentryFlowResult:
     """Setup a target based on the provided user input"""
     config = dict(user_input) if user_input is not None else None
-    errors = validate_rolling_target_rate_config(config) if config is not None else {}
+    errors = validate_rolling_target_timeframe_config(config) if config is not None else {}
 
     if len(errors) < 1 and user_input is not None:
       config[CONFIG_KIND] = CONFIG_KIND_ROLLING_TARGET_RATE
@@ -152,7 +152,7 @@ class RollingTargetTimePeriodSubentryFlowHandler(ConfigSubentryFlow):
   
   async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None):
     config = dict(user_input) if user_input is not None else None
-    errors = validate_rolling_target_rate_config(config) if config is not None else {}
+    errors = validate_rolling_target_timeframe_config(config) if config is not None else {}
 
     if len(errors) < 1 and user_input is not None:
       return self.async_update_reload_and_abort(

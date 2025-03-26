@@ -1,7 +1,7 @@
 from decimal import Decimal
 import pytest
 
-from custom_components.target_time_periods.entities import create_weighting
+from custom_components.target_timeframes.entities import create_weighting
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("config,number_of_slots,expected_weighting",[

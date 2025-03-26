@@ -1,9 +1,7 @@
 from datetime import datetime, timedelta
 import pytest
 
-from unit import (create_rate_data, agile_rates)
-from custom_components.target_time_periods.api_client import rates_to_thirty_minute_increments
-from custom_components.target_time_periods.entities import get_fixed_applicable_time_periods
+from custom_components.target_timeframes.entities import get_fixed_applicable_time_periods
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("current_date,target_start_time,target_end_time,expected_first_valid_from,is_rolling_target,expected_number_of_rates",[
@@ -38,12 +36,12 @@ async def test_when_continuous_times_present_then_next_continuous_times_returned
   # Arrange
   period_from = datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z")
   period_to = datetime.strptime("2022-02-11T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z")
-  expected_rates = [0.1, 0.2, 0.3, 0.2, 0.2, 0.1]
+  expected_values = [0.1, 0.2, 0.3, 0.2, 0.2, 0.1]
 
   rates = create_rate_data(
     period_from,
     period_to,
-    expected_rates
+    expected_values
   )
 
   # Act
@@ -264,12 +262,12 @@ async def test_when_times_are_in_bst_then_rates_are_shifted():
 
   period_from = datetime.strptime("2024-04-06T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
   period_to = datetime.strptime("2024-04-07T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
-  expected_rates = [0.1, 0.2, 0.3, 0.2, 0.2, 0.1]
+  expected_values = [0.1, 0.2, 0.3, 0.2, 0.2, 0.1]
 
   rates = create_rate_data(
     period_from,
     period_to,
-    expected_rates
+    expected_values
   )
 
   # Act

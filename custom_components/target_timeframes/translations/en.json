@@ -1,10 +1,10 @@
 {
-  "title": "Target Time Period",
+  "title": "Target Timeframes",
   "config": {
     "step": {
       "user": {
         "title": "Add Data Source",
-        "description": "Setup a data source for your target time periods. Full documentation can be found at https://bottlecapdave.github.io/homeassistant-targettimeperiods/setup/data_source",
+        "description": "Setup a data source for your target timeframes. Full documentation can be found at https://bottlecapdave.github.io/homeassistant-targettimeframes/setup/data_source",
         "data": {
           "source_name": "The name of the source",
           "source_id": "The id of the source"
@@ -15,7 +15,7 @@
       },
       "reconfigure": {
         "title": "Reconfigure Data Source",
-        "description": "Setup a data source for your target time periods. Full documentation can be found at https://bottlecapdave.github.io/homeassistant-targettimeperiods/setup/data_source",
+        "description": "Setup a data source for your target timeframes. Full documentation can be found at https://bottlecapdave.github.io/homeassistant-targettimeframes/setup/data_source",
         "data": {
           "source_name": "The name of the source",
           "source_id": "The id of the source"
@@ -35,24 +35,24 @@
       "invalid_value": "Value must be in decimal format (e.g. 0.10)",
       "invalid_weighting": "The weighting format is not supported. Please consult documentation for more information.",
       "invalid_weighting_slots": "The number of weighting blocks does not equal the specified number of hours.",
-      "weighting_not_supported_for_type": "Weighting is only supported for continuous target rates",
+      "weighting_not_supported_for_type": "Weighting is only supported for continuous target values",
       "weighting_not_supported_for_hour_mode": "Weighting is not supported for this hour mode",
       "minimum_or_maximum_value_not_specified": "Either minimum and/or maximum value must be specified for minimum hours mode"
     },
     "abort": {
-      "not_supported": "Configuration for target rates is not supported at the moment."
+      "not_supported": "Configuration for target values is not supported at the moment."
     }
   },
   "config_subentries": {
     "target_time_period": {
       "initiate_flow": {
-        "user": "Add Target Time",
-        "reconfigure": "Reconfigure Target Time"
+        "user": "Add Target Timeframe",
+        "reconfigure": "Reconfigure Target Timeframe"
       },
       "step": {
         "user": {
-          "title": "Add Target Time",
-          "description": "Setup a target time. Full documentation can be found at https://bottlecapdave.github.io/homeassistant-targettimeperiods/setup/target_rate",
+          "title": "Add Target Timeframe",
+          "description": "Setup a target time. Full documentation can be found at https://bottlecapdave.github.io/homeassistant-targettimeframes/setup/target_value",
           "data": {
             "name": "The name of your target",
             "hours": "The hours you require in decimal format.",
@@ -72,13 +72,13 @@
           "data_description": {
             "type": "Continuous target will find the continuous period for your target hours with the lowest combined value. Intermittent will find the time periods, with potential gaps, with the lowest combined value which will meet your target hours",
             "hours": "This has to be a multiple of 0.5.",
-            "minimum_value": "This is in pounds and pence (e.g. 0.12)",
-            "maximum_value": "This is in pounds and pence (e.g. 0.12)"
+            "minimum_value": "This is in decimal format (e.g. 0.12)",
+            "maximum_value": "This is in decimal format (e.g. 0.12)"
           }
         },
         "reconfigure": {
-          "title": "Reconfigure Target Time",
-          "description": "Setup a target time. Full documentation can be found at https://bottlecapdave.github.io/homeassistant-targettimeperiods/setup/target_rate",
+          "title": "Reconfigure Target Timeframe",
+          "description": "Setup a target time. Full documentation can be found at https://bottlecapdave.github.io/homeassistant-targettimeframes/setup/target_value",
           "data": {
             "name": "The name of your target",
             "hours": "The hours you require in decimal format.",
@@ -98,8 +98,8 @@
           "data_description": {
             "type": "Continuous target will find the continuous period for your target hours with the lowest combined value. Intermittent will find the time periods, with potential gaps, with the lowest combined value which will meet your target hours",
             "hours": "This has to be a multiple of 0.5.",
-            "minimum_value": "This is in pounds and pence (e.g. 0.12)",
-            "maximum_value": "This is in pounds and pence (e.g. 0.12)"
+            "minimum_value": "This is in decimal format (e.g. 0.12)",
+            "maximum_value": "This is in decimal format (e.g. 0.12)"
           }
         }
       },
@@ -110,13 +110,13 @@
     },
     "rolling_target_time_period": {
       "initiate_flow": {
-        "user": "Add Rolling Target Time",
-        "reconfigure": "Reconfigure Rolling Target Time"
+        "user": "Add Rolling Target Timeframe",
+        "reconfigure": "Reconfigure Rolling Target Timeframe"
       },
       "step": {
         "user": {
-          "title": "Rolling Target Rate",
-          "description": "Setup a rolling target time. Full documentation can be found at https://bottlecapdave.github.io/homeassistant-targettimeperiods/setup/rolling_target_rate",
+          "title": "Rolling Target Timeframe",
+          "description": "Setup a rolling target time. Full documentation can be found at https://bottlecapdave.github.io/homeassistant-targettimeframes/setup/rolling_target_value",
           "data": {
             "name": "The name of your target",
             "hours": "The hours you require in decimal format.",
@@ -125,15 +125,15 @@
             "offset": "The offset to apply to the scheduled block to be considered active",
             "latest_values": "Find last applicable time times",
             "find_highest_values": "Find highest values",
-            "minimum_value": "The optional minimum rate for target hours",
-            "maximum_value": "The optional maximum rate for target hours",
+            "minimum_value": "The optional minimum value for target hours",
+            "maximum_value": "The optional maximum value for target hours",
             "weighting": "The optional weighting to apply to the discovered time period values",
             "target_times_evaluation_mode": "When should target times be selected"
           }
         },
         "reconfigure": {
-          "title": "Reconfigure Rolling Target Rate",
-          "description": "Setup a rolling target time. Full documentation can be found at https://bottlecapdave.github.io/homeassistant-targettimeperiods/setup/rolling_target_rate",
+          "title": "Reconfigure Rolling Target Timeframe",
+          "description": "Setup a rolling target time. Full documentation can be found at https://bottlecapdave.github.io/homeassistant-targettimeframes/setup/rolling_target_value",
           "data": {
             "name": "The name of your target",
             "hours": "The hours you require in decimal format.",
@@ -142,8 +142,8 @@
             "offset": "The offset to apply to the scheduled block to be considered active",
             "latest_values": "Find last applicable time times",
             "find_highest_values": "Find highest values",
-            "minimum_value": "The optional minimum rate for target hours",
-            "maximum_value": "The optional maximum rate for target hours",
+            "minimum_value": "The optional minimum value for target hours",
+            "maximum_value": "The optional maximum value for target hours",
             "weighting": "The optional weighting to apply to the discovered time period values",
             "target_times_evaluation_mode": "When should target times be selected"
           }
@@ -152,7 +152,7 @@
     }
   },
   "exceptions": {
-    "invalid_rate_weightings": {
+    "invalid_value_weightings": {
       "message": "{error}"
     }
   }

@@ -46,7 +46,7 @@
     ],
     [
       "@semantic-release/git", {
-        "assets": ["package.json", "CHANGELOG.md", "./custom_components/target_time_periods"],
+        "assets": ["package.json", "CHANGELOG.md", "./custom_components/target_timeframes"],
         "message": "release: Released v${nextRelease.version} [skip ci]"
       }
     ],

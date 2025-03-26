@@ -3,7 +3,7 @@ update_target_config:
   description: Updates a given target rate's config.
   target:
     entity:
-      integration: target_time_periods
+      integration: target_timeframes
       domain: binary_sensor
   fields:
     target_hours:
@@ -62,7 +62,7 @@ update_rolling_target_config:
   description: Updates a given rolling target rate's config.
   target:
     entity:
-      integration: target_time_periods
+      integration: target_timeframes
       domain: binary_sensor
   fields:
     target_hours:
@@ -115,7 +115,7 @@ update_target_time_period_data_source:
   description: Updates the source data for a given target time period. This will replace any existing data for the source.
   target:
     entity:
-      integration: target_time_periods
+      integration: target_timeframes
       domain: sensor
   fields:
     data:
