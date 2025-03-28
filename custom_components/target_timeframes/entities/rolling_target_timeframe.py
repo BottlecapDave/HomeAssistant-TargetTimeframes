@@ -58,11 +58,12 @@ _LOGGER = logging.getLogger(__name__)
 class TargetTimeframesRollingTargetRate(BinarySensorEntity, RestoreEntity):
   """Sensor for calculating when a target should be turned on or off."""
   
-  def __init__(self, hass: HomeAssistant, data_source_id: str, config_entry, config, initial_data):
+  def __init__(self, hass: HomeAssistant, data_source_id: str, config_entry, config_subentry, config, initial_data):
     """Init sensor."""
 
     self._state = None
     self._config_entry = config_entry
+    self._config_subentry = config_subentry
     self._config = config
     self._attributes = self._config.copy()
     self._last_evaluated = None
@@ -304,13 +305,11 @@ class TargetTimeframesRollingTargetRate(BinarySensorEntity, RestoreEntity):
 
     if persist_changes:
       updatable_keys = [CONFIG_TARGET_HOURS, CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD, CONFIG_TARGET_OFFSET, CONFIG_TARGET_MIN_VALUE, CONFIG_TARGET_MAX_VALUE, CONFIG_TARGET_WEIGHTING]
-      new_config_data = { **self._config_entry.data }
+      new_config_data = { **self._config_subentry.data }
       new_config_data.update(extract_config(config, updatable_keys))
-      new_config_options = { **self._config_entry.options }
-      new_config_options.update(extract_config(config, updatable_keys))
 
-      self._hass.config_entries.async_update_entry(
+      self._hass.config_entries.async_update_subentry(
         self._config_entry,
-        data = new_config_data,
-        options = new_config_options
+        self._config_subentry,
+        data = new_config_data
       )

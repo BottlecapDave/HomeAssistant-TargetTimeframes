@@ -67,7 +67,7 @@ class TargetTimeframesConfigFlow(ConfigFlow, domain=DOMAIN):
       step_id="reconfigure",
       data_schema=self.add_suggested_values_to_schema(
         DATA_SCHEMA_SOURCE,
-        user_input if user_input is not None else {}
+        user_input if user_input is not None else self._get_reconfigure_entry().data
       ),
     )
   
@@ -112,8 +112,9 @@ class TargetTimePeriodSubentryFlowHandler(ConfigSubentryFlow):
     errors = validate_target_rate_config(config) if config is not None else {}
 
     if len(errors) < 1 and user_input is not None:
-      return self.async_update_reload_and_abort(
+      return self.async_update_and_abort(
         self._get_reconfigure_entry(),
+        self._get_reconfigure_subentry(),
         data_updates=config,
       )
 
@@ -121,7 +122,7 @@ class TargetTimePeriodSubentryFlowHandler(ConfigSubentryFlow):
       step_id="reconfigure",
       data_schema=self.add_suggested_values_to_schema(
         DATA_SCHEMA_TARGET_TIME_PERIOD,
-        user_input if user_input is not None else {}
+        user_input if user_input is not None else self._get_reconfigure_subentry().data
       ),
     )
 
@@ -155,8 +156,9 @@ class RollingTargetTimePeriodSubentryFlowHandler(ConfigSubentryFlow):
     errors = validate_rolling_target_timeframe_config(config) if config is not None else {}
 
     if len(errors) < 1 and user_input is not None:
-      return self.async_update_reload_and_abort(
+      return self.async_update_and_abort(
         self._get_reconfigure_entry(),
+        self._get_reconfigure_subentry(),
         data_updates=config,
       )
 
@@ -164,6 +166,6 @@ class RollingTargetTimePeriodSubentryFlowHandler(ConfigSubentryFlow):
       step_id="reconfigure",
       data_schema=self.add_suggested_values_to_schema(
         DATA_SCHEMA_ROLLING_TARGET_TIME_PERIOD,
-        user_input if user_input is not None else {}
+        user_input if user_input is not None else self._get_reconfigure_subentry().data
       ),
     )
