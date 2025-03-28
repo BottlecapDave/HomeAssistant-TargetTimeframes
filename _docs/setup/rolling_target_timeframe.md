@@ -2,7 +2,7 @@
 
 After you've configured your [data source](./data_source.md), you'll be able to configure rolling target timeframe sensors. These are configured as sub configuration options associated with your data source. Select `Rolling Target timeframe` from the sub menu.
 
-These sensors calculate the lowest continuous or intermittent values within the next available `x` hours, where `x` is configurable via the sensor, and turn on when these periods are active. If you are targeting an export meter, then the sensors will calculate the highest continuous or intermittent values within the next available `x` hours and turn on when these periods are active. If you are wanting to evaluate on a fixed basis (e.g. every 24 hours), you might be interested in the [standard target timeframe sensors](./target_rate.md)
+These sensors calculate the lowest continuous or intermittent values within the next available `x` hours, where `x` is configurable via the sensor, and turn on when these periods are active. If you are targeting an export meter, then the sensors will calculate the highest continuous or intermittent values within the next available `x` hours and turn on when these periods are active. If you are wanting to evaluate on a fixed basis (e.g. every 24 hours), you might be interested in the [standard target timeframe sensors](./target_timeframe.md)
 
 These sensors can then be used in automations to turn on/off devices that save you (and the planet) energy and money. You can go through this flow as many times as you need rolling target timeframe sensors.
 
@@ -42,7 +42,7 @@ This is the number of hours to look ahead for the best time periods. This will i
 
 ### Evaluation mode
 
-Because the time frame that is being evaluated is currently moving, you might want to set how/when the target times are evaluated in order to make the selected times more or less dynamic.
+Because the time frame that is being evaluated could change at different frequencies depending on the source, you might want to set how/when the target times are evaluated in order to make the selected times more or less dynamic.
 
 #### All existing target timeframes are in the past
 
@@ -144,4 +144,4 @@ The following attributes are available on each sensor
 
 ## Services
 
-There are services available associated with target timeframe sensors. Please review them in the [services doc](../services.md#rolling-target-values).
+There are services available associated with target timeframe sensors. Please review them in the [services doc](../services.md#rolling-target-timeframes).

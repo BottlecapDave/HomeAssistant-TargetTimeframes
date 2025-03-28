@@ -10,15 +10,24 @@ Updates the source data for a given targetframe period. This will replace any ex
 
 | Attribute                | Optional | Description                                                                                                           |
 | ------------------------ | -------- | --------------------------------------------------------------------------------------------------------------------- |
-| `target.entity_id`       | `no`     | The name of the [](./setup/data_source.md#last-updated) sensor whose configuration is to be updated.                                                   |
-| `data.target_hours`      | `yes`    | The optional number of hours the target timeframe sensor should come on during a 24 hour period. Must be divisible by 0.5. |
-| `data.target_start_time` | `yes`    | The optional time the evaluation period should start. Must be in the format of `HH:MM`.                               |
-| `data.target_end_time`   | `yes`    | The optional time the evaluation period should end. Must be in the format of `HH:MM`.                                 |
-| `data.target_offset`     | `yes`    | The optional offset to apply to the target timeframe when it starts. Must be in the format `(+/-)HH:MM:SS`.                |
-| `data.target_minimum_value`     | `yes`    | The optional minimum timeframe the selected timeframes should not go below. |
-| `data.target_maximum_value`     | `yes`    | The optional maximum timeframe the selected timeframes should not go above. |
-| `data.target_weighting`     | `yes`    | The optional weighting that should be applied to the selected timeframes. |
-| `data.persist_changes` | `yes` | Determines if the changes should be persisted to the original configuration or should be temporary and reset upon integration reload. If not supplied, then the changes are temporary |
+| `target.entity_id`       | `no`     | The name of the [data source last updated](./setup/data_source.md#data-source-last-updated) sensor whose underlying data is to be updated.                                                   |
+| `data.data`      | `no`    | The collection of data to update the data source with. This will override any previous data. For the target rate sensors to work properly, you should target having data for the whole of yesterday, today and tomorrow (e.g. if today is 2025-01-04, you should aim to have data from 2025-01-03T00:00:00 to 2025-01-06T00:00:00).
+
+The structure of the data should match the following
+
+```
+[
+  {
+    "start": "2025-01-01T00:00:00Z",
+    "end": "2025-01-01T00:30:00Z",
+    "value": 0.1,
+    "metadata": {
+      // Any additional metadata that might describe how the value was created
+    }
+  },
+  ...
+]
+```
 
 #### Automations
 
