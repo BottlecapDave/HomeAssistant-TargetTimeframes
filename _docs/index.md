@@ -1,20 +1,12 @@
 # Home Assistant Target Timeframes
 
-## Features
+Target timeframes was a feature that has been extracted out of the [Octopus Energy integration](https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy). The idea is you can configure binary sensors that will find and turn on during the most optimal time periods based on external data sources, targeting either the lowest or highest values. What these values represent can be anything. In the original integration, the values represented cost of energy, and so the cheapest periods were discovered. But it could represent other things like 
 
-Below are the main features of the integration
+* Temperature to turn on sprinklers during the hottest times of the day
+* Carbon emissions to turn on devices when renewables on the grid are at their highest
+* Solar generation to turn on devices when the most energy is being generated.
 
-* [Electricity](./entities/electricity.md) and [gas](./entities/gas.md) meter support including consumption data and rate information
-* [Custom sensor support to target cheapest rates](#target-rate-sensors)
-* [Custom sensor support for tracking costs of other entities](#cost-tracker-sensors)
-* [Custom sensor support for comparing to other tariffs](#tariff-comparison-sensors)
-* [Octopus Home mini support](#home-mini)
-* [Octopus Home Pro support (Experimental)](#home-pro)
-* [Intelligent tariff settings support](#intelligent)
-* [Saving sessions support](#octoplus)
-* [Wheel of fortune support](#wheel-of-fortune)
-* [Greener days support](#greenness-forecast)
-* [Heat Pump support](#heat-pumps)
+How the sensors behave is configurable in a number of ways and explained further in the docs.
 
 ## How to install
 
@@ -37,87 +29,7 @@ To install, place the contents of `custom_components` into the `<config director
 
 ## How to setup
 
-Please follow the [setup guide](./setup/account.md) to setup your initial account. This guide details the configuration, along with the entities that will be available to you.
-
-## Entities
-
-### Electricity Entities
-
-[Full list of electricity entities](./entities/electricity.md).
-
-### Gas Entities
-
-[Full list of gas entities](./entities/gas.md).
-
-### Home Mini
-
-If you are lucky enough to own an [Octopus Home Mini](https://octopus.energy/blog/octopus-home-mini/), you can now receive this data within Home Assistant. When setting up (or editing) your account within Home Assistant, you will need to check the box next to `I have a Home Mini`. This will gain [electricity entities](./entities/electricity.md#home-minipro-entities) and [gas entities](./entities/gas.md#home-minipro-entities) which can be added to the [energy dashboard](https://www.home-assistant.io/blog/2021/08/04/home-energy-management/).
-
-!!! info
-
-    You will only have the same data exposed in the integration that is available within the Octopus app. There has been reports of gas not appearing within the Octopus app (and integration) straight away, so you might have to wait a few days for this to appear. Once it's available within the Octopus app, if you reload the integration (or restart Home Assistant) then the entities should become available.
-
-!!! warning
-
-    Export sensors are not provided as the data is not available.
-
-### Home Pro
-
-If you are lucky enough to own an Octopus Home Pro, you can now receive this data within Home Assistant. When setting up (or editing) your account within Home Assistant, you will need to configure your [Home Pro](./setup/account.md#home-pro). This will gain [electricity entities](./entities/electricity.md#home-minipro-entities) and [gas entities](./entities/gas.md#home-minipro-entities) which can be added to the [energy dashboard](https://www.home-assistant.io/blog/2021/08/04/home-energy-management/).
-
-!!! info
-
-    You will only have the same data exposed in the integration that is available within the Octopus app. There has been reports of gas not appearing within the Octopus app (and integration) straight away, so you might have to wait a few days for this to appear. Once it's available within the Octopus app, if you reload the integration (or restart Home Assistant) then the entities should become available.
-
-!!! warning
-
-    Export sensors are not provided as the data is not available.
-
-### Intelligent
-
-If you are on the [intelligent tariff](https://octopus.energy/smart/intelligent-octopus/), then you'll get a few additional entities when you install the integration. 
-
-[List of intelligent entities](./entities/intelligent.md).
-
-!!! warning
-    
-    If you switch to the intelligent tariff after you have installed the integration, you will need to reload the integration or restart your Home Assistant instance.
-
-### Octoplus
-
-To support Target Timeframes's [octoplus programme](https://octopus.energy/octoplus/). [Full list of octoplus entites](./entities/octoplus.md).
-
-### Wheel of Fortune
-
-To support the wheel of fortune that is awarded every month to customers. [Full list of wheel of fortune entites](./entities/wheel_of_fortune.md).
-
-### Greenness Forecast
-
-To support Target Timeframes's [greener days](https://octopus.energy/smart/greener-days/). [Full list of greenness forecast entities](./entities/greenness_forecast.md).
-
-### Heat Pumps
-
-To support heat pumps connected to Target Timeframes, like the [Cosy 6](https://octopus.energy/cosy-heat-pump/). [Full list of heat pump entities](./entities/heat_pump.md).
-
-## Target Rate Sensors
-
-These sensors calculate the lowest continuous or intermittent rates **within a 24 hour period** or on a rolling basis and turn on when these periods are active. If you are targeting an export meter, then the sensors will calculate the highest continuous or intermittent rates **within a 24 hour period** or on a rolling basis and turn on when these periods are active.
-
-These sensors can then be used in automations to turn on/off devices that save you (and the planet) energy and money. You can go through this flow as many times as you need target rate sensors.
-
-Please follow the setup guides for either [standard target rate](./setup/target_rate.md) or [rolling target rate](./setup/rolling_target_rate.md) sensors.
-
-## Cost Tracker Sensors
-
-These sensors track the consumption of other existing sensors and provide a daily cost of those sensors.
-
-Please follow the [setup guide](./setup/cost_tracker.md).
-
-## Tariff Comparison Sensors
-
-These sensors compare the cost of the previous consumption to another tariff to see if you're on the best tariff.
-
-Please follow the [setup guide](./setup/tariff_comparison.md).
+You will initially need to setup one or more [data sources](./setup/data_source.md). You'll then need to setup one or more [target timeframe](./setup/target_timeframe.md) or [rolling target timeframe](./setup/rolling_target_timeframe.md) sensors.
 
 ## Events
 
@@ -127,17 +39,9 @@ This integration raises several events, which can be used for various tasks like
 
 This integration includes several services. Please review them in the [services doc](./services.md).
 
-## Energy Dashboard
-
-The core sensors have been designed to work with the energy dashboard. Please see the [energy dashboard guide](./setup/energy_dashboard.md) for instructions on how to set this up.
-
 ## Blueprints
 
 A selection of [blueprints](./blueprints.md) are available to help get you up and running quickly with the integration.
-
-## Community Contributions
-
-A collection of community contributions can be found on the [community contributions](./community.md) page.
 
 ## FAQ
 

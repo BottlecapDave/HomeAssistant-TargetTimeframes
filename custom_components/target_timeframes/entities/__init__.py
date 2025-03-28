@@ -261,7 +261,7 @@ def get_target_time_period_info(current_date: datetime, applicable_rates, offset
   next_duration_in_hours = 0
   total_applicable_rates = len(applicable_rates) if applicable_rates is not None else 0
 
-  overall_total_cost = 0
+  overall_total_value = 0
   overall_min_value = None
   overall_max_value = None
 
@@ -315,7 +315,7 @@ def get_target_time_period_info(current_date: datetime, applicable_rates, offset
       if max_value is None or max_value < rate["value"]:
         max_value = rate["value"]
 
-      overall_total_cost += rate["value"]
+      overall_total_value += rate["value"]
       if overall_min_value is None or overall_min_value > rate["value"]:
         overall_min_value = rate["value"]
 
@@ -359,7 +359,7 @@ def get_target_time_period_info(current_date: datetime, applicable_rates, offset
 
   return {
     "is_active": is_active,
-    "overall_average_value": round(overall_total_cost / total_applicable_rates, 5) if total_applicable_rates > 0  else 0,
+    "overall_average_value": round(overall_total_value / total_applicable_rates, 5) if total_applicable_rates > 0  else 0,
     "overall_min_value": overall_min_value,
     "overall_max_value": overall_max_value,
     "current_duration_in_hours": current_duration_in_hours,

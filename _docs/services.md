@@ -2,24 +2,46 @@
 
 There are a few services available within this integration, which are detailed here.
 
-## Target Rates
+## Data Sources
 
-The following services are available if you have set up at least one [target rate](./setup/target_rate.md).
+### target_timeframes.update_target_timeframe_data_source
+
+Updates the source data for a given targetframe period. This will replace any existing data for the source.
+
+| Attribute                | Optional | Description                                                                                                           |
+| ------------------------ | -------- | --------------------------------------------------------------------------------------------------------------------- |
+| `target.entity_id`       | `no`     | The name of the [](./setup/data_source.md#last-updated) sensor whose configuration is to be updated.                                                   |
+| `data.target_hours`      | `yes`    | The optional number of hours the target timeframe sensor should come on during a 24 hour period. Must be divisible by 0.5. |
+| `data.target_start_time` | `yes`    | The optional time the evaluation period should start. Must be in the format of `HH:MM`.                               |
+| `data.target_end_time`   | `yes`    | The optional time the evaluation period should end. Must be in the format of `HH:MM`.                                 |
+| `data.target_offset`     | `yes`    | The optional offset to apply to the target timeframe when it starts. Must be in the format `(+/-)HH:MM:SS`.                |
+| `data.target_minimum_value`     | `yes`    | The optional minimum timeframe the selected timeframes should not go below. |
+| `data.target_maximum_value`     | `yes`    | The optional maximum timeframe the selected timeframes should not go above. |
+| `data.target_weighting`     | `yes`    | The optional weighting that should be applied to the selected timeframes. |
+| `data.persist_changes` | `yes` | Determines if the changes should be persisted to the original configuration or should be temporary and reset upon integration reload. If not supplied, then the changes are temporary |
+
+#### Automations
+
+Examples can be found in the [blueprints](./blueprints.md) section for configuring a variety of different data sources.
+
+## Target Timeframes
+
+The following services are available if you have set up at least one [target timeframe](./setup/target_timeframe.md).
 
 ### target_timeframes.update_target_timeframe_config
 
-For updating a given [target rate's](./setup/target_rate.md) config. This allows you to change target rates sensors dynamically based on other outside criteria (e.g. you need to adjust the target hours to top up home batteries).
+For updating a given [target timeframe's](./setup/target_timeframe.md) config. This allows you to change target timeframes sensors dynamically based on other outside criteria (e.g. you need to adjust the target hours to top up home batteries).
 
 | Attribute                | Optional | Description                                                                                                           |
 | ------------------------ | -------- | --------------------------------------------------------------------------------------------------------------------- |
 | `target.entity_id`       | `no`     | The name of the target sensor whose configuration is to be updated.                                                   |
-| `data.target_hours`      | `yes`    | The optional number of hours the target rate sensor should come on during a 24 hour period. Must be divisible by 0.5. |
+| `data.target_hours`      | `yes`    | The optional number of hours the target timeframe sensor should come on during a 24 hour period. Must be divisible by 0.5. |
 | `data.target_start_time` | `yes`    | The optional time the evaluation period should start. Must be in the format of `HH:MM`.                               |
 | `data.target_end_time`   | `yes`    | The optional time the evaluation period should end. Must be in the format of `HH:MM`.                                 |
-| `data.target_offset`     | `yes`    | The optional offset to apply to the target rate when it starts. Must be in the format `(+/-)HH:MM:SS`.                |
-| `data.target_minimum_value`     | `yes`    | The optional minimum rate the selected rates should not go below. |
-| `data.target_maximum_value`     | `yes`    | The optional maximum rate the selected rates should not go above. |
-| `data.target_weighting`     | `yes`    | The optional weighting that should be applied to the selected rates. |
+| `data.target_offset`     | `yes`    | The optional offset to apply to the target timeframe when it starts. Must be in the format `(+/-)HH:MM:SS`.                |
+| `data.target_minimum_value`     | `yes`    | The optional minimum timeframe the selected timeframes should not go below. |
+| `data.target_maximum_value`     | `yes`    | The optional maximum timeframe the selected timeframes should not go above. |
+| `data.target_weighting`     | `yes`    | The optional weighting that should be applied to the selected timeframes. |
 | `data.persist_changes` | `yes` | Determines if the changes should be persisted to the original configuration or should be temporary and reset upon integration reload. If not supplied, then the changes are temporary |
 
 #### Automation Example
@@ -50,7 +72,7 @@ Then an automation might look like the following
 
 ```yaml
 mode: single
-alias: Update target rate config
+alias: Update target timeframe config
 triggers:
   - trigger: state
     entity_id:
@@ -74,23 +96,23 @@ actions:
       entity_id: binary_sensor.target_timeframes_target_example
 ```
 
-## Rolling Target Rates
+## Rolling Target Timeframes
 
-The following services are available if you have set up at least one [rolling target rate](./setup/rolling_target_rate.md).
+The following services are available if you have set up at least one [rolling target timeframe](./setup/rolling_target_timeframe.md).
 
 ### target_timeframes.update_rolling_target_timeframe_config
 
-For updating a given [rolling target rate's](./setup/rolling_target_rate.md) config. This allows you to change rolling target rates sensors dynamically based on other outside criteria (e.g. you need to adjust the target hours to top up home batteries).
+For updating a given [rolling target timeframe's](./setup/rolling_target_timeframe.md) config. This allows you to change rolling target timeframes sensors dynamically based on other outside criteria (e.g. you need to adjust the target hours to top up home batteries).
 
 | Attribute                | Optional | Description                                                                                                           |
 | ------------------------ | -------- | --------------------------------------------------------------------------------------------------------------------- |
 | `target.entity_id`       | `no`     | The name of the target sensor whose configuration is to be updated.                                                   |
-| `data.target_hours`      | `yes`    | The optional number of hours the target rate sensor should come on during a 24 hour period. Must be divisible by 0.5. |
-| `data.target_look_ahead_hours` | `yes`    | The optional number of hours worth of rates the sensor should look at for the evaluation period.                               |
-| `data.target_offset`     | `yes`    | The optional offset to apply to the target rate when it starts. Must be in the format `(+/-)HH:MM:SS`.                |
-| `data.target_minimum_value`     | `yes`    | The optional minimum rate the selected rates should not go below. |
-| `data.target_maximum_value`     | `yes`    | The optional maximum rate the selected rates should not go above. |
-| `data.target_weighting`     | `yes`    | The optional weighting that should be applied to the selected rates. |
+| `data.target_hours`      | `yes`    | The optional number of hours the target timeframe sensor should come on during a 24 hour period. Must be divisible by 0.5. |
+| `data.target_look_ahead_hours` | `yes`    | The optional number of hours worth of timeframes the sensor should look at for the evaluation period.                               |
+| `data.target_offset`     | `yes`    | The optional offset to apply to the target timeframe when it starts. Must be in the format `(+/-)HH:MM:SS`.                |
+| `data.target_minimum_value`     | `yes`    | The optional minimum timeframe the selected timeframes should not go below. |
+| `data.target_maximum_value`     | `yes`    | The optional maximum timeframe the selected timeframes should not go above. |
+| `data.target_weighting`     | `yes`    | The optional weighting that should be applied to the selected timeframes. |
 | `data.persist_changes` | `yes` | Determines if the changes should be persisted to the original configuration or should be temporary and reset upon integration reload. If not supplied, then the changes are temporary |
 
 #### Automation Example
@@ -118,7 +140,7 @@ Then an automation might look like the following
 
 ```yaml
 mode: single
-alias: Update target rate config
+alias: Update target timeframe config
 triggers:
   - trigger: state
     entity_id:

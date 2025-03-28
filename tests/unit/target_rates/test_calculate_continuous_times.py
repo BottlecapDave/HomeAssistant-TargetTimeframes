@@ -3,8 +3,7 @@ from decimal import Decimal
 from custom_components.target_timeframes.const import CONFIG_TARGET_HOURS_MODE_MAXIMUM, CONFIG_TARGET_HOURS_MODE_MINIMUM
 import pytest
 
-from unit import (create_data_source_data, agile_rates)
-from custom_components.target_timeframes.api_client import rates_to_thirty_minute_increments
+from unit import (create_data_source_data, default_time_periods, values_to_thirty_minute_increments)
 from custom_components.target_timeframes.entities import calculate_continuous_times, get_fixed_applicable_time_periods
 
 @pytest.mark.asyncio
@@ -72,7 +71,7 @@ async def test_when_continuous_times_present_then_next_continuous_times_returned
   # Restrict our time block
   target_hours = 1
 
-  applicable_rates = get_fixed_applicable_time_periods(
+  applicable_time_periods = get_fixed_applicable_time_periods(
     current_date,
     target_start_time,
     target_end_time,
@@ -82,7 +81,7 @@ async def test_when_continuous_times_present_then_next_continuous_times_returned
 
   # Act
   result = calculate_continuous_times(
-    applicable_rates,
+    applicable_time_periods,
     target_hours,
     False,
     find_last_rates
@@ -93,11 +92,11 @@ async def test_when_continuous_times_present_then_next_continuous_times_returned
   assert len(result) == 2
   assert result[0]["start"] == expected_first_valid_from
   assert result[0]["end"] == expected_first_valid_from + timedelta(minutes=30)
-  assert result[0]["value_inc_vat"] == 0.001
+  assert result[0]["value"] == 0.1
 
   assert result[1]["start"] == expected_first_valid_from + timedelta(minutes=30)
   assert result[1]["end"] == expected_first_valid_from + timedelta(hours=1)
-  assert result[1]["value_inc_vat"] == 0.001
+  assert result[1]["value"] == 0.1
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("current_date,target_start_time,target_end_time,expected_first_valid_from,is_rolling_target,find_last_rates",[
@@ -164,7 +163,7 @@ async def test_when_continuous_times_present_and_highest_price_required_then_nex
   # Restrict our time block
   target_hours = 1
 
-  applicable_rates = get_fixed_applicable_time_periods(
+  applicable_time_periods = get_fixed_applicable_time_periods(
     current_date,
     target_start_time,
     target_end_time,
@@ -174,7 +173,7 @@ async def test_when_continuous_times_present_and_highest_price_required_then_nex
 
   # Act
   result = calculate_continuous_times(
-    applicable_rates,
+    applicable_time_periods,
     target_hours,
     True,
     find_last_rates
@@ -185,11 +184,11 @@ async def test_when_continuous_times_present_and_highest_price_required_then_nex
   assert len(result) == 2
   assert result[0]["start"] == expected_first_valid_from
   assert result[0]["end"] == expected_first_valid_from + timedelta(minutes=30)
-  assert result[0]["value_inc_vat"] == 0.002
+  assert result[0]["value"] == 0.2
 
   assert result[1]["start"] == expected_first_valid_from + timedelta(minutes=30)
   assert result[1]["end"] == expected_first_valid_from + timedelta(hours=1)
-  assert result[1]["value_inc_vat"] == 0.003
+  assert result[1]["value"] == 0.3
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("current_date,target_start_time,target_end_time,expected_first_valid_from,is_rolling_target",[
@@ -211,87 +210,72 @@ async def test_when_continuous_times_present_and_highest_price_required_then_nex
 ])
 async def test_readme_examples(current_date, target_start_time, target_end_time, expected_first_valid_from, is_rolling_target):
   # Arrange
-  tariff_code = "test-tariff"
-  rates = rates_to_thirty_minute_increments(
-    {
-      "results": [
-        {
-          "value_exc_vat": 6,
-          "value_inc_vat": 6,
-          "valid_from": "2023-01-01T00:00:00Z",
-          "valid_to": "2023-01-01T00:30:00Z"
-        },
-        {
-          "value_exc_vat": 12,
-          "value_inc_vat": 12,
-          "valid_from": "2023-01-01T00:30:00Z",
-          "valid_to": "2023-01-01T05:00:00Z"
-        },
-        {
-          "value_exc_vat": 7,
-          "value_inc_vat": 7,
-          "valid_from": "2023-01-01T05:00:00Z",
-          "valid_to": "2023-01-01T05:30:00Z"
-        },
-        {
-          "value_exc_vat": 20,
-          "value_inc_vat": 20,
-          "valid_from": "2023-01-01T05:30:00Z",
-          "valid_to": "2023-01-01T18:00:00Z"
-        },
-        {
-          "value_exc_vat": 34,
-          "value_inc_vat": 34,
-          "valid_from": "2023-01-01T18:00:00Z",
-          "valid_to": "2023-01-01T23:30:00Z"
-        },
-        {
-          "value_exc_vat": 5,
-          "value_inc_vat": 5,
-          "valid_from": "2023-01-01T23:30:00Z",
-          "valid_to": "2023-01-02T00:30:00Z"
-        },
-        {
-          "value_exc_vat": 12,
-          "value_inc_vat": 12,
-          "valid_from": "2023-01-02T00:30:00Z",
-          "valid_to": "2023-01-02T05:00:00Z"
-        },
-        {
-          "value_exc_vat": 7,
-          "value_inc_vat": 7,
-          "valid_from": "2023-01-02T05:00:00Z",
-          "valid_to": "2023-01-02T05:30:00Z"
-        },
-        {
-          "value_exc_vat": 20,
-          "value_inc_vat": 20,
-          "valid_from": "2023-01-02T05:30:00Z",
-          "valid_to": "2023-01-02T18:00:00Z"
-        },
-        {
-          "value_exc_vat": 34,
-          "value_inc_vat": 34,
-          "valid_from": "2023-01-02T18:00:00Z",
-          "valid_to": "2023-01-02T23:30:00Z"
-        },
-        {
-          "value_exc_vat": 6,
-          "value_inc_vat": 6,
-          "valid_from": "2023-01-02T23:30:00Z",
-          "valid_to": "2023-01-03T00:00:00Z"
-        },
-      ]
-    },
+  rates = values_to_thirty_minute_increments(
+    [
+      {
+        "value": 6,
+        "start": "2023-01-01T00:00:00Z",
+        "end": "2023-01-01T00:30:00Z"
+      },
+      {
+        "value": 12,
+        "start": "2023-01-01T00:30:00Z",
+        "end": "2023-01-01T05:00:00Z"
+      },
+      {
+        "value": 7,
+        "start": "2023-01-01T05:00:00Z",
+        "end": "2023-01-01T05:30:00Z"
+      },
+      {
+        "value": 20,
+        "start": "2023-01-01T05:30:00Z",
+        "end": "2023-01-01T18:00:00Z"
+      },
+      {
+        "value": 34,
+        "start": "2023-01-01T18:00:00Z",
+        "end": "2023-01-01T23:30:00Z"
+      },
+      {
+        "value": 5,
+        "start": "2023-01-01T23:30:00Z",
+        "end": "2023-01-02T00:30:00Z"
+      },
+      {
+        "value": 12,
+        "start": "2023-01-02T00:30:00Z",
+        "end": "2023-01-02T05:00:00Z"
+      },
+      {
+        "value": 7,
+        "start": "2023-01-02T05:00:00Z",
+        "end": "2023-01-02T05:30:00Z"
+      },
+      {
+        "value": 20,
+        "start": "2023-01-02T05:30:00Z",
+        "end": "2023-01-02T18:00:00Z"
+      },
+      {
+        "value": 34,
+        "start": "2023-01-02T18:00:00Z",
+        "end": "2023-01-02T23:30:00Z"
+      },
+      {
+        "value": 6,
+        "start": "2023-01-02T23:30:00Z",
+        "end": "2023-01-03T00:00:00Z"
+      },
+    ],
     datetime.strptime("2023-01-01T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
-    datetime.strptime("2023-01-03T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
-    tariff_code
+    datetime.strptime("2023-01-03T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z")
   )
   
   # Restrict our time block
   target_hours = 1
 
-  applicable_rates = get_fixed_applicable_time_periods(
+  applicable_time_periods = get_fixed_applicable_time_periods(
     current_date,
     target_start_time,
     target_end_time,
@@ -301,7 +285,7 @@ async def test_readme_examples(current_date, target_start_time, target_end_time,
 
   # Act
   result = calculate_continuous_times(
-    applicable_rates,
+    applicable_time_periods,
     target_hours,
   )
 
@@ -318,7 +302,7 @@ async def test_readme_examples(current_date, target_start_time, target_end_time,
     assert result[1]["end"] == expected_first_valid_from + timedelta(minutes=60)
 
 @pytest.mark.asyncio
-async def test_when_applicable_rates_is_none_then_no_continuous_times_returned():
+async def test_when_applicable_time_periods_is_none_then_no_continuous_times_returned():
   # Arrange
   target_hours = 1
 
@@ -332,127 +316,6 @@ async def test_when_applicable_rates_is_none_then_no_continuous_times_returned()
   assert result is not None
   assert len(result) == 0
 
-# Added for https://github.com/BottlecapDave/homeassistant-targettimeframes/issues/68
-@pytest.mark.asyncio
-@pytest.mark.parametrize("current_date",[
-  (datetime.strptime("2022-10-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T00:30:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T01:00:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T01:30:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T02:00:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T02:30:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T03:00:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T03:30:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T04:00:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T04:30:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T05:00:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T05:30:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T06:00:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T06:30:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T07:00:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T07:30:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T08:00:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T08:30:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T09:00:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T09:30:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T10:00:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T10:30:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T11:00:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T11:30:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T12:30:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T13:00:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T13:30:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T14:00:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T14:30:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T15:00:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T15:30:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T16:00:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T16:30:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T17:00:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T17:30:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T18:00:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T18:30:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T19:00:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T19:30:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T20:00:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T20:30:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T21:00:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T21:30:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T22:00:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T22:30:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T23:00:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-  (datetime.strptime("2022-10-09T23:30:00Z", "%Y-%m-%dT%H:%M:%S%z")),
-])
-async def test_when_go_rates_supplied_once_a_day_set_and_cheapest_period_past_then_no_period_returned(current_date):
-  # Arrange
-  tariff_code = "test-tariff"
-  rates = rates_to_thirty_minute_increments(
-    {
-      "results": [
-        {
-          "value_exc_vat": 38.217,
-          "value_inc_vat": 40.12785,
-          "valid_from": "2022-10-08T04:30:00Z",
-          "valid_to": "2022-10-09T00:30:00Z"
-        },
-        {
-          "value_exc_vat": 7.142,
-          "value_inc_vat": 7.4991,
-          "valid_from": "2022-10-09T00:30:00Z",
-          "valid_to": "2022-10-09T04:30:00Z"
-        },
-        {
-          "value_exc_vat": 38.217,
-          "value_inc_vat": 40.12785,
-          "valid_from": "2022-10-09T04:30:00Z",
-          "valid_to": "2022-10-10T00:30:00Z"
-        }
-      ]
-    },
-    datetime.strptime("2022-10-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
-    datetime.strptime("2022-10-10T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
-    tariff_code
-  )
-
-  assert rates is not None
-  assert len(rates) == 48
-  
-  # Restrict our time block
-  target_hours = 4
-
-  applicable_rates = get_fixed_applicable_time_periods(
-    current_date,
-    None,
-    None,
-    rates,
-    False
-  )
-
-  # Act
-  result = calculate_continuous_times(
-    applicable_rates,
-    target_hours
-  )
-
-  # Assert
-  assert result is not None
-  assert len(result) == 8
-
-  start_time = datetime.strptime("2022-10-09T00:30:00Z", "%Y-%m-%dT%H:%M:%S%z")
-  for index in range(8):
-    end_time = start_time + timedelta(minutes=30)
-    assert result[index]["start"] == start_time
-    assert result[index]["end"] == end_time
-    assert result[index]["value_inc_vat"] == round(rates[1]["value_inc_vat"] / 100, 6)
-
-    assert result[index]["tariff_code"] == tariff_code
-
-    start_time = end_time
-
-  # Make sure our end time doesn't go outside of our Octopus Go cheap period
-  assert start_time == datetime.strptime("2022-10-09T04:30:00Z", "%Y-%m-%dT%H:%M:%S%z")
-
 @pytest.mark.asyncio
 async def test_when_last_rate_is_currently_active_and_target_is_rolling_then_rates_are_not_reevaluated():
   # Arrange
@@ -465,17 +328,17 @@ async def test_when_last_rate_is_currently_active_and_target_is_rolling_then_rat
   # Restrict our time block
   target_hours = 0.5
 
-  applicable_rates = get_fixed_applicable_time_periods(
+  applicable_time_periods = get_fixed_applicable_time_periods(
     current_date,
     target_start_time,
     target_end_time,
-    agile_rates,
+    default_time_periods,
     True
   )
 
   # Act
   result = calculate_continuous_times(
-    applicable_rates,
+    applicable_time_periods,
     target_hours,
     False,
     True
@@ -486,7 +349,7 @@ async def test_when_last_rate_is_currently_active_and_target_is_rolling_then_rat
   assert len(result) == 1
   assert result[0]["start"] == expected_first_valid_from
   assert result[0]["end"] == expected_first_valid_from + timedelta(minutes=30)
-  assert result[0]["value_inc_vat"] == 0.18081
+  assert result[0]["value"] == 18.081
 
 @pytest.mark.asyncio
 async def test_when_available_rates_are_too_low_then_no_times_are_returned():
@@ -498,17 +361,17 @@ async def test_when_available_rates_are_too_low_then_no_times_are_returned():
   # Restrict our time block
   target_hours = 3
 
-  applicable_rates = get_fixed_applicable_time_periods(
+  applicable_time_periods = get_fixed_applicable_time_periods(
     current_date,
     target_start_time,
     target_end_time,
-    agile_rates,
+    default_time_periods,
     False
   )
 
   # Act
   result = calculate_continuous_times(
-    applicable_rates,
+    applicable_time_periods,
     target_hours
   )
 
@@ -518,15 +381,15 @@ async def test_when_available_rates_are_too_low_then_no_times_are_returned():
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("target_hours,expected_first_valid_from,expected_values",[
-  (0.5, datetime.strptime("2022-10-22T10:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.191]),
-  (1, datetime.strptime("2022-10-22T09:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.2, 0.191]),
+  (0.5, datetime.strptime("2022-10-22T10:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [19.1]),
+  (1, datetime.strptime("2022-10-22T09:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [20, 19.1]),
 ])
-async def test_when_min_rate_is_provided_then_result_does_not_include_any_rate_below_min_rate(target_hours: float, expected_first_valid_from: datetime, expected_values: list):
+async def test_when_min_value_is_provided_then_result_does_not_include_any_rate_below_min_value(target_hours: float, expected_first_valid_from: datetime, expected_values: list):
   # Arrange
   current_date = datetime.strptime("2022-10-22T09:10:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
   target_start_time = "09:00"
   target_end_time = "22:00"
-  min_rate = 0.19
+  min_value = 19
 
   rates = create_data_source_data(
     datetime.strptime("2022-10-22T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
@@ -534,7 +397,7 @@ async def test_when_min_rate_is_provided_then_result_does_not_include_any_rate_b
     [19.1, 18.9, 19.1, 20]
   )
 
-  applicable_rates = get_fixed_applicable_time_periods(
+  applicable_time_periods = get_fixed_applicable_time_periods(
     current_date,
     target_start_time,
     target_end_time,
@@ -544,11 +407,11 @@ async def test_when_min_rate_is_provided_then_result_does_not_include_any_rate_b
 
   # Act
   result = calculate_continuous_times(
-    applicable_rates,
+    applicable_time_periods,
     target_hours,
     False,
     False,
-    min_rate
+    min_value
   )
 
   # Assert
@@ -560,19 +423,19 @@ async def test_when_min_rate_is_provided_then_result_does_not_include_any_rate_b
     assert result[index]["start"] == expected_from
     expected_from = expected_from + timedelta(minutes=30)
     assert result[index]["end"] == expected_from
-    assert result[index]["value_inc_vat"] == expected_values[index]
+    assert result[index]["value"] == expected_values[index]
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("target_hours,expected_first_valid_from,expected_values",[
-  (0.5, datetime.strptime("2022-10-22T10:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.191]),
-  (1, datetime.strptime("2022-10-22T10:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.191, 0.189]),
+  (0.5, datetime.strptime("2022-10-22T10:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [19.1]),
+  (1, datetime.strptime("2022-10-22T10:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [19.1, 18.9]),
 ])
-async def test_when_max_rate_is_provided_then_result_does_not_include_any_rate_above_max_rate(target_hours: float, expected_first_valid_from: datetime, expected_values: list):
+async def test_when_max_value_is_provided_then_result_does_not_include_any_rate_above_max_value(target_hours: float, expected_first_valid_from: datetime, expected_values: list):
   # Arrange
   current_date = datetime.strptime("2022-10-22T09:10:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
   target_start_time = "09:00"
   target_end_time = "22:00"
-  max_rate = 0.199
+  max_value = 19.9
 
   rates = create_data_source_data(
     datetime.strptime("2022-10-22T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
@@ -580,7 +443,7 @@ async def test_when_max_rate_is_provided_then_result_does_not_include_any_rate_a
     [19.1, 18.9, 19.1, 20]
   )
 
-  applicable_rates = get_fixed_applicable_time_periods(
+  applicable_time_periods = get_fixed_applicable_time_periods(
     current_date,
     target_start_time,
     target_end_time,
@@ -590,12 +453,12 @@ async def test_when_max_rate_is_provided_then_result_does_not_include_any_rate_a
 
   # Act
   result = calculate_continuous_times(
-    applicable_rates,
+    applicable_time_periods,
     target_hours,
     True,
     False,
     None,
-    max_rate
+    max_value
   )
 
   # Assert
@@ -607,27 +470,27 @@ async def test_when_max_rate_is_provided_then_result_does_not_include_any_rate_a
     assert result[index]["start"] == expected_from
     expected_from = expected_from + timedelta(minutes=30)
     assert result[index]["end"] == expected_from
-    assert result[index]["value_inc_vat"] == expected_values[index]
+    assert result[index]["value"] == expected_values[index]
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("weighting,possible_rates,expected_first_valid_from,expected_values",[
-  ([1, 2, 1], [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T11:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.191, 0.151, 0.20]),
-  ([1, 2, 2], [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T10:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.189, 0.191, 0.151]),
-  ([1, 0, 0], [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T11:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.151, 0.20, 0.191]),
+@pytest.mark.parametrize("weighting,possible_values,expected_first_valid_from,expected_values",[
+  ([1, 2, 1], [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T11:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [19.1, 15.1, 20]),
+  ([1, 2, 2], [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T10:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [18.9, 19.1, 15.1]),
+  ([1, 0, 0], [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T11:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [15.1, 20, 19.1]),
   
-  ([Decimal('1.1'), Decimal('2.2'), Decimal('1.1')], [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T11:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.191, 0.151, 0.20]),
-  ([Decimal('1.1'), Decimal('2.2'), Decimal('2.2')], [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T10:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.189, 0.191, 0.151]),
-  ([Decimal('1.1'), Decimal('0.0'), Decimal('0.0')], [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T11:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.151, 0.20, 0.191]),
+  ([Decimal('1.1'), Decimal('2.2'), Decimal('1.1')], [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T11:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [19.1, 15.1, 20]),
+  ([Decimal('1.1'), Decimal('2.2'), Decimal('2.2')], [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T10:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [18.9, 19.1, 15.1]),
+  ([Decimal('1.1'), Decimal('0.0'), Decimal('0.0')], [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T11:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [15.1, 20, 19.1]),
 
   # Examples defined in https://github.com/BottlecapDave/homeassistant-targettimeframes/issues/807
-  (None, [14, 14, 10, 7, 15, 21], datetime.strptime("2022-10-22T09:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.14, 0.1, 0.07]),
-  ([1, 1, 2], [14, 14, 10, 7, 15, 21], datetime.strptime("2022-10-22T09:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.14, 0.1, 0.07]),
-  ([5, 1, 1], [14, 14, 10, 7, 15, 21], datetime.strptime("2022-10-22T10:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.07, 0.15, 0.21]),
+  (None, [14, 14, 10, 7, 15, 21], datetime.strptime("2022-10-22T09:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [14, 10, 7]),
+  ([1, 1, 2], [14, 14, 10, 7, 15, 21], datetime.strptime("2022-10-22T09:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [14, 10, 7]),
+  ([5, 1, 1], [14, 14, 10, 7, 15, 21], datetime.strptime("2022-10-22T10:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [7, 15, 21]),
 
-  ([Decimal('1.1'), Decimal('1.1'), Decimal('2.2')], [14, 14, 10, 7, 15, 21], datetime.strptime("2022-10-22T09:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.14, 0.1, 0.07]),
-  ([Decimal('5.5'), Decimal('1.1'), Decimal('1.1')], [14, 14, 10, 7, 15, 21], datetime.strptime("2022-10-22T10:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [0.07, 0.15, 0.21]),
+  ([Decimal('1.1'), Decimal('1.1'), Decimal('2.2')], [14, 14, 10, 7, 15, 21], datetime.strptime("2022-10-22T09:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [14, 10, 7]),
+  ([Decimal('5.5'), Decimal('1.1'), Decimal('1.1')], [14, 14, 10, 7, 15, 21], datetime.strptime("2022-10-22T10:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [7, 15, 21]),
 ])
-async def test_when_weighting_specified_then_result_is_adjusted(weighting: list, possible_rates: list, expected_first_valid_from: datetime, expected_values: list):
+async def test_when_weighting_specified_then_result_is_adjusted(weighting: list, possible_values: list, expected_first_valid_from: datetime, expected_values: list):
   # Arrange
   current_date = datetime.strptime("2022-10-22T09:10:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
   target_start_time = "09:00"
@@ -636,10 +499,10 @@ async def test_when_weighting_specified_then_result_is_adjusted(weighting: list,
   rates = create_data_source_data(
     datetime.strptime("2022-10-22T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     datetime.strptime("2022-10-23T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
-    possible_rates
+    possible_values
   )
 
-  applicable_rates = get_fixed_applicable_time_periods(
+  applicable_time_periods = get_fixed_applicable_time_periods(
     current_date,
     target_start_time,
     target_end_time,
@@ -649,7 +512,7 @@ async def test_when_weighting_specified_then_result_is_adjusted(weighting: list,
 
   # Act
   result = calculate_continuous_times(
-    applicable_rates,
+    applicable_time_periods,
     1.5,
     False,
     False,
@@ -666,7 +529,7 @@ async def test_when_weighting_specified_then_result_is_adjusted(weighting: list,
     assert result[index]["start"] == expected_from
     expected_from = expected_from + timedelta(minutes=30)
     assert result[index]["end"] == expected_from
-    assert result[index]["value_inc_vat"] == expected_values[index]
+    assert result[index]["value"] == expected_values[index]
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("weighting",[
@@ -685,7 +548,7 @@ async def test_when_target_hours_zero_then_result_is_adjusted(weighting):
     [19.1, 18.9, 19.1, 15.1, 20]
   )
 
-  applicable_rates = get_fixed_applicable_time_periods(
+  applicable_time_periods = get_fixed_applicable_time_periods(
     current_date,
     target_start_time,
     target_end_time,
@@ -695,7 +558,7 @@ async def test_when_target_hours_zero_then_result_is_adjusted(weighting):
 
   # Act
   result = calculate_continuous_times(
-    applicable_rates,
+    applicable_time_periods,
     0,
     False,
     False,
@@ -712,16 +575,16 @@ def test_when_hour_mode_is_maximum_and_not_enough_hours_available_then_reduced_t
   current_date = datetime.strptime("2022-10-22T09:10:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
   target_start_time = "09:00"
   target_end_time = "22:00"
-  possible_rates = [19.1, 18.9, 21.1, 15.1, 20]
-  expected_values = [0.191, 0.189]
+  possible_values = [19.1, 18.9, 21.1, 15.1, 20]
+  expected_values = [19.1, 18.9]
 
   rates = create_data_source_data(
     datetime.strptime("2022-10-22T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     datetime.strptime("2022-10-23T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
-    possible_rates
+    possible_values
   )
 
-  applicable_rates = get_fixed_applicable_time_periods(
+  applicable_time_periods = get_fixed_applicable_time_periods(
     current_date,
     target_start_time,
     target_end_time,
@@ -731,11 +594,11 @@ def test_when_hour_mode_is_maximum_and_not_enough_hours_available_then_reduced_t
 
   # Act
   result = calculate_continuous_times(
-    applicable_rates,
+    applicable_time_periods,
     1.5,
     False,
     False,
-    max_value=0.199,
+    max_value=19.9,
     hours_mode=CONFIG_TARGET_HOURS_MODE_MAXIMUM
   )
 
@@ -748,23 +611,23 @@ def test_when_hour_mode_is_maximum_and_not_enough_hours_available_then_reduced_t
     assert result[index]["start"] == expected_from
     expected_from = expected_from + timedelta(minutes=30)
     assert result[index]["end"] == expected_from
-    assert result[index]["value_inc_vat"] == expected_values[index]
+    assert result[index]["value"] == expected_values[index]
 
 def test_when_hour_mode_is_maximum_and_more_than_enough_hours_available_then_target_rates_returned():
   # Arrange
   current_date = datetime.strptime("2022-10-22T09:10:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
   target_start_time = "09:00"
   target_end_time = "22:00"
-  possible_rates = [19.1, 18.9, 19.1, 15.1, 20]
-  expected_values = [0.189, 0.191, 0.151]
+  possible_values = [19.1, 18.9, 19.1, 15.1, 20]
+  expected_values = [18.9, 19.1, 15.1]
 
   rates = create_data_source_data(
     datetime.strptime("2022-10-22T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     datetime.strptime("2022-10-23T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
-    possible_rates
+    possible_values
   )
 
-  applicable_rates = get_fixed_applicable_time_periods(
+  applicable_time_periods = get_fixed_applicable_time_periods(
     current_date,
     target_start_time,
     target_end_time,
@@ -774,7 +637,7 @@ def test_when_hour_mode_is_maximum_and_more_than_enough_hours_available_then_tar
 
   # Act
   result = calculate_continuous_times(
-    applicable_rates,
+    applicable_time_periods,
     1.5,
     False,
     False,
@@ -790,23 +653,22 @@ def test_when_hour_mode_is_maximum_and_more_than_enough_hours_available_then_tar
     assert result[index]["start"] == expected_from
     expected_from = expected_from + timedelta(minutes=30)
     assert result[index]["end"] == expected_from
-    assert result[index]["value_inc_vat"] == expected_values[index]
+    assert result[index]["value"] == expected_values[index]
 
 def test_when_hour_mode_is_minimum_and_not_enough_hours_available_then_no_target_rates_returned():
   # Arrange
   current_date = datetime.strptime("2022-10-22T09:10:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
   target_start_time = "09:00"
   target_end_time = "22:00"
-  possible_rates = [19.1, 18.9, 21.1, 15.1, 20]
-  expected_values = [0.191, 0.189]
+  possible_values = [19.1, 18.9, 21.1, 15.1, 20]
 
   rates = create_data_source_data(
     datetime.strptime("2022-10-22T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     datetime.strptime("2022-10-23T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
-    possible_rates
+    possible_values
   )
 
-  applicable_rates = get_fixed_applicable_time_periods(
+  applicable_time_periods = get_fixed_applicable_time_periods(
     current_date,
     target_start_time,
     target_end_time,
@@ -816,7 +678,7 @@ def test_when_hour_mode_is_minimum_and_not_enough_hours_available_then_no_target
 
   # Act
   result = calculate_continuous_times(
-    applicable_rates,
+    applicable_time_periods,
     1.5,
     False,
     False,
@@ -833,16 +695,16 @@ def test_when_hour_mode_is_minimum_and_more_than_enough_hours_available_then_tar
   current_date = datetime.strptime("2022-10-22T09:10:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
   target_start_time = "09:00"
   target_end_time = "22:00"
-  possible_rates = [19.1, 18.9, 19.1, 15.1, 20]
-  expected_values = [0.191, 0.189, 0.191, 0.151]
+  possible_values = [19.1, 18.9, 19.1, 15.1, 20]
+  expected_values = [19.1, 18.9, 19.1, 15.1]
 
   rates = create_data_source_data(
     datetime.strptime("2022-10-22T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     datetime.strptime("2022-10-23T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
-    possible_rates
+    possible_values
   )
 
-  applicable_rates = get_fixed_applicable_time_periods(
+  applicable_time_periods = get_fixed_applicable_time_periods(
     current_date,
     target_start_time,
     target_end_time,
@@ -852,11 +714,11 @@ def test_when_hour_mode_is_minimum_and_more_than_enough_hours_available_then_tar
 
   # Act
   result = calculate_continuous_times(
-    applicable_rates,
+    applicable_time_periods,
     1.5,
     False,
     False,
-    max_value=0.199,
+    max_value=19.9,
     hours_mode=CONFIG_TARGET_HOURS_MODE_MINIMUM
   )
 
@@ -869,304 +731,256 @@ def test_when_hour_mode_is_minimum_and_more_than_enough_hours_available_then_tar
     assert result[index]["start"] == expected_from
     expected_from = expected_from + timedelta(minutes=30)
     assert result[index]["end"] == expected_from
-    assert result[index]["value_inc_vat"] == expected_values[index]
+    assert result[index]["value"] == expected_values[index]
 
 def test_when_multiple_blocks_have_same_value_then_earliest_is_picked():
-  applicable_rates = [
+  applicable_time_periods = [
     {
-        "value_exc_vat": 22.79,
-        "value_inc_vat": 23.9295,
+        "value": 23.9295,
         "start": datetime.strptime("2024-09-04T18:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T19:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 23.2,
-        "value_inc_vat": 24.36,
+        "value": 24.36,
         "start": datetime.strptime("2024-09-04T18:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T18:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 35.68,
-        "value_inc_vat": 37.464,
+        "value": 37.464,
         "start": datetime.strptime("2024-09-04T17:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T18:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 35.47,
-        "value_inc_vat": 37.2435,
+        "value": 37.2435,
         "start": datetime.strptime("2024-09-04T17:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T17:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 37.46,
-        "value_inc_vat": 39.333,
+        "value": 39.333,
         "start": datetime.strptime("2024-09-04T16:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T17:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 34.94,
-        "value_inc_vat": 36.687,
+        "value": 36.687,
         "start": datetime.strptime("2024-09-04T16:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T16:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 32.53,
-        "value_inc_vat": 34.1565,
+        "value": 34.1565,
         "start": datetime.strptime("2024-09-04T15:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T16:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 31.38,
-        "value_inc_vat": 32.949,
+        "value": 32.949,
         "start": datetime.strptime("2024-09-04T15:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T15:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 17.94,
-        "value_inc_vat": 18.837,
+        "value": 18.837,
         "start": datetime.strptime("2024-09-04T14:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T15:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 17.32,
-        "value_inc_vat": 18.186,
+        "value": 18.186,
         "start": datetime.strptime("2024-09-04T14:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T14:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 16.09,
-        "value_inc_vat": 16.8945,
+        "value": 16.8945,
         "start": datetime.strptime("2024-09-04T13:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T14:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 16.51,
-        "value_inc_vat": 17.3355,
+        "value": 17.3355,
         "start": datetime.strptime("2024-09-04T13:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T13:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 16,
-        "value_inc_vat": 16.8,
+        "value": 16.8,
         "start": datetime.strptime("2024-09-04T12:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T13:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 16.09,
-        "value_inc_vat": 16.8945,
+        "value": 16.8945,
         "start": datetime.strptime("2024-09-04T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T12:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 16.09,
-        "value_inc_vat": 16.8945,
+        "value": 16.8945,
         "start": datetime.strptime("2024-09-04T11:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 16.46,
-        "value_inc_vat": 17.283,
+        "value": 17.283,
         "start": datetime.strptime("2024-09-04T11:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T11:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 16.09,
-        "value_inc_vat": 16.8945,
+        "value": 16.8945,
         "start": datetime.strptime("2024-09-04T10:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T11:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 16.09,
-        "value_inc_vat": 16.8945,
+        "value": 16.8945,
         "start": datetime.strptime("2024-09-04T10:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T10:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 16.3,
-        "value_inc_vat": 17.115,
+        "value": 17.115,
         "start": datetime.strptime("2024-09-04T09:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T10:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 17.54,
-        "value_inc_vat": 18.417,
+        "value": 18.417,
         "start": datetime.strptime("2024-09-04T09:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T09:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 20.16,
-        "value_inc_vat": 21.168,
+        "value": 21.168,
         "start": datetime.strptime("2024-09-04T08:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T09:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 21,
-        "value_inc_vat": 22.05,
+        "value": 22.05,
         "start": datetime.strptime("2024-09-04T08:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T08:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 22.26,
-        "value_inc_vat": 23.373,
+        "value": 23.373,
         "start": datetime.strptime("2024-09-04T07:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T08:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 21.88,
-        "value_inc_vat": 22.974,
+        "value": 22.974,
         "start": datetime.strptime("2024-09-04T07:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T07:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 24.19,
-        "value_inc_vat": 25.3995,
+        "value": 25.3995,
         "start": datetime.strptime("2024-09-04T06:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T07:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 21.84,
-        "value_inc_vat": 22.932,
+        "value": 22.932,
         "start": datetime.strptime("2024-09-04T06:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T06:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 22.2,
-        "value_inc_vat": 23.31,
+        "value": 23.31,
         "start": datetime.strptime("2024-09-04T05:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T06:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 19.74,
-        "value_inc_vat": 20.727,
+        "value": 20.727,
         "start": datetime.strptime("2024-09-04T05:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T05:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 17.43,
-        "value_inc_vat": 18.3015,
+        "value": 18.3015,
         "start": datetime.strptime("2024-09-04T04:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T05:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 17.66,
-        "value_inc_vat": 18.543,
+        "value": 18.543,
         "start": datetime.strptime("2024-09-04T04:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T04:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 16.09,
-        "value_inc_vat": 16.8945,
+        "value": 16.8945,
         "start": datetime.strptime("2024-09-04T03:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T04:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 16.09,
-        "value_inc_vat": 16.8945,
+        "value": 16.8945,
         "start": datetime.strptime("2024-09-04T03:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T03:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 14.93,
-        "value_inc_vat": 15.6765,
+        "value": 15.6765,
         "start": datetime.strptime("2024-09-04T02:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T03:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 15.12,
-        "value_inc_vat": 15.876,
+        "value": 15.876,
         "start": datetime.strptime("2024-09-04T02:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T02:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 16.09,
-        "value_inc_vat": 16.8945,
+        "value": 16.8945,
         "start": datetime.strptime("2024-09-04T01:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T02:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 16.09,
-        "value_inc_vat": 16.8945,
+        "value": 16.8945,
         "start": datetime.strptime("2024-09-04T01:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T01:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 16.09,
-        "value_inc_vat": 16.8945,
+        "value": 16.8945,
         "start": datetime.strptime("2024-09-04T00:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T01:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 16.09,
-        "value_inc_vat": 16.8945,
+        "value": 16.8945,
         "start": datetime.strptime("2024-09-04T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T00:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 16.09,
-        "value_inc_vat": 16.8945,
+        "value": 16.8945,
         "start": datetime.strptime("2024-09-03T23:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-04T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 16.7,
-        "value_inc_vat": 17.535,
+        "value": 17.535,
         "start": datetime.strptime("2024-09-03T23:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-03T23:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 18.69,
-        "value_inc_vat": 19.6245,
+        "value": 19.6245,
         "start": datetime.strptime("2024-09-03T22:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-03T23:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 18.69,
-        "value_inc_vat": 19.6245,
+        "value": 19.6245,
         "start": datetime.strptime("2024-09-03T22:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-03T22:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 17.56,
-        "value_inc_vat": 18.438,
+        "value": 18.438,
         "start": datetime.strptime("2024-09-03T21:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-03T22:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 20.21,
-        "value_inc_vat": 21.2205,
+        "value": 21.2205,
         "start": datetime.strptime("2024-09-03T21:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-03T21:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 21.17,
-        "value_inc_vat": 22.2285,
+        "value": 22.2285,
         "start": datetime.strptime("2024-09-03T20:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-03T21:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 23.84,
-        "value_inc_vat": 25.032,
+        "value": 25.032,
         "start": datetime.strptime("2024-09-03T20:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-03T20:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 24.36,
-        "value_inc_vat": 25.578,
+        "value": 25.578,
         "start": datetime.strptime("2024-09-03T19:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-03T20:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     },
     {
-        "value_exc_vat": 25.83,
-        "value_inc_vat": 27.1215,
+        "value": 27.1215,
         "start": datetime.strptime("2024-09-03T19:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
         "end": datetime.strptime("2024-09-03T19:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
     }
   ]
   
-  applicable_rates.sort(key=lambda x: (x["start"].timestamp(), x["start"].fold))
+  applicable_time_periods.sort(key=lambda x: (x["start"].timestamp(), x["start"].fold))
   
   result = calculate_continuous_times(
-    applicable_rates,
+    applicable_time_periods,
     3,
     False,
     False
@@ -1183,20 +997,20 @@ def test_when_multiple_blocks_have_same_value_then_earliest_is_picked():
 
 
 def test_when_weighting_present_with_find_latest_rate_then_latest_time_is_picked():
-  applicable_rates = create_data_source_data(datetime.strptime("2024-10-10T20:00:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
+  applicable_time_periods = create_data_source_data(datetime.strptime("2024-10-10T20:00:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
                                       datetime.strptime("2024-10-10T23:30:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
-                                      [0.267159])
-  applicable_rates.extend(create_data_source_data(datetime.strptime("2024-10-10T23:30:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
+                                      [2067159])
+  applicable_time_periods.extend(create_data_source_data(datetime.strptime("2024-10-10T23:30:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
                                            datetime.strptime("2024-10-11T05:30:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
-                                           [0.070003]))
-  applicable_rates.extend(create_data_source_data(datetime.strptime("2024-10-11T05:30:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
+                                           [70003]))
+  applicable_time_periods.extend(create_data_source_data(datetime.strptime("2024-10-11T05:30:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
                                            datetime.strptime("2024-10-11T23:30:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
-                                           [0.267159]))
+                                           [2067159]))
   
-  applicable_rates.sort(key=lambda x: (x["start"].timestamp(), x["start"].fold))
+  applicable_time_periods.sort(key=lambda x: (x["start"].timestamp(), x["start"].fold))
   
   result = calculate_continuous_times(
-    applicable_rates,
+    applicable_time_periods,
     7.5,
     False,
     True,
@@ -1214,24 +1028,24 @@ def test_when_weighting_present_with_find_latest_rate_then_latest_time_is_picked
 
 
 def test_when_weighting_present_in_rates_then_weighted_rate_is_picked():
-  applicable_rates = create_data_source_data(datetime.strptime("2024-10-10T20:00:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
+  applicable_time_periods = create_data_source_data(datetime.strptime("2024-10-10T20:00:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
                                       datetime.strptime("2024-10-10T23:30:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
-                                      [0.2])
+                                      [20])
   
-  applicable_rates[2]["weighting"] = Decimal(0.5)
-  applicable_rates[2]["value_inc_vat"] = 0.3
+  applicable_time_periods[2]["weighting"] = Decimal(0.5)
+  applicable_time_periods[2]["value"] = 0.3
   
-  applicable_rates[3]["weighting"] = Decimal(0.5)
-  applicable_rates[3]["value_inc_vat"] = 0.3
+  applicable_time_periods[3]["weighting"] = Decimal(0.5)
+  applicable_time_periods[3]["value"] = 0.3
 
-  applicable_rates[4]["weighting"] = Decimal(0.5)
-  applicable_rates[4]["value_inc_vat"] = 0.3
+  applicable_time_periods[4]["weighting"] = Decimal(0.5)
+  applicable_time_periods[4]["value"] = 0.3
   
-  applicable_rates[5]["weighting"] = Decimal(0.5)
-  applicable_rates[5]["value_inc_vat"] = 0.3
+  applicable_time_periods[5]["weighting"] = Decimal(0.5)
+  applicable_time_periods[5]["value"] = 0.3
   
   result = calculate_continuous_times(
-    applicable_rates,
+    applicable_time_periods,
     1,
     False,
     False

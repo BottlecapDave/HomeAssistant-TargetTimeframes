@@ -5,8 +5,9 @@ docs_dir: _docs
 nav:
   - Home: index.md
   - Setup:
-    - ./setup/target_rate.md
-    - ./setup/rolling_target_rate.md
+    - ./setup/data_source.md
+    - ./setup/target_timeframe.md
+    - ./setup/rolling_target_timeframe.md
   - services.md
   - events.md
   - blueprints.md

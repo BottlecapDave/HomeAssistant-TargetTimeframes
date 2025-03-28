@@ -42,14 +42,14 @@ from custom_components.target_timeframes.entities import create_weighting
   ("2.2,*", 4, [Decimal('2.2'), Decimal('1'), Decimal('1'), Decimal('1')]),
 
   ("10.1", 3, [Decimal('10.1')]),
-  ("10.1,20.2,30.3", 3, [Decimal('10.1'), Decimal('20.2'), Decimal('30.3')]),
-  ("20.2,*,30.3", 4, [Decimal('20.2'), Decimal('1'), Decimal('1'), Decimal('30.3')]),
-  ("20.2,40.4,*,30.3", 5, [Decimal('20.2'), Decimal('40.4'), Decimal('1'), Decimal('1'), Decimal('30.3')]),
-  ("20.2,*,30.3,40.4", 5, [Decimal('20.2'), Decimal('1'), Decimal('1'), Decimal('30.3'), Decimal('40.4')]),
-  ("*,20.2,30.3", 4, [Decimal('1'), Decimal('1'), Decimal('20.2'), Decimal('30.3')]),
-  ("*,20.2", 4, [Decimal('1'), Decimal('1'), Decimal('1'), Decimal('20.2')]),
-  ("20.2,30.3,*", 4, [Decimal('20.2'), Decimal('30.3'), Decimal('1'), Decimal('1')]),
-  ("20.2,*", 4, [Decimal('20.2'), Decimal('1'), Decimal('1'), Decimal('1')]),
+  ("10.1,220,30.3", 3, [Decimal('10.1'), Decimal('220'), Decimal('30.3')]),
+  ("220,*,30.3", 4, [Decimal('220'), Decimal('1'), Decimal('1'), Decimal('30.3')]),
+  ("220,40.4,*,30.3", 5, [Decimal('220'), Decimal('40.4'), Decimal('1'), Decimal('1'), Decimal('30.3')]),
+  ("220,*,30.3,40.4", 5, [Decimal('220'), Decimal('1'), Decimal('1'), Decimal('30.3'), Decimal('40.4')]),
+  ("*,220,30.3", 4, [Decimal('1'), Decimal('1'), Decimal('220'), Decimal('30.3')]),
+  ("*,220", 4, [Decimal('1'), Decimal('1'), Decimal('1'), Decimal('220')]),
+  ("220,30.3,*", 4, [Decimal('220'), Decimal('30.3'), Decimal('1'), Decimal('1')]),
+  ("220,*", 4, [Decimal('220'), Decimal('1'), Decimal('1'), Decimal('1')]),
 ])
 async def test_when_create_weighting_called_then_valid_weighting_returned(config, number_of_slots, expected_weighting):
   actual_weighting = create_weighting(config, number_of_slots)

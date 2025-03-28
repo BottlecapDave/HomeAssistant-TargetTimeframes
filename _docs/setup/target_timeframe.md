@@ -1,12 +1,12 @@
 # Target Rate Sensor(s)
 
-After you've configured your [account](./account.md), you'll be able to configure target value sensors. These are configured by adding subsequent instances of the integration going through the [normal flow](https://my.home-assistant.io/redirect/config_flow_start/?domain=target_timeframes), and selecting `Target Rate` in the provided menu.
+After you've configured your [data source](./data_source.md), you'll be able to configure rolling target timeframe sensors. These are configured as sub configuration options associated with your data source. Select `Target timeframe` from the sub menu.
 
 These sensors calculate the lowest continuous or intermittent values **within a 24 hour period** and turn on when these periods are active. If you are targeting an export meter, then the sensors will calculate the highest continuous or intermittent values **within a 24 hour period** and turn on when these periods are active. If you are wanting to evaluate on a rolling basis, you might be interested in the [rolling target value sensors](./rolling_target_value.md)
 
 These sensors can then be used in automations to turn on/off devices that save you (and the planet) energy and money. You can go through this flow as many times as you need target value sensors.
 
-Each sensor will be in the form `binary_sensor.target_timeframes_target_{{TARGET_RATE_NAME}}`.
+Each sensor will be in the form `binary_sensor.target_timeframes_{{DATA_SOURCE_ID}}_{{TARGET_RATE_NAME}}`.
 
 ## Setup
 
