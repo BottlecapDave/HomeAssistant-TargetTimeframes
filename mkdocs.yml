@@ -10,6 +10,8 @@ nav:
     - ./setup/rolling_target_timeframe.md
   - services.md
   - events.md
+  - Repairs:
+    - ./repairs/invalid_target_timeframe.md
   - blueprints.md
   - faq.md
   - sponsorship.md

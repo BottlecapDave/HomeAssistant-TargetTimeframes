@@ -52,7 +52,7 @@ from . import (
   should_evaluate_target_timeframes
 )
 
-from ..config.target_timeframe import validate_target_rate_config
+from ..config.target_timeframe import validate_target_timeframe_config
 from .repairs import check_for_errors
 from ..utils.attributes import dict_to_typed_dict
 
@@ -316,7 +316,7 @@ class TargetTimeframesTargetRate(BinarySensorEntity, RestoreEntity):
         CONFIG_TARGET_WEIGHTING: trimmed_target_weighting if trimmed_target_weighting != "" else None
       })
 
-    errors = validate_target_rate_config(config)
+    errors = validate_target_timeframe_config(config)
     keys = list(errors.keys())
     if (len(keys)) > 0:
       translations = await translation.async_get_translations(self._hass, self._hass.config.language, "options", {DOMAIN})

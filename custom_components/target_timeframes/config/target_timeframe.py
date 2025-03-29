@@ -54,7 +54,7 @@ def is_time_frame_long_enough(hours, start_time, end_time):
 
   return available_minutes >= target_minutes
 
-def validate_target_rate_config(data):
+def validate_target_timeframe_config(data):
   errors = {}
 
   matches = re.search(REGEX_ENTITY_NAME, data[CONFIG_TARGET_NAME])

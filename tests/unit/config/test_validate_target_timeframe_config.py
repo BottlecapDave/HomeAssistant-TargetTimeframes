@@ -1,7 +1,7 @@
 import pytest
 
 from homeassistant.util.dt import (as_utc, parse_datetime)
-from custom_components.target_timeframes.config.target_timeframe import validate_target_rate_config
+from custom_components.target_timeframes.config.target_timeframe import validate_target_timeframe_config
 from custom_components.target_timeframes.const import CONFIG_TARGET_END_TIME, CONFIG_TARGET_HOURS, CONFIG_TARGET_HOURS_MODE, CONFIG_TARGET_HOURS_MODE_EXACT, CONFIG_TARGET_HOURS_MODE_MAXIMUM, CONFIG_TARGET_HOURS_MODE_MINIMUM, CONFIG_TARGET_MAX_VALUE, CONFIG_TARGET_MIN_VALUE, CONFIG_TARGET_NAME, CONFIG_TARGET_OFFSET, CONFIG_TARGET_START_TIME, CONFIG_TARGET_TYPE, CONFIG_TARGET_TYPE_CONTINUOUS, CONFIG_TARGET_TYPE_INTERMITTENT, CONFIG_TARGET_WEIGHTING
 
 now = as_utc(parse_datetime("2023-08-20T10:00:00Z"))
@@ -23,7 +23,7 @@ async def test_when_config_is_valid_no_errors_returned():
   }
 
   # Act
-  errors = validate_target_rate_config(data)
+  errors = validate_target_timeframe_config(data)
 
   # Assert
   assert CONFIG_TARGET_NAME not in errors
@@ -53,7 +53,7 @@ async def test_when_optional_config_is_valid_no_errors_returned():
   }
 
   # Act
-  errors = validate_target_rate_config(data)
+  errors = validate_target_timeframe_config(data)
 
   # Assert
   assert CONFIG_TARGET_NAME not in errors
@@ -85,7 +85,7 @@ async def test_when_config_has_invalid_name_then_errors_returned(name):
   }
 
   # Act
-  errors = validate_target_rate_config(data)
+  errors = validate_target_timeframe_config(data)
 
   # Assert
   assert CONFIG_TARGET_NAME in errors
@@ -114,7 +114,7 @@ async def test_when_config_has_valid_hours_then_no_errors_returned():
   }
 
   # Act
-  errors = validate_target_rate_config(data)
+  errors = validate_target_timeframe_config(data)
 
   # Assert
   assert CONFIG_TARGET_HOURS not in errors
@@ -150,7 +150,7 @@ async def test_when_config_has_invalid_hours_then_errors_returned(hours):
   }
 
   # Act
-  errors = validate_target_rate_config(data)
+  errors = validate_target_timeframe_config(data)
 
   # Assert
   assert CONFIG_TARGET_HOURS in errors
@@ -188,7 +188,7 @@ async def test_when_config_has_invalid_start_time_then_errors_returned(start_tim
   }
 
   # Act
-  errors = validate_target_rate_config(data)
+  errors = validate_target_timeframe_config(data)
 
   # Assert
   assert CONFIG_TARGET_START_TIME in errors
@@ -226,7 +226,7 @@ async def test_when_config_has_invalid_end_time_then_errors_returned(end_time):
   }
 
   # Act
-  errors = validate_target_rate_config(data)
+  errors = validate_target_timeframe_config(data)
 
   # Assert
   assert CONFIG_TARGET_END_TIME in errors
@@ -269,7 +269,7 @@ async def test_when_config_has_invalid_offset_then_errors_returned(offset):
   }
 
   # Act
-  errors = validate_target_rate_config(data)
+  errors = validate_target_timeframe_config(data)
 
   # Assert
   assert CONFIG_TARGET_OFFSET in errors
@@ -302,7 +302,7 @@ async def test_when_hours_exceed_selected_time_frame_then_errors_returned(start_
   }
 
   # Act
-  errors = validate_target_rate_config(data)
+  errors = validate_target_timeframe_config(data)
 
   # Assert
   assert CONFIG_TARGET_HOURS in errors
@@ -341,7 +341,7 @@ async def test_when_config_is_valid_and_not_agile_then_no_errors_returned(start_
     data[CONFIG_TARGET_OFFSET] = offset
 
   # Act
-  errors = validate_target_rate_config(data)
+  errors = validate_target_timeframe_config(data)
 
   # Assert
   assert CONFIG_TARGET_NAME not in errors
@@ -386,7 +386,7 @@ async def test_when_config_is_valid_and_agile_then_no_errors_returned(start_time
 
 
   # Act
-  errors = validate_target_rate_config(data)
+  errors = validate_target_timeframe_config(data)
 
   # Assert
   assert CONFIG_TARGET_NAME not in errors
@@ -419,7 +419,7 @@ async def test_when_weighting_is_invalid_then_weighting_error_returned(weighting
   }
 
   # Act
-  errors = validate_target_rate_config(data)
+  errors = validate_target_timeframe_config(data)
 
   # Assert
   assert CONFIG_TARGET_WEIGHTING in errors
@@ -449,7 +449,7 @@ async def test_when_weighting_set_and_type_invalid_then_weighting_error_returned
   }
 
   # Act
-  errors = validate_target_rate_config(data)
+  errors = validate_target_timeframe_config(data)
 
   # Assert
   assert CONFIG_TARGET_WEIGHTING in errors
@@ -485,7 +485,7 @@ async def test_when_hour_mode_is_minimum_and_minimum_or_maximum_value_is_specifi
   }
 
   # Act
-  errors = validate_target_rate_config(data)
+  errors = validate_target_timeframe_config(data)
 
   # Assert
   assert CONFIG_TARGET_NAME not in errors
@@ -518,7 +518,7 @@ async def test_when_hour_mode_is_not_exact_and_weighting_specified_then_error_re
   }
 
   # Act
-  errors = validate_target_rate_config(data)
+  errors = validate_target_timeframe_config(data)
 
   # Assert
   assert CONFIG_TARGET_WEIGHTING in errors
@@ -547,7 +547,7 @@ async def test_when_hour_mode_is_minimum_and_minimum_and_maximum_value_is_not_sp
   }
 
   # Act
-  errors = validate_target_rate_config(data)
+  errors = validate_target_timeframe_config(data)
 
   # Assert
   assert CONFIG_TARGET_NAME not in errors
