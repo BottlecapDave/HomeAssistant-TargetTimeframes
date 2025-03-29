@@ -104,7 +104,7 @@ actions:
   - action: target_timeframes.update_target_timeframe_config
     data:
       target_hours: >
-        "{{ states('input_number.target_timeframes_target_hours') | string }}"
+        {{ states('input_number.target_timeframes_target_hours') }}
       target_start_time: >
         {{ states('input_text.target_timeframes_target_from') }}
       target_end_time: >
@@ -171,9 +171,9 @@ actions:
   - action: target_timeframes.update_target_timeframe_config
     data:
       target_hours: >
-        "{{ states('input_number.target_timeframes_target_hours') | string }}"
+        {{ states('input_number.target_timeframes_target_hours') }}
       target_look_ahead_hours: >
-        "{{ states('input_number.target_timeframes_rolling_target_look_ahead_hours') | string }}"
+        {{ states('input_number.target_timeframes_rolling_target_look_ahead_hours') }}
       target_offset: >
         {{ states('input_text.target_timeframes_target_offset') }}
     target:

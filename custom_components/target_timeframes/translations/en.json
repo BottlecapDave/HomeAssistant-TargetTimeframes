@@ -24,23 +24,6 @@
           "source_id": "This should be provided in all service calls when the source data is updated. This must be unique across all sources."
         }
       }
-    },
-    "error": {
-      "value_greater_than_zero": "Value must be greater or equal to 1",
-      "invalid_target_hours": "Target hours must be in half hour increments (e.g. 0.5 = 30 minutes; 1 = 60 minutes).",
-      "invalid_target_name": "Name must only include lower case alpha characters and underscore (e.g. my_target)",
-      "invalid_target_time": "Must be in the format HH:MM",
-      "invalid_offset": "Offset must be in the form of HH:MM:SS with an optional negative symbol",
-      "invalid_hours_time_frame": "The target hours do not fit in the elected target time frame",
-      "invalid_value": "Value must be in decimal format (e.g. 0.10)",
-      "invalid_weighting": "The weighting format is not supported. Please consult documentation for more information.",
-      "invalid_weighting_slots": "The number of weighting blocks does not equal the specified number of hours.",
-      "weighting_not_supported_for_type": "Weighting is only supported for continuous target values",
-      "weighting_not_supported_for_hour_mode": "Weighting is not supported for this hour mode",
-      "minimum_or_maximum_value_not_specified": "Either minimum and/or maximum value must be specified for minimum hours mode"
-    },
-    "abort": {
-      "not_supported": "Configuration for target values is not supported at the moment."
     }
   },
   "config_subentries": {
@@ -104,8 +87,18 @@
         }
       },
       "error": {
-      },
-      "abort": {
+        "value_greater_than_zero": "Value must be greater or equal to 1",
+        "invalid_target_hours": "Hours must be in half hour increments (e.g. 0.5 = 30 minutes; 1 = 60 minutes).",
+        "invalid_target_name": "Name must only include lower case alpha characters and underscore (e.g. my_target)",
+        "invalid_target_time": "Must be in the format HH:MM",
+        "invalid_offset": "Offset must be in the form of HH:MM:SS with an optional negative symbol",
+        "invalid_hours_time_frame": "The target hours do not fit in the elected target time frame",
+        "invalid_value": "Value must be in decimal format (e.g. 0.10)",
+        "invalid_weighting": "The weighting format is not supported. Please consult documentation for more information.",
+        "invalid_weighting_slots": "The number of weighting blocks does not equal the specified number of hours.",
+        "weighting_not_supported_for_type": "Weighting is only supported for continuous target values",
+        "weighting_not_supported_for_hour_mode": "Weighting is not supported for this hour mode",
+        "minimum_or_maximum_value_not_specified": "Either minimum and/or maximum value must be specified for minimum hours mode"
       }
     },
     "rolling_target_time_period": {
@@ -148,6 +141,20 @@
             "target_times_evaluation_mode": "When should target times be selected"
           }
         }
+      },
+      "error": {
+        "value_greater_than_zero": "Value must be greater or equal to 1",
+        "invalid_target_hours": "Hours must be in half hour increments (e.g. 0.5 = 30 minutes; 1 = 60 minutes).",
+        "invalid_target_name": "Name must only include lower case alpha characters and underscore (e.g. my_target)",
+        "invalid_target_time": "Must be in the format HH:MM",
+        "invalid_offset": "Offset must be in the form of HH:MM:SS with an optional negative symbol",
+        "invalid_hours_time_frame": "The target hours do not fit in the elected target time frame",
+        "invalid_value": "Value must be in decimal format (e.g. 0.10)",
+        "invalid_weighting": "The weighting format is not supported. Please consult documentation for more information.",
+        "invalid_weighting_slots": "The number of weighting blocks does not equal the specified number of hours.",
+        "weighting_not_supported_for_type": "Weighting is only supported for continuous target values",
+        "weighting_not_supported_for_hour_mode": "Weighting is not supported for this hour mode",
+        "minimum_or_maximum_value_not_specified": "Either minimum and/or maximum value must be specified for minimum hours mode"
       }
     }
   },

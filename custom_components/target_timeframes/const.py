@@ -76,7 +76,7 @@ DATA_SCHEMA_SOURCE = vol.Schema({
 
 DATA_SCHEMA_TARGET_TIME_PERIOD = vol.Schema({
   vol.Required(CONFIG_TARGET_NAME): str,
-  vol.Required(CONFIG_TARGET_HOURS): str,
+  vol.Required(CONFIG_TARGET_HOURS): vol.Coerce(float),
   vol.Required(CONFIG_TARGET_HOURS_MODE, default=CONFIG_TARGET_HOURS_MODE_EXACT): selector.SelectSelector(
       selector.SelectSelectorConfig(
           options=[
@@ -111,14 +111,14 @@ DATA_SCHEMA_TARGET_TIME_PERIOD = vol.Schema({
   vol.Optional(CONFIG_TARGET_ROLLING_TARGET, default=False): bool,
   vol.Optional(CONFIG_TARGET_LATEST_VALUES, default=False): bool,
   vol.Optional(CONFIG_TARGET_FIND_HIGHEST_VALUES, default=False): bool,
-  vol.Optional(CONFIG_TARGET_MIN_VALUE): str,
-  vol.Optional(CONFIG_TARGET_MAX_VALUE): str,
+  vol.Optional(CONFIG_TARGET_MIN_VALUE): vol.Coerce(float),
+  vol.Optional(CONFIG_TARGET_MAX_VALUE): vol.Coerce(float),
   vol.Optional(CONFIG_TARGET_WEIGHTING): str,
 })
 
 DATA_SCHEMA_ROLLING_TARGET_TIME_PERIOD = vol.Schema({
   vol.Required(CONFIG_TARGET_NAME): str,
-  vol.Required(CONFIG_TARGET_HOURS): str,
+  vol.Required(CONFIG_TARGET_HOURS): vol.Coerce(float),
   vol.Required(CONFIG_TARGET_HOURS_MODE, default=CONFIG_TARGET_HOURS_MODE_EXACT): selector.SelectSelector(
     selector.SelectSelectorConfig(
         options=[
@@ -138,7 +138,7 @@ DATA_SCHEMA_ROLLING_TARGET_TIME_PERIOD = vol.Schema({
         mode=selector.SelectSelectorMode.DROPDOWN,
     )
   ),
-  vol.Required(CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD): str,
+  vol.Required(CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD): vol.Coerce(float),
   vol.Optional(CONFIG_TARGET_OFFSET): str,
   vol.Required(CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE, default=CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALL_IN_PAST): selector.SelectSelector(
       selector.SelectSelectorConfig(
@@ -152,8 +152,8 @@ DATA_SCHEMA_ROLLING_TARGET_TIME_PERIOD = vol.Schema({
   ),
   vol.Optional(CONFIG_TARGET_LATEST_VALUES): bool,
   vol.Optional(CONFIG_TARGET_FIND_HIGHEST_VALUES): bool,
-  vol.Optional(CONFIG_TARGET_MIN_VALUE): str,
-  vol.Optional(CONFIG_TARGET_MAX_VALUE): str,
+  vol.Optional(CONFIG_TARGET_MIN_VALUE): vol.Coerce(float),
+  vol.Optional(CONFIG_TARGET_MAX_VALUE): vol.Coerce(float),
   vol.Optional(CONFIG_TARGET_WEIGHTING): str,
 })
 

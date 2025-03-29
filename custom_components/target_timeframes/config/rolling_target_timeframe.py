@@ -26,10 +26,8 @@ async def async_migrate_rolling_target_timeframe_config(version: int, data: {}, 
 
   return new_data
 
-def merge_rolling_target_rate_config(data: dict, options: dict, updated_config: dict = None):
+def merge_rolling_target_timeframe_config(data: dict, updated_config: dict = None):
   config = dict(data)
-  if options is not None:
-    config.update(options)
 
   if updated_config is not None:
     config.update(updated_config)

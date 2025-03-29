@@ -50,12 +50,12 @@ async def async_setup_entry(hass, entry, async_add_entities):
             vol.All(
               cv.make_entity_service_schema(
                 {
-                  vol.Optional("target_hours"): str,
+                  vol.Optional("target_hours"): vol.Coerce(float),
                   vol.Optional("target_start_time"): str,
                   vol.Optional("target_end_time"): str,
                   vol.Optional("target_offset"): str,
-                  vol.Optional("target_minimum_value"): str,
-                  vol.Optional("target_maximum_value"): str,
+                  vol.Optional("target_minimum_value"): vol.Coerce(float),
+                  vol.Optional("target_maximum_value"): vol.Coerce(float),
                   vol.Optional("target_weighting"): str,
                   vol.Optional("persist_changes"): bool,
                 },
@@ -65,7 +65,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
                 "target_hours", "target_start_time", "target_end_time", "target_offset", "target_minimum_value", "target_maximum_value"
               ),
             ),
-            "async_update_target_rate_config",
+            "async_update_target_timeframe_config",
           )
         else:
           platform.async_register_entity_service(
@@ -73,11 +73,11 @@ async def async_setup_entry(hass, entry, async_add_entities):
             vol.All(
               cv.make_entity_service_schema(
                 {
-                  vol.Optional("target_hours"): str,
-                  vol.Optional("target_look_ahead_hours"): str,
+                  vol.Optional("target_hours"): vol.Coerce(float),
+                  vol.Optional("target_look_ahead_hours"): vol.Coerce(float),
                   vol.Optional("target_offset"): str,
-                  vol.Optional("target_minimum_value"): str,
-                  vol.Optional("target_maximum_value"): str,
+                  vol.Optional("target_minimum_value"): vol.Coerce(float),
+                  vol.Optional("target_maximum_value"): vol.Coerce(float),
                   vol.Optional("target_weighting"): str,
                   vol.Optional("persist_changes"): bool,
                 },
@@ -87,7 +87,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
                 "target_hours", "target_look_ahead_hours", "target_offset", "target_minimum_value", "target_maximum_value"
               ),
             ),
-            "async_update_rolling_target_rate_config",
+            "async_update_rolling_target_timeframe_config",
           )
 
       async_add_entities(entities, config_subentry_id=sub_entry_id)
