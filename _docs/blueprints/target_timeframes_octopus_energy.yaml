@@ -1,0 +1,73 @@
+blueprint:
+  name: Target Timeframess - Octopus Energy source
+  description: Configures a targe timeframe data source from Octopus Energy
+  domain: automation
+  author: BottlecapDave
+  input:
+    target_timeframe_data_source_sensor:
+      name: Target timeframe data source sensor
+      description: The data source sensor which represents the data source to update
+      selector:
+        entity:
+          filter:
+          - domain:
+            - sensor
+            integration: target_timeframes
+          multiple: false
+    octopus_energy_previous_day_rates:
+      name: Previous day rates
+      description: The previous day rates event sensor supplied by Octopus Energy
+      selector:
+        entity:
+          filter:
+          - domain:
+            - event
+            integration: octopus_energy
+          multiple: false
+    octopus_energy_current_day_rates:
+      name: Current day rates
+      description: The current day rates event sensor supplied by Octopus Energy
+      selector:
+        entity:
+          filter:
+          - domain:
+            - event
+            integration: octopus_energy
+          multiple: false
+    octopus_energy_next_day_rates:
+      name: Next day rates
+      description: The next day rates event sensor supplied by Octopus Energy
+      selector:
+        entity:
+          filter:
+          - domain:
+            - event
+            integration: octopus_energy
+          multiple: false
+variables:
+  target_timeframe_data_source_sensor: !input target_timeframe_data_source_sensor
+  octopus_energy_previous_day_rates: !input octopus_energy_previous_day_rates
+  octopus_energy_current_day_rates: !input octopus_energy_current_day_rates
+  octopus_energy_next_day_rates: !input octopus_energy_next_day_rates
+mode: queued
+max: 4
+triggers:
+- platform: state
+  entity_id: !input octopus_energy_current_day_rates
+- platform: state
+  entity_id: !input octopus_energy_next_day_rates
+condition: []
+action:
+- action: target_timeframes.update_target_timeframe_data_source
+  data: >
+    {% set all_rates = state_attr(octopus_energy_previous_day_rates, 'rates') + state_attr(octopus_energy_current_day_rates, 'rates') + state_attr(octopus_energy_next_day_rates, 'rates') %}
+    {% set data = namespace(new_rates=[]) %}
+    {% for rate in all_rates %}
+    {% set start = rate["start"] | as_timestamp | timestamp_utc %}
+    {% set end = rate["end"] | as_timestamp | timestamp_utc %}
+    {% set value = rate["value"] | float %}
+    {% set data.new_rates = data.new_rates + [{ 'start': start , 'end': end, 'value': value, 'metadata': { "is_capped": rate["is_capped"] } }] %}
+    {% endfor %}
+    {{ { 'data': data.new_rates } }}
+  target:
+    entity_id: !input target_timeframe_data_source_sensor
