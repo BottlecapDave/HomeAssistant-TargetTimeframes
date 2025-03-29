@@ -20,7 +20,7 @@
     
     
       
-        <title>Rolling Target timeframe Sensor(s) - Home Assistant Target Timeframes</title>
+        <title>Rolling Target Timeframe Sensor(s) - Home Assistant Target Timeframes</title>
       
     
     
@@ -108,7 +108,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Rolling Target timeframe Sensor(s)
+              Rolling Target Timeframe Sensor(s)
             
           </span>
         </div>
@@ -335,7 +335,7 @@
         
   
   <span class="md-ellipsis">
-    Target Rate Sensor(s)
+    Target Timeframe Sensor(s)
   </span>
   
 
@@ -365,7 +365,7 @@
           
   
   <span class="md-ellipsis">
-    Rolling Target timeframe Sensor(s)
+    Rolling Target Timeframe Sensor(s)
   </span>
   
 
@@ -376,7 +376,7 @@
         
   
   <span class="md-ellipsis">
-    Rolling Target timeframe Sensor(s)
+    Rolling Target Timeframe Sensor(s)
   </span>
   
 
@@ -629,6 +629,69 @@
   
 
       </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Repairs
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Repairs
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../repairs/invalid_target_timeframe/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Repairs - Invalid Target Timeframe
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -917,11 +980,11 @@
   
 
 
-<h1 id="rolling-target-timeframe-sensors">Rolling Target timeframe Sensor(s)<a class="headerlink" href="#rolling-target-timeframe-sensors" title="Permanent link">#</a></h1>
-<p>After you've configured your <a href="../data_source/">data source</a>, you'll be able to configure rolling target timeframe sensors. These are configured as sub configuration options associated with your data source. Select <code>Rolling Target timeframe</code> from the sub menu.</p>
+<h1 id="rolling-target-timeframe-sensors">Rolling Target Timeframe Sensor(s)<a class="headerlink" href="#rolling-target-timeframe-sensors" title="Permanent link">#</a></h1>
+<p>After you've configured your <a href="../data_source/">data source</a>, you'll be able to configure rolling target timeframe sensors. These are configured as sub configuration options associated with your data source. Select <code>Rolling Target Timeframe</code> from the sub menu.</p>
 <p>These sensors calculate the lowest continuous or intermittent values within the next available <code>x</code> hours, where <code>x</code> is configurable via the sensor, and turn on when these periods are active. If you are targeting an export meter, then the sensors will calculate the highest continuous or intermittent values within the next available <code>x</code> hours and turn on when these periods are active. If you are wanting to evaluate on a fixed basis (e.g. every 24 hours), you might be interested in the <a href="../target_timeframe/">standard target timeframe sensors</a></p>
 <p>These sensors can then be used in automations to turn on/off devices that save you (and the planet) energy and money. You can go through this flow as many times as you need rolling target timeframe sensors.</p>
-<p>Each sensor will be in the form <code>binary_sensor.target_timeframes_{{DATA_SOURCE_ID}}_{{TARGET_RATE_NAME}}</code>.</p>
+<p>Each sensor will be in the form <code>binary_sensor.target_timeframes_{{DATA_SOURCE_ID}}_{{TARGET_TIMEFRAME_NAME}}</code>.</p>
 <h2 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">#</a></h2>
 <h3 id="hours">Hours<a class="headerlink" href="#hours" title="Permanent link">#</a></h3>
 <p>The hours that you require for the sensor to find. This should be in decimal format and represent 30 minute increments. For example 30 minutes would be <code>0.5</code>, 1 hour would be <code>1</code> or <code>1.0</code>, 1 hour and 30 minutes would be <code>1.5</code>, etc.</p>

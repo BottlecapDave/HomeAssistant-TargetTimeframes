@@ -333,7 +333,7 @@
         
   
   <span class="md-ellipsis">
-    Target Rate Sensor(s)
+    Target Timeframe Sensor(s)
   </span>
   
 
@@ -354,7 +354,7 @@
         
   
   <span class="md-ellipsis">
-    Rolling Target timeframe Sensor(s)
+    Rolling Target Timeframe Sensor(s)
   </span>
   
 
@@ -564,6 +564,69 @@
   
 
       </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Repairs
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Repairs
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../repairs/invalid_target_timeframe/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Repairs - Invalid Target Timeframe
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -934,7 +997,7 @@
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">target_timeframes.update_target_timeframe_config</span>
 <span class="w">    </span><span class="nt">data</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">target_hours</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
-<span class="w">        </span><span class="no">&quot;{{ states(&#39;input_number.target_timeframes_target_hours&#39;) | string }}&quot;</span>
+<span class="w">        </span><span class="no">{{ states(&#39;input_number.target_timeframes_target_hours&#39;) }}</span>
 <span class="w">      </span><span class="nt">target_start_time</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
 <span class="w">        </span><span class="no">{{ states(&#39;input_text.target_timeframes_target_from&#39;) }}</span>
 <span class="w">      </span><span class="nt">target_end_time</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
@@ -1030,9 +1093,9 @@
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">target_timeframes.update_target_timeframe_config</span>
 <span class="w">    </span><span class="nt">data</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">target_hours</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
-<span class="w">        </span><span class="no">&quot;{{ states(&#39;input_number.target_timeframes_target_hours&#39;) | string }}&quot;</span>
+<span class="w">        </span><span class="no">{{ states(&#39;input_number.target_timeframes_target_hours&#39;) }}</span>
 <span class="w">      </span><span class="nt">target_look_ahead_hours</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
-<span class="w">        </span><span class="no">&quot;{{ states(&#39;input_number.target_timeframes_rolling_target_look_ahead_hours&#39;) | string }}&quot;</span>
+<span class="w">        </span><span class="no">{{ states(&#39;input_number.target_timeframes_rolling_target_look_ahead_hours&#39;) }}</span>
 <span class="w">      </span><span class="nt">target_offset</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
 <span class="w">        </span><span class="no">{{ states(&#39;input_text.target_timeframes_target_offset&#39;) }}</span>
 <span class="w">    </span><span class="nt">target</span><span class="p">:</span>
