@@ -25,9 +25,19 @@ The structure of the data should match the following
       // Any additional metadata that might describe how the value was created
     }
   },
+  {
+    "start": "2025-01-01T00:30:00Z",
+    "end": "2025-01-01T01:00:00Z",
+    "value": 0.2,
+    "metadata": {
+      // Any additional metadata that might describe how the value was created
+    }
+  },
   ...
 ]
 ```
+
+Each item within the data must be in thirty minute increments. The minute must be 00 or 30, the second should be zero.
 
 #### Automations
 
