@@ -57,7 +57,6 @@ jobs:
     needs: 
     - validate
     - unit_tests
-    - integration_tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
