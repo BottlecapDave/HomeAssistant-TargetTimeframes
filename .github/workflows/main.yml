@@ -33,10 +33,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: "home-assistant/actions/hassfest@master"
-      - name: HACS Action
-        uses: "hacs/action@main"
-        with:
-          category: "integration"
+      # - name: HACS Action
+      #   uses: "hacs/action@main"
+      #   with:
+      #     category: "integration"
   unit_tests:
     if: ${{ github.event_name != 'schedule' || github.repository_owner == 'BottlecapDave' }}
     name: Unit Tests
