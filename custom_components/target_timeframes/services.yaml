@@ -12,6 +12,8 @@ update_target_timeframe_config:
       example: 1.5
       selector:
         number:
+          step: any
+          mode: box
     target_start_time:
       name: Start time
       description: The optional time the evaluation period should start.
@@ -37,6 +39,8 @@ update_target_timeframe_config:
       example: 0.10
       selector:
         number:
+          step: any
+          mode: box
     target_maximum_value:
       name: Maximum value
       description:
@@ -44,6 +48,8 @@ update_target_timeframe_config:
       example: 0.10
       selector:
         number:
+          step: any
+          mode: box
     target_weighting:
       name: Weighting
       description:
@@ -71,12 +77,16 @@ update_rolling_target_timeframe_config:
       example: 1.5
       selector:
         number:
+          step: any
+          mode: box
     target_look_ahead_hours:
       name: Look ahead hours
       description: The optional number of hours worth of values the sensor should look at for the evaluation period.
       example: 8.5
       selector:
         number:
+          step: any
+          mode: box
     target_offset:
       name: Offset
       description:
@@ -90,6 +100,8 @@ update_rolling_target_timeframe_config:
       example: 0.10
       selector:
         number:
+          step: any
+          mode: box
     target_maximum_value:
       name: Maximum value
       description:
@@ -97,6 +109,8 @@ update_rolling_target_timeframe_config:
       example: 0.10
       selector:
         number:
+          step: any
+          mode: box
     target_weighting:
       name: Weighting
       description:
