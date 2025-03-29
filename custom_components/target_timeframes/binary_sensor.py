@@ -32,11 +32,15 @@ async def async_setup_entry(hass, entry, async_add_entities):
     data_dict = list(map(lambda x: x.dict(), data))
 
   if entry.subentries:
-    for sub_entry in entry.subentries.values():
+    for sub_entry_id, sub_entry in entry.subentries.items():
       config = dict(sub_entry.data)
+      entities = []
 
       if config[CONFIG_KIND] == CONFIG_KIND_TARGET_RATE or config[CONFIG_KIND] == CONFIG_KIND_ROLLING_TARGET_RATE:
-        await async_setup_target_sensors(hass, entry, sub_entry, config, data_source_id, async_add_entities, data_dict)
+        if config[CONFIG_KIND] == CONFIG_KIND_TARGET_RATE:
+          entities.append(TargetTimeframesTargetRate(hass, data_source_id, entry, sub_entry, config, data_dict))
+        else:
+          entities.append(TargetTimeframesRollingTargetRate(hass, data_source_id, entry, sub_entry, config, data_dict))
 
         platform = entity_platform.async_get_current_platform()
 
@@ -86,15 +90,5 @@ async def async_setup_entry(hass, entry, async_add_entities):
             "async_update_rolling_target_rate_config",
           )
 
+      async_add_entities(entities, config_subentry_id=sub_entry_id)
   return True
-
-async def async_setup_target_sensors(hass, entry, sub_entry, config, data_source_id, async_add_entities, initial_data):
-  entities = []
-
-  if config[CONFIG_KIND] == CONFIG_KIND_TARGET_RATE:
-    entities.append(TargetTimeframesTargetRate(hass, data_source_id, entry, sub_entry, config, initial_data))
-  else:
-    entities.append(TargetTimeframesRollingTargetRate(hass, data_source_id, entry, sub_entry, config, initial_data))
-
-  async_add_entities(entities)
-  return
