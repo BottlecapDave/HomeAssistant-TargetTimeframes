@@ -2,7 +2,7 @@ from typing import Any
 from homeassistant.config_entries import (ConfigFlow, ConfigEntry, ConfigSubentryFlow, SubentryFlowResult)
 from homeassistant.core import callback
 
-from .config.target_timeframe import validate_target_rate_config
+from .config.target_timeframe import validate_target_timeframe_config
 from .config.rolling_target_timeframe import validate_rolling_target_timeframe_config
 
 from .const import (
@@ -88,7 +88,7 @@ class TargetTimePeriodSubentryFlowHandler(ConfigSubentryFlow):
       self, user_input: dict[str, Any] | None = None
   ) -> SubentryFlowResult:
     config = dict(user_input) if user_input is not None else None
-    errors = validate_target_rate_config(config) if config is not None else {}
+    errors = validate_target_timeframe_config(config) if config is not None else {}
 
     if len(errors) < 1 and user_input is not None:
       config[CONFIG_KIND] = CONFIG_KIND_TARGET_RATE
@@ -109,7 +109,7 @@ class TargetTimePeriodSubentryFlowHandler(ConfigSubentryFlow):
   
   async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None):
     config = dict(user_input) if user_input is not None else None
-    errors = validate_target_rate_config(config) if config is not None else {}
+    errors = validate_target_timeframe_config(config) if config is not None else {}
 
     if len(errors) < 1 and user_input is not None:
       return self.async_update_and_abort(

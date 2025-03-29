@@ -52,7 +52,7 @@
       "step": {
         "user": {
           "title": "Add Target Timeframe",
-          "description": "Setup a target time. Full documentation can be found at https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/target_value",
+          "description": "Setup a target time. Full documentation can be found at https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/target_timeframe",
           "data": {
             "name": "The name of your target",
             "hours": "The hours you require in decimal format.",
@@ -78,7 +78,7 @@
         },
         "reconfigure": {
           "title": "Reconfigure Target Timeframe",
-          "description": "Setup a target time. Full documentation can be found at https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/target_value",
+          "description": "Setup a target time. Full documentation can be found at https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/target_timeframe",
           "data": {
             "name": "The name of your target",
             "hours": "The hours you require in decimal format.",
@@ -116,7 +116,7 @@
       "step": {
         "user": {
           "title": "Rolling Target Timeframe",
-          "description": "Setup a rolling target time. Full documentation can be found at https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/rolling_target_value",
+          "description": "Setup a rolling target time. Full documentation can be found at https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/rolling_target_timeframe",
           "data": {
             "name": "The name of your target",
             "hours": "The hours you require in decimal format.",
@@ -133,7 +133,7 @@
         },
         "reconfigure": {
           "title": "Reconfigure Rolling Target Timeframe",
-          "description": "Setup a rolling target time. Full documentation can be found at https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/rolling_target_value",
+          "description": "Setup a rolling target time. Full documentation can be found at https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/rolling_target_timeframe",
           "data": {
             "name": "The name of your target",
             "hours": "The hours you require in decimal format.",

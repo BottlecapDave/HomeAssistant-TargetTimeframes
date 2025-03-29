@@ -29,24 +29,24 @@ To install, place the contents of `custom_components` into the `<config director
 
 ## How to setup
 
-You will initially need to setup one or more [data sources](https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/data_source.md). You'll then need to setup one or more [target timeframe](https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/target_timeframe.md) or [rolling target timeframe](https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/rolling_target_timeframe.md) sensors.
+You will initially need to setup one or more [data sources](https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/data_source). You'll then need to setup one or more [target timeframe](https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/target_timeframe) or [rolling target timeframe](https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/rolling_target_timeframe) sensors.
 
 ## Events
 
-This integration raises several events, which can be used for various tasks like automations. For more information, please see the [events docs](https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/events.md).
+This integration raises several events, which can be used for various tasks like automations. For more information, please see the [events docs](https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/events).
 
 ## Services
 
-This integration includes several services. Please review them in the [services doc](https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/services.md).
+This integration includes several services. Please review them in the [services doc](https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/services).
 
 ## Blueprints
 
-A selection of [blueprints](https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/blueprints.md) are available to help get you up and running quickly with the integration.
+A selection of [blueprints](https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/blueprints) are available to help get you up and running quickly with the integration.
 
 ## FAQ
 
-Before raising anything, please read through the [faq](https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/faq.md). If you have questions, then you can raise a [discussion](https://github.com/BottlecapDave/homeassistant-targettimeframes/discussions). If you have found a bug or have a feature request please [raise it](https://github.com/BottlecapDave/homeassistant-targettimeframes/issues) using the appropriate report template.
+Before raising anything, please read through the [faq](https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/faq). If you have questions, then you can raise a [discussion](https://github.com/BottlecapDave/homeassistant-targettimeframes/discussions). If you have found a bug or have a feature request please [raise it](https://github.com/BottlecapDave/homeassistant-targettimeframes/issues) using the appropriate report template.
 
 ## Sponsorship
 
-Please see the [sponsorship](https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/sponsorship.md) page for more information.
+Please see the [sponsorship](https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/sponsorship) page for more information.

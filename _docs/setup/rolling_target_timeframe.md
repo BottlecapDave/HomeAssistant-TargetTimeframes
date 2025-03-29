@@ -1,12 +1,12 @@
-# Rolling Target timeframe Sensor(s)
+# Rolling Target Timeframe Sensor(s)
 
-After you've configured your [data source](./data_source.md), you'll be able to configure rolling target timeframe sensors. These are configured as sub configuration options associated with your data source. Select `Rolling Target timeframe` from the sub menu.
+After you've configured your [data source](./data_source.md), you'll be able to configure rolling target timeframe sensors. These are configured as sub configuration options associated with your data source. Select `Rolling Target Timeframe` from the sub menu.
 
 These sensors calculate the lowest continuous or intermittent values within the next available `x` hours, where `x` is configurable via the sensor, and turn on when these periods are active. If you are targeting an export meter, then the sensors will calculate the highest continuous or intermittent values within the next available `x` hours and turn on when these periods are active. If you are wanting to evaluate on a fixed basis (e.g. every 24 hours), you might be interested in the [standard target timeframe sensors](./target_timeframe.md)
 
 These sensors can then be used in automations to turn on/off devices that save you (and the planet) energy and money. You can go through this flow as many times as you need rolling target timeframe sensors.
 
-Each sensor will be in the form `binary_sensor.target_timeframes_{{DATA_SOURCE_ID}}_{{TARGET_RATE_NAME}}`.
+Each sensor will be in the form `binary_sensor.target_timeframes_{{DATA_SOURCE_ID}}_{{TARGET_TIMEFRAME_NAME}}`.
 
 ## Setup
 

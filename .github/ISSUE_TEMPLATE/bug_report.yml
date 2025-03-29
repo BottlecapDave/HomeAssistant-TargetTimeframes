@@ -59,7 +59,7 @@ body:
     id: ha-logs
     attributes:
       label: Home Assistant Logs
-      description: Paste any related Home Assistant logs here. Please follow the instructions as outlined in the [FAQ](https://bottlecapdave.github.io/homeassistant-targettimeframes/faq#how-do-i-increase-the-logs-for-the-integration)
+      description: Paste any related Home Assistant logs here. Please follow the instructions as outlined in the [FAQ](https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/faq#how-do-i-increase-the-logs-for-the-integration)
     validations:
       required: true
   - type: checkboxes
@@ -67,7 +67,7 @@ body:
     attributes:
       label: Confirmation
       options:
-        - label: I confirm that I cannot find my solution within the [documentation](https://bottlecapdave.github.io/homeassistant-targettimeframes)
+        - label: I confirm that I cannot find my solution within the [documentation](https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes)
           required: true
-        - label: I confirm that I cannot find my solution within the [FAQ](https://bottlecapdave.github.io/homeassistant-targettimeframes/faq)
+        - label: I confirm that I cannot find my solution within the [FAQ](https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/faq)
           required: true
