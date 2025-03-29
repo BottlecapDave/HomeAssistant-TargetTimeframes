@@ -59,7 +59,7 @@ class TargetTimeframesConfigFlow(ConfigFlow, domain=DOMAIN):
         self._abort_if_unique_id_mismatch()
 
       return self.async_update_reload_and_abort(
-          self._get_reconfigure_entry(),
+          self._get_entry(),
           data_updates=user_input,
       )
 
@@ -67,7 +67,7 @@ class TargetTimeframesConfigFlow(ConfigFlow, domain=DOMAIN):
       step_id="reconfigure",
       data_schema=self.add_suggested_values_to_schema(
         DATA_SCHEMA_SOURCE,
-        user_input if user_input is not None else self._get_reconfigure_entry().data
+        user_input if user_input is not None else self._get_entry().data
       ),
     )
   
@@ -113,7 +113,7 @@ class TargetTimePeriodSubentryFlowHandler(ConfigSubentryFlow):
 
     if len(errors) < 1 and user_input is not None:
       return self.async_update_and_abort(
-        self._get_reconfigure_entry(),
+        self._get_entry(),
         self._get_reconfigure_subentry(),
         data_updates=config,
       )
@@ -157,7 +157,7 @@ class RollingTargetTimePeriodSubentryFlowHandler(ConfigSubentryFlow):
 
     if len(errors) < 1 and user_input is not None:
       return self.async_update_and_abort(
-        self._get_reconfigure_entry(),
+        self._get_entry(),
         self._get_reconfigure_subentry(),
         data_updates=config,
       )
