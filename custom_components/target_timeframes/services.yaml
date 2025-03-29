@@ -9,9 +9,11 @@ update_target_timeframe_config:
     target_hours:
       name: Hours
       description: The optional number of hours the target timeframe sensor should come on during a 24 hour period.
-      example: '1.5'
+      example: 1.5
       selector:
-        text:
+        number:
+          step: any
+          mode: box
     target_start_time:
       name: Start time
       description: The optional time the evaluation period should start.
@@ -31,23 +33,27 @@ update_target_timeframe_config:
       selector:
         text:
     target_minimum_value:
-      name: Minimum rate
+      name: Minimum value
       description:
-        The optional minimum rate the selected rates should not go below
-      example: '0.10'
+        The optional minimum value the selected values should not go below
+      example: 0.10
       selector:
-        text:
+        number:
+          step: any
+          mode: box
     target_maximum_value:
-      name: Maximum rate
+      name: Maximum value
       description:
-        The optional maximum rate the selected rates should not go above
-      example: '0.10'
+        The optional maximum value the selected values should not go above
+      example: 0.10
       selector:
-        text:
+        number:
+          step: any
+          mode: box
     target_weighting:
       name: Weighting
       description:
-        The optional weighting that should be applied to the selected rates
+        The optional weighting that should be applied to the selected values
       example: '1,2,1'
       selector:
         text:
@@ -68,15 +74,19 @@ update_rolling_target_timeframe_config:
     target_hours:
       name: Hours
       description: The optional number of hours the target timeframe sensor should come on during a 24 hour period.
-      example: '1.5'
+      example: 1.5
       selector:
-        text:
+        number:
+          step: any
+          mode: box
     target_look_ahead_hours:
       name: Look ahead hours
-      description: The optional number of hours worth of rates the sensor should look at for the evaluation period.
-      example: '8.5'
+      description: The optional number of hours worth of values the sensor should look at for the evaluation period.
+      example: 8.5
       selector:
-        text:
+        number:
+          step: any
+          mode: box
     target_offset:
       name: Offset
       description:
@@ -84,23 +94,27 @@ update_rolling_target_timeframe_config:
       selector:
         text:
     target_minimum_value:
-      name: Minimum rate
+      name: Minimum value
       description:
-        The optional minimum rate the selected rates should not go below
-      example: '0.10'
+        The optional minimum value the selected values should not go below
+      example: 0.10
       selector:
-        text:
+        number:
+          step: any
+          mode: box
     target_maximum_value:
-      name: Maximum rate
+      name: Maximum value
       description:
-        The optional maximum rate the selected rates should not go above
-      example: '0.10'
+        The optional maximum value the selected values should not go above
+      example: 0.10
       selector:
-        text:
+        number:
+          step: any
+          mode: box
     target_weighting:
       name: Weighting
       description:
-        The optional weighting that should be applied to the selected rates
+        The optional weighting that should be applied to the selected values
       example: '1,2,1'
       selector:
         text:

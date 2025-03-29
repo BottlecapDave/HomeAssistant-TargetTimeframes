@@ -9,7 +9,7 @@
     "repairs",
     "recorder"
   ],
-  "documentation": "https://bottlecapdave.github.io/homeassistant-targettimeframes",
+  "documentation": "https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes",
   "homekit": {},
   "integration_type": "helper",
   "iot_class": "local_polling",

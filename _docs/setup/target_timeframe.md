@@ -1,4 +1,4 @@
-# Target Rate Sensor(s)
+# Target Timeframe Sensor(s)
 
 After you've configured your [data source](./data_source.md), you'll be able to configure rolling target timeframe sensors. These are configured as sub configuration options associated with your data source. Select `Target timeframe` from the sub menu.
 
@@ -6,7 +6,7 @@ These sensors calculate the lowest continuous or intermittent values **within a 
 
 These sensors can then be used in automations to turn on/off devices that save you (and the planet) energy and money. You can go through this flow as many times as you need target value sensors.
 
-Each sensor will be in the form `binary_sensor.target_timeframes_{{DATA_SOURCE_ID}}_{{TARGET_RATE_NAME}}`.
+Each sensor will be in the form `binary_sensor.target_timeframes_{{DATA_SOURCE_ID}}_{{TARGET_TIMEFRAME_NAME}}`.
 
 ## Setup
 

@@ -25,9 +25,19 @@ The structure of the data should match the following
       // Any additional metadata that might describe how the value was created
     }
   },
+  {
+    "start": "2025-01-01T00:30:00Z",
+    "end": "2025-01-01T01:00:00Z",
+    "value": 0.2,
+    "metadata": {
+      // Any additional metadata that might describe how the value was created
+    }
+  },
   ...
 ]
 ```
+
+Each item within the data must be in thirty minute increments. The minute must be 00 or 30, the second should be zero.
 
 #### Automations
 
@@ -94,7 +104,7 @@ actions:
   - action: target_timeframes.update_target_timeframe_config
     data:
       target_hours: >
-        "{{ states('input_number.target_timeframes_target_hours') | string }}"
+        {{ states('input_number.target_timeframes_target_hours') }}
       target_start_time: >
         {{ states('input_text.target_timeframes_target_from') }}
       target_end_time: >
@@ -161,9 +171,9 @@ actions:
   - action: target_timeframes.update_target_timeframe_config
     data:
       target_hours: >
-        "{{ states('input_number.target_timeframes_target_hours') | string }}"
+        {{ states('input_number.target_timeframes_target_hours') }}
       target_look_ahead_hours: >
-        "{{ states('input_number.target_timeframes_rolling_target_look_ahead_hours') | string }}"
+        {{ states('input_number.target_timeframes_rolling_target_look_ahead_hours') }}
       target_offset: >
         {{ states('input_text.target_timeframes_target_offset') }}
     target:

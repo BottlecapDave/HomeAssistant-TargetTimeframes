@@ -246,57 +246,51 @@ class TargetTimeframesRollingTargetRate(BinarySensorEntity, RestoreEntity):
     )
 
   @callback
-  async def async_update_rolling_target_rate_config(self, target_hours=None, target_look_ahead_hours=None, target_offset=None, target_minimum_value=None, target_maximum_value=None, target_weighting=None, persist_changes=False):
+  async def async_update_rolling_target_timeframe_config(self, target_hours=None, target_look_ahead_hours=None, target_offset=None, target_minimum_value=None, target_maximum_value=None, target_weighting=None, persist_changes=False):
     """Update sensors config"""
 
     config = dict(self._config)
     if target_hours is not None:
       # Inputs from automations can include quotes, so remove these
-      trimmed_target_hours = target_hours.strip('\"')
       config.update({
-        CONFIG_TARGET_HOURS: trimmed_target_hours
+        CONFIG_TARGET_HOURS: target_hours if isinstance(target_hours, str) == False else (target_hours.strip('\"') if target_hours != "" else None)
       })
 
     if target_look_ahead_hours is not None:
       # Inputs from automations can include quotes, so remove these
-      trimmed_target_look_ahead_hours = target_look_ahead_hours.strip('\"')
       config.update({
-        CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD: trimmed_target_look_ahead_hours
+        CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD: target_look_ahead_hours if isinstance(target_look_ahead_hours, str) == False else (target_look_ahead_hours.strip('\"') if target_look_ahead_hours != "" else None)
       })
 
     if target_offset is not None:
       # Inputs from automations can include quotes, so remove these
-      trimmed_target_offset = target_offset.strip('\"')
       config.update({
-        CONFIG_TARGET_OFFSET: trimmed_target_offset
+        CONFIG_TARGET_OFFSET: target_offset if isinstance(target_offset, str) == False else (target_offset.strip('\"') if target_offset != "" else None)
       })
 
     if target_minimum_value is not None:
       # Inputs from automations can include quotes, so remove these
-      trimmed_target_minimum_value = target_minimum_value.strip('\"')
       config.update({
-        CONFIG_TARGET_MIN_VALUE: trimmed_target_minimum_value if trimmed_target_minimum_value != "" else None
+        CONFIG_TARGET_MIN_VALUE: target_minimum_value if isinstance(target_minimum_value, str) == False else (target_minimum_value.strip('\"') if target_minimum_value != "" else None)
       })
 
     if target_maximum_value is not None:
       # Inputs from automations can include quotes, so remove these
-      trimmed_target_maximum_value = target_maximum_value.strip('\"')
       config.update({
-        CONFIG_TARGET_MAX_VALUE: trimmed_target_maximum_value if trimmed_target_maximum_value != "" else None
+        CONFIG_TARGET_MAX_VALUE: target_maximum_value if isinstance(target_maximum_value, str) == False else (target_maximum_value.strip('\"') if target_maximum_value != "" else None)
       })
 
     if target_weighting is not None:
       # Inputs from automations can include quotes, so remove these
-      trimmed_target_weighting = target_weighting.strip('\"')
       config.update({
-        CONFIG_TARGET_WEIGHTING: trimmed_target_weighting if trimmed_target_weighting != "" else None
+        CONFIG_TARGET_WEIGHTING: target_weighting if isinstance(target_weighting, str) == False else (target_weighting.strip('\"') if target_weighting != "" else None)
       })
 
     errors = validate_rolling_target_timeframe_config(config)
     keys = list(errors.keys())
     if (len(keys)) > 0:
-      translations = await translation.async_get_translations(self._hass, self._hass.config.language, "options", {DOMAIN})
-      raise vol.Invalid(translations[f'component.{DOMAIN}.options.error.{errors[keys[0]]}'])
+      translations = await translation.async_get_translations(self._hass, self._hass.config.language, "config_subentries", {DOMAIN})
+      raise vol.Invalid(translations[f'component.{DOMAIN}.config_subentries.rolling_target_time_period.error.{errors[keys[0]]}'])
 
     self._config = config
     self._attributes = self._config.copy()
