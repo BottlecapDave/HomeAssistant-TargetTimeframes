@@ -11,7 +11,6 @@
   ],
   "documentation": "https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes",
   "homekit": {},
-  "integration_type": "helper",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/BottlecapDave/homeassistant-targettimeframes/issues",
   "requirements": [
