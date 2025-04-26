@@ -2,7 +2,7 @@
 
 Data sources help group target timeframe sensors together to be fed from a central data source. These data sources take a specific shape, but can represent anything. To start configuring target timeframe sensors, you'll need to create an initial data source. This can be done via the [integration UI](https://my.home-assistant.io/redirect/config_flow_start/?domain=target_timeframe).
 
-Once the data source has been created, you'll have the following entities created. You'll then need to use the [available service](../services.md#target_timeframesupdate_target_timeframe_data_source) to configure the underlying data. 
+Once the data source has been created, you'll have the following entities created. You'll then need to use the [available service](../services.md#target_timeframesupdate_target_timeframe_data_source) to configure the underlying data. There are also a collection of [blueprints](../blueprints.md#data-sources) available for loading popular data sources.
 
 ## Entities
 
