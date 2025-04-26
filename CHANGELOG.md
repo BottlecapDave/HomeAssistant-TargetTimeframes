@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/BottlecapDave/homeassistant-targettimeframes/compare/v1.0.1...v1.0.2) (2025-04-01)
+
+
+### Bug Fixes
+
+* Fixed integration not appearing in integrations ([51820ff](https://github.com/BottlecapDave/homeassistant-targettimeframes/commit/51820fff765b63bad931d54b9a89c44346003d91))
+
 ## [1.0.1](https://github.com/BottlecapDave/homeassistant-targettimeframes/compare/v1.0.0...v1.0.1) (2025-03-29)
 
 
