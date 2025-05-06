@@ -1,5 +1,5 @@
 blueprint:
-  name: Target Timeframess - Carbon Intensity source
+  name: Target Timeframes - Carbon Intensity source
   description: Configures a targe timeframe data source from Carbon Intensity
   domain: automation
   author: BottlecapDave
