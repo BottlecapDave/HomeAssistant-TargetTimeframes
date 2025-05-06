@@ -49,7 +49,13 @@ condition: []
 action:
 - action: target_timeframes.update_target_timeframe_data_source
   data: >
-    {% set all_rates = state_attr(carbon_intensity_current_day_rates, 'rates') + state_attr(carbon_intensity_next_day_rates, 'rates') %}
+    {% set all_rates = [] %}
+    {% if state_attr(carbon_intensity_current_day_rates, 'rates') != None %}
+    {% set all_rates = all_rates + state_attr(carbon_intensity_current_day_rates, 'rates') %}
+    {% endif %}
+    {% if state_attr(carbon_intensity_next_day_rates, 'rates') != None %}
+    {% set all_rates = all_rates + state_attr(carbon_intensity_next_day_rates, 'rates') %}
+    {% endif %}
     {% set data = namespace(new_rates=[]) %}
     {% for rate in all_rates %}
     {% set start = rate["from"] | as_timestamp | timestamp_utc %}
