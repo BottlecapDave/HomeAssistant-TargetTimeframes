@@ -65,7 +65,7 @@ action:
     {% for rate in all_rates %}
     {% set start = rate["start"] | as_timestamp | timestamp_utc %}
     {% set end = rate["end"] | as_timestamp | timestamp_utc %}
-    {% set value = rate["value"] | float %}
+    {% set value = rate["value_inc_vat"] | float %}
     {% set data.new_rates = data.new_rates + [{ 'start': start , 'end': end, 'value': value, 'metadata': { "is_capped": rate["is_capped"] } }] %}
     {% endfor %}
     {{ { 'data': data.new_rates } }}
