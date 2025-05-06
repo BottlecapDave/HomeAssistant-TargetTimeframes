@@ -356,6 +356,39 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      Properties
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Properties">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#name" class="md-nav__link">
+    <span class="md-ellipsis">
+      Name
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#id" class="md-nav__link">
+    <span class="md-ellipsis">
+      Id
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#entities" class="md-nav__link">
     <span class="md-ellipsis">
       Entities
@@ -627,6 +660,39 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      Properties
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Properties">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#name" class="md-nav__link">
+    <span class="md-ellipsis">
+      Name
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#id" class="md-nav__link">
+    <span class="md-ellipsis">
+      Id
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#entities" class="md-nav__link">
     <span class="md-ellipsis">
       Entities
@@ -670,6 +736,11 @@
 
 <h1 id="data-source">Data source<a class="headerlink" href="#data-source" title="Permanent link">#</a></h1>
 <p>Data sources help group target timeframe sensors together to be fed from a central data source. These data sources take a specific shape, but can represent anything. To start configuring target timeframe sensors, you'll need to create an initial data source. This can be done via the <a href="https://my.home-assistant.io/redirect/config_flow_start/?domain=target_timeframe">integration UI</a>.</p>
+<h2 id="properties">Properties<a class="headerlink" href="#properties" title="Permanent link">#</a></h2>
+<h3 id="name">Name<a class="headerlink" href="#name" title="Permanent link">#</a></h3>
+<p>The name of the data source. This is for informative purposes.</p>
+<h3 id="id">Id<a class="headerlink" href="#id" title="Permanent link">#</a></h3>
+<p>The unique identifier of the data source. This is used by internal events to ensure sensors use the correct data. For example, if you were using data provided by Octopus Energy, then this might be <code>octopus_energy</code>.</p>
 <p>Once the data source has been created, you'll have the following entities created. You'll then need to use the <a href="../../services/#target_timeframesupdate_target_timeframe_data_source">available service</a> to configure the underlying data. There are also a collection of <a href="../../blueprints/#data-sources">blueprints</a> available for loading popular data sources.</p>
 <h2 id="entities">Entities<a class="headerlink" href="#entities" title="Permanent link">#</a></h2>
 <h3 id="data-source-last-updated">Data Source Last Updated<a class="headerlink" href="#data-source-last-updated" title="Permanent link">#</a></h3>
