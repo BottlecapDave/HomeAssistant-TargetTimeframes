@@ -44,11 +44,30 @@ blueprint:
             - event
             integration: octopus_energy
           multiple: false
+    octopus_energy_free_electricity:
+      name: Free Electricity events
+      description: The free electricity event sensor supplied by Octopus Energy
+      selector:
+        entity:
+          filter:
+          - domain:
+            - event
+            integration: octopus_energy
+          multiple: false
+    octopus_energy_free_electricity_weighting:
+      name: Free Electricity events
+      description: The free electricity event sensor supplied by Octopus Energy
+      default: 1
+      selector:
+        number:
+          mode: box
 variables:
   target_timeframe_data_source_sensor: !input target_timeframe_data_source_sensor
   octopus_energy_previous_day_rates: !input octopus_energy_previous_day_rates
   octopus_energy_current_day_rates: !input octopus_energy_current_day_rates
   octopus_energy_next_day_rates: !input octopus_energy_next_day_rates
+  octopus_energy_free_electricity: !input octopus_energy_free_electricity
+  octopus_energy_free_electricity_weighting: !input octopus_energy_free_electricity_weighting
 mode: queued
 max: 4
 triggers:
@@ -70,12 +89,33 @@ action:
     {% if state_attr(octopus_energy_next_day_rates, 'rates') != None %}
     {% set all_rates = all_rates + state_attr(octopus_energy_next_day_rates, 'rates') %}
     {% endif %}
+    {% set free_electricity_rates = [] %}
+    {# {% if state_attr(octopus_energy_free_electricity, 'rates') != None %}
+    {% set free_electricity_rates = state_attr(octopus_energy_free_electricity, 'events') %}
+    {% endif %} #}
     {% set data = namespace(new_rates=[]) %}
     {% for rate in all_rates %}
     {% set start = rate["start"] | as_timestamp | timestamp_utc %}
     {% set end = rate["end"] | as_timestamp | timestamp_utc %}
     {% set value = rate["value_inc_vat"] | float %}
-    {% set data.new_rates = data.new_rates + [{ 'start': start , 'end': end, 'value': value, 'metadata': { "is_capped": rate["is_capped"] } }] %}
+    {% set free_namespace = namespace(is_free=False) %}
+    {% for free_session in free_electricity_rates %}
+    {% set free_start = free_session["start"] | as_timestamp | timestamp_utc %}
+    {% set free_end = free_session["end"] | as_timestamp | timestamp_utc %}
+    {% if free_start <= start and free_end > start %}
+    {% set free_namespace.is_free = True %}
+    {% endif %}
+    {% endfor %}
+
+    {% set metadata = { "is_capped": rate["is_capped"] } %}
+    {% if free_namespace.is_free %}
+    {% set value = value * octopus_energy_free_electricity_weighting %}
+    {% set metadata = dict(metadata.items(), rate=rate["value_inc_vat"], is_free_session=free_namespace.is_free) %}
+    {% endif %}
+
+    {% set new_rate = [{ 'start': start , 'end': end, 'value': value, 'metadata': metadata }] %}
+
+    {% set data.new_rates = data.new_rates + new_rate %}
     {% endfor %}
     {{ { 'data': data.new_rates } }}
   target:
