@@ -1,6 +1,6 @@
 blueprint:
-  name: Target Timeframess - Carbon Intensity source
-  description: Configures a targe timeframe data source from Carbon Intensity
+  name: Target Timeframes - Carbon Intensity source
+  description: Configures a target timeframe data source from Carbon Intensity
   domain: automation
   author: BottlecapDave
   input:
@@ -16,7 +16,7 @@ blueprint:
           multiple: false
     carbon_intensity_current_day_rates:
       name: Current day rates
-      description: The current day rates event sensor supplied by Carbon Intensity
+      description: The current day rates event sensor supplied by Carbon Intensity. More information can be found at https://bottlecapdave.github.io/HomeAssistant-CarbonIntensity/entities/#current-day-rates.
       selector:
         entity:
           filter:
@@ -26,7 +26,7 @@ blueprint:
           multiple: false
     carbon_intensity_next_day_rates:
       name: Next day rates
-      description: The next day rates event sensor supplied by Carbon Intensity
+      description: The next day rates event sensor supplied by Carbon Intensity. More information can be found at https://bottlecapdave.github.io/HomeAssistant-CarbonIntensity/entities/#next-day-rates.
       selector:
         entity:
           filter:
@@ -49,14 +49,20 @@ condition: []
 action:
 - action: target_timeframes.update_target_timeframe_data_source
   data: >
-    {% set all_rates = state_attr(carbon_intensity_current_day_rates, 'rates') + state_attr(carbon_intensity_next_day_rates, 'rates') %}
-    {% set data = namespace(new_rates=[]) %}
-    {% for rate in all_rates %}
-    {% set start = rate["from"] | as_timestamp | timestamp_utc %}
-    {% set end = rate["to"] | as_timestamp | timestamp_utc %}
-    {% set value = rate["intensity_forecast"] | float %}
-    {% set data.new_rates = data.new_rates + [{ 'start': start , 'end': end, 'value': value, 'metadata': { "generation_mix": rate["generation_mix"] } }] %}
-    {% endfor %}
+    {%- set all_rates = [] -%}
+    {%- if state_attr(carbon_intensity_current_day_rates, 'rates') != None -%}
+      {%- set all_rates = all_rates + state_attr(carbon_intensity_current_day_rates, 'rates') -%}
+    {%- endif -%}
+    {%- if state_attr(carbon_intensity_next_day_rates, 'rates') != None -%}
+      {%- set all_rates = all_rates + state_attr(carbon_intensity_next_day_rates, 'rates') -%}
+    {%- endif -%}
+    {%- set data = namespace(new_rates=[]) -%}
+    {%- for rate in all_rates -%}
+      {%- set start = rate["from"] | as_timestamp | timestamp_utc -%}
+      {%- set end = rate["to"] | as_timestamp | timestamp_utc -%}
+      {%- set value = rate["intensity_forecast"] | float -%}
+      {%- set data.new_rates = data.new_rates + [{ 'start': start , 'end': end, 'value': value, 'metadata': { "generation_mix": rate["generation_mix"] } }] -%}
+    {%- endfor -%}
     {{ { 'data': data.new_rates } | to_json }}
   target:
     entity_id: !input target_timeframe_data_source_sensor

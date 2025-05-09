@@ -5,10 +5,11 @@ from homeassistant.helpers import selector
 DOMAIN = "target_timeframes"
 INTEGRATION_VERSION = "1.0.2"
 
-CONFIG_VERSION = 1
+CONFIG_VERSION = 2
 
 CONFIG_DATA_SOURCE_NAME = "source_name"
 CONFIG_DATA_SOURCE_ID = "source_id"
+CONFIG_DATA_UNIQUE_ID = "unique_id"
 
 CONFIG_KIND = "kind"
 CONFIG_KIND_TARGET_RATE = "target_rate"

@@ -8,6 +8,8 @@ There are a few services available within this integration, which are detailed h
 
 Updates the source data for a given targetframe period. This will replace any existing data for the source.
 
+There are a collection of [blueprints](./blueprints.md#data-sources) available for loading popular data sources.
+
 | Attribute                | Optional | Description                                                                                                           |
 | ------------------------ | -------- | --------------------------------------------------------------------------------------------------------------------- |
 | `target.entity_id`       | `no`     | The name of the [data source last updated](./setup/data_source.md#data-source-last-updated) sensor whose underlying data is to be updated.                                                   |

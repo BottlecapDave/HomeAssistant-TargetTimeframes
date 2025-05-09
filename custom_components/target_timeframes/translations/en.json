@@ -10,7 +10,7 @@
           "source_id": "The id of the source"
         },
         "data_description": {
-          "source_id": "This should be provided in all service calls when the source data is updated. This must be unique across all sources."
+          "source_id": "This must be unique across all sources. This is used in all related entity names."
         }
       },
       "reconfigure": {
@@ -21,7 +21,7 @@
           "source_id": "The id of the source"
         },
         "data_description": {
-          "source_id": "This should be provided in all service calls when the source data is updated. This must be unique across all sources."
+          "source_id": "This must be unique across all sources. This is used in all related entity names. Changing will create new entities."
         }
       }
     }

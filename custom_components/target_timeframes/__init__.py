@@ -1,7 +1,9 @@
 import logging
 from datetime import timedelta
+from uuid import uuid4
 
 from .const import (
+  CONFIG_DATA_UNIQUE_ID,
   CONFIG_VERSION,
   DOMAIN
 )
@@ -23,11 +25,15 @@ async def async_migrate_entry(hass, config_entry):
   if (config_entry.version < CONFIG_VERSION):
     _LOGGER.debug("Migrating from version %s", config_entry.version)
 
-    new_data = None
-    new_options = None
+    new_data = {**config_entry.data}
+    unique_id = config_entry.unique_id
     title = config_entry.title
+
+    if (config_entry.version < 2):
+      new_data[CONFIG_DATA_UNIQUE_ID] = str(uuid4())
+      unique_id = new_data[CONFIG_DATA_UNIQUE_ID]
     
-    hass.config_entries.async_update_entry(config_entry, title=title, data=new_data, options=new_options, version=CONFIG_VERSION)
+    hass.config_entries.async_update_entry(config_entry, title=title, data=new_data, version=CONFIG_VERSION, unique_id=unique_id)
 
     _LOGGER.debug("Migration to version %s successful", config_entry.version)
 
