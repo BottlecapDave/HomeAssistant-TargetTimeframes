@@ -1,4 +1,5 @@
 from typing import Any
+from uuid import uuid4
 from homeassistant.config_entries import (ConfigFlow, ConfigEntry, ConfigSubentryFlow, SubentryFlowResult)
 from homeassistant.core import callback
 
@@ -7,6 +8,7 @@ from .config.rolling_target_timeframe import merge_rolling_target_timeframe_conf
 
 from .const import (
   CONFIG_DATA_SOURCE_ID,
+  CONFIG_DATA_UNIQUE_ID,
   CONFIG_KIND,
   CONFIG_KIND_ROLLING_TARGET_RATE,
   CONFIG_KIND_TARGET_RATE,
@@ -35,7 +37,8 @@ class TargetTimeframesConfigFlow(ConfigFlow, domain=DOMAIN):
 
       # Setup our basic sensors
       if len(errors) < 1:
-        await self.async_set_unique_id(user_input[CONFIG_DATA_SOURCE_ID])
+        user_input[CONFIG_DATA_UNIQUE_ID] = str(uuid4())
+        await self.async_set_unique_id(user_input[CONFIG_DATA_UNIQUE_ID])
         self._abort_if_unique_id_mismatch()
 
         return self.async_create_entry(
@@ -53,13 +56,14 @@ class TargetTimeframesConfigFlow(ConfigFlow, domain=DOMAIN):
     config = dict()
     config.update(self._get_reconfigure_entry().data)
 
+    errors = {}
     if user_input is not None:
       config.update(user_input)
       errors = validate_source_config(config)
 
       # Setup our basic sensors
       if len(errors) < 1:
-        await self.async_set_unique_id(config[CONFIG_DATA_SOURCE_ID])
+        await self.async_set_unique_id(config[CONFIG_DATA_UNIQUE_ID])
         self._abort_if_unique_id_mismatch()
 
       return self.async_update_reload_and_abort(
