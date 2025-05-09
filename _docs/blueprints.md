@@ -25,3 +25,13 @@ This blueprint will provide the data source for Octopus Energy rates as provided
 !!! warning
 
     This automation will run when any of the underlying entities update. This make take a while initially. If you want the data available immediately, then you'll need to run the automation manually.
+
+### Octopus Energy and Carbon Intensity
+
+[Install blueprint](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fbottlecapdave.github.io%2FHomeAssistant-TargetTimeframes%2Fblueprints%2Ftarget_timeframes_octopus_energy_carbon_intensity.yaml) | [Source](./blueprints/target_timeframes_octopus_energy_carbon_intensity.yaml)
+
+This blueprint will provide the data source for Octopus Energy rates as provided by the [Octopus Energy](https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy) integration and UK Carbon Intensity as provided by the [Carbon Intensity](https://github.com/BottlecapDave/HomeAssistant-CarbonIntensity) integration. It will multiply the OE rate by the carbon intensity, resulting in target timeframes favouring periods with low rates, and then falling back to carbon intensity where rates are the same.
+
+!!! warning
+
+    This automation will run when any of the underlying entities update. This make take a while initially. If you want the data available immediately, then you'll need to run the automation manually.

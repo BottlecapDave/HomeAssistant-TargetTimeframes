@@ -1,6 +1,6 @@
 blueprint:
   name: Target Timeframes - Carbon Intensity source
-  description: Configures a targe timeframe data source from Carbon Intensity
+  description: Configures a target timeframe data source from Carbon Intensity
   domain: automation
   author: BottlecapDave
   input:
@@ -51,17 +51,17 @@ action:
   data: >
     {% set all_rates = [] %}
     {% if state_attr(carbon_intensity_current_day_rates, 'rates') != None %}
-    {% set all_rates = all_rates + state_attr(carbon_intensity_current_day_rates, 'rates') %}
+      {% set all_rates = all_rates + state_attr(carbon_intensity_current_day_rates, 'rates') %}
     {% endif %}
     {% if state_attr(carbon_intensity_next_day_rates, 'rates') != None %}
-    {% set all_rates = all_rates + state_attr(carbon_intensity_next_day_rates, 'rates') %}
+      {% set all_rates = all_rates + state_attr(carbon_intensity_next_day_rates, 'rates') %}
     {% endif %}
     {% set data = namespace(new_rates=[]) %}
     {% for rate in all_rates %}
-    {% set start = rate["from"] | as_timestamp | timestamp_utc %}
-    {% set end = rate["to"] | as_timestamp | timestamp_utc %}
-    {% set value = rate["intensity_forecast"] | float %}
-    {% set data.new_rates = data.new_rates + [{ 'start': start , 'end': end, 'value': value, 'metadata': { "generation_mix": rate["generation_mix"] } }] %}
+      {% set start = rate["from"] | as_timestamp | timestamp_utc %}
+      {% set end = rate["to"] | as_timestamp | timestamp_utc %}
+      {% set value = rate["intensity_forecast"] | float %}
+      {% set data.new_rates = data.new_rates + [{ 'start': start , 'end': end, 'value': value, 'metadata': { "generation_mix": rate["generation_mix"] } }] %}
     {% endfor %}
     {{ { 'data': data.new_rates } | to_json }}
   target:
