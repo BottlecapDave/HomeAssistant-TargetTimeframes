@@ -1,3 +1,11 @@
+## [1.0.3](https://github.com/BottlecapDave/homeassistant-targettimeframes/compare/v1.0.2...v1.0.3) (2025-05-09)
+
+
+### Bug Fixes
+
+* Fixed issue where target timeframes can't be reconfigured on 2025.4 onwards (30 minutes dev time) ([b778dda](https://github.com/BottlecapDave/homeassistant-targettimeframes/commit/b778ddae183358f706f3840bfd17d3720553d867))
+* Fixed the ability to reconfigure data sources (1 hour dev time) ([a2472d4](https://github.com/BottlecapDave/homeassistant-targettimeframes/commit/a2472d4cd9a279325485e6a6aaab011f12761605))
+
 ## [1.0.2](https://github.com/BottlecapDave/homeassistant-targettimeframes/compare/v1.0.1...v1.0.2) (2025-04-01)
 
 
