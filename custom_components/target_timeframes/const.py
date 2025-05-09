@@ -3,7 +3,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers import selector
 
 DOMAIN = "target_timeframes"
-INTEGRATION_VERSION = "1.0.2"
+INTEGRATION_VERSION = "1.0.3"
 
 CONFIG_VERSION = 2
 
