@@ -1047,7 +1047,7 @@
 
 
 <h1 id="target-timeframe-sensors">Target Timeframe Sensor(s)<a class="headerlink" href="#target-timeframe-sensors" title="Permanent link">#</a></h1>
-<p>After you've configured your <a href="../data_source/">data source</a>, you'll be able to configure rolling target timeframe sensors. These are configured as sub configuration options associated with your data source. Select <code>Target timeframe</code> from the sub menu.</p>
+<p>After you've configured your <a href="../data_source/">data source</a>, you'll be able to configure target timeframe sensors. These are configured as sub configuration options associated with your data source. Select <code>Target timeframe</code> from the sub menu.</p>
 <p>These sensors calculate the lowest continuous or intermittent values <strong>within a 24 hour period</strong> and turn on when these periods are active. If you are targeting an export meter, then the sensors will calculate the highest continuous or intermittent values <strong>within a 24 hour period</strong> and turn on when these periods are active. If you are wanting to evaluate on a rolling basis, you might be interested in the <a href="../rolling_target_timeframe/">rolling target value sensors</a></p>
 <p>These sensors can then be used in automations to turn on/off devices that save you (and the planet) energy and money. You can go through this flow as many times as you need target value sensors.</p>
 <p>Each sensor will be in the form <code>binary_sensor.target_timeframes_{{DATA_SOURCE_ID}}_{{TARGET_TIMEFRAME_NAME}}</code>.</p>

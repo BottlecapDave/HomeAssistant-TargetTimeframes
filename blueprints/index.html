@@ -554,6 +554,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#octopus-energy-and-carbon-intensity" class="md-nav__link">
+    <span class="md-ellipsis">
+      Octopus Energy and Carbon Intensity
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -661,6 +670,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#octopus-energy-and-carbon-intensity" class="md-nav__link">
+    <span class="md-ellipsis">
+      Octopus Energy and Carbon Intensity
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -687,13 +705,29 @@
 <h1 id="blueprints">Blueprints<a class="headerlink" href="#blueprints" title="Permanent link">#</a></h1>
 <p><a href="https://www.home-assistant.io/docs/automation/using_blueprints/">Blueprints</a> are an excellent way to get you up and running with the integration quickly. They can also be used as a guide for setting up new automations which you can tailor to your needs.</p>
 <h2 id="data-sources">Data Sources<a class="headerlink" href="#data-sources" title="Permanent link">#</a></h2>
-<p>The following blueprints can help you configure data sources provided by other integrations</p>
+<p>The following blueprints can help you use data from other integrations as the source of your target timeframes.</p>
 <h3 id="carbon-intensity">Carbon Intensity<a class="headerlink" href="#carbon-intensity" title="Permanent link">#</a></h3>
 <p><a href="https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fbottlecapdave.github.io%2FHomeAssistant-TargetTimeframes%2Fblueprints%2Ftarget_timeframes_carbon_intensity.yaml">Install blueprint</a> | <a href="target_timeframes_carbon_intensity.yaml">Source</a></p>
 <p>This blueprint will provide the data source for the UK Carbon Intensity as provided by the <a href="https://github.com/BottlecapDave/HomeAssistant-CarbonIntensity">Carbon Intensity</a> integration.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This automation will run when any of the underlying entities update. This make take a while initially. If you want the data available immediately, then you'll need to run the automation manually.</p>
+</div>
 <h3 id="octopus-energy">Octopus Energy<a class="headerlink" href="#octopus-energy" title="Permanent link">#</a></h3>
-<p><a href="https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fbottlecapdave.github.io%2FHomeAssistant-TargetTimeframes%2Fblueprints%2Ftarget_timeframes_octopus_energy.yaml">Install blueprint</a> | <a href="target_timeframes_octopus_energy.yaml">Source</a></p>
+<p><a href="https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fbottlecapdave.github.io%2FHomeAssistant-TargetTimeframes%2Fblueprints%2Ftarget_timeframes_octopus_energy.yaml">Install blueprint (No Free Electricity)</a> | <a href="target_timeframes_octopus_energy.yaml">Source</a></p>
+<p><a href="https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fbottlecapdave.github.io%2FHomeAssistant-TargetTimeframes%2Fblueprints%2Ftarget_timeframes_octopus_energy.yaml">Install blueprint (Free Electricity Included)</a> | <a href="target_timeframes_octopus_energy.yaml">Source</a></p>
 <p>This blueprint will provide the data source for Octopus Energy rates as provided by the <a href="https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy">Octopus Energy</a> integration.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This automation will run when any of the underlying entities update. This make take a while initially. If you want the data available immediately, then you'll need to run the automation manually.</p>
+</div>
+<h3 id="octopus-energy-and-carbon-intensity">Octopus Energy and Carbon Intensity<a class="headerlink" href="#octopus-energy-and-carbon-intensity" title="Permanent link">#</a></h3>
+<p><a href="https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fbottlecapdave.github.io%2FHomeAssistant-TargetTimeframes%2Fblueprints%2Ftarget_timeframes_octopus_energy_carbon_intensity.yaml">Install blueprint</a> | <a href="target_timeframes_octopus_energy_carbon_intensity.yaml">Source</a></p>
+<p>This blueprint will provide the data source for Octopus Energy rates as provided by the <a href="https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy">Octopus Energy</a> integration and UK Carbon Intensity as provided by the <a href="https://github.com/BottlecapDave/HomeAssistant-CarbonIntensity">Carbon Intensity</a> integration. It will multiply the OE rate by the carbon intensity, resulting in target timeframes favouring periods with low rates, and then falling back to carbon intensity where rates are the same.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This automation will run when any of the underlying entities update. This make take a while initially. If you want the data available immediately, then you'll need to run the automation manually.</p>
+</div>
 
 
 
