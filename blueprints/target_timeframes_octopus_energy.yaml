@@ -1,6 +1,6 @@
 blueprint:
   name: Target Timeframes - Octopus Energy source
-  description: Configures a targe timeframe data source from Octopus Energy
+  description: Configures a target timeframe data source from Octopus Energy
   domain: automation
   author: BottlecapDave
   input:
