@@ -16,7 +16,7 @@ blueprint:
           multiple: false
     octopus_energy_previous_day_rates:
       name: Previous day rates
-      description: The previous day rates event sensor supplied by Octopus Energy
+      description: The previous day rates event sensor supplied by Octopus Energy. More information can be found at https://bottlecapdave.github.io/HomeAssistant-OctopusEnergy/entities/electricity/#previous-day-rates.
       selector:
         entity:
           filter:
@@ -26,7 +26,7 @@ blueprint:
           multiple: false
     octopus_energy_current_day_rates:
       name: Current day rates
-      description: The current day rates event sensor supplied by Octopus Energy
+      description: The current day rates event sensor supplied by Octopus Energy. More information can be found at https://bottlecapdave.github.io/HomeAssistant-OctopusEnergy/entities/electricity/#current-day-rates.
       selector:
         entity:
           filter:
@@ -36,7 +36,7 @@ blueprint:
           multiple: false
     octopus_energy_next_day_rates:
       name: Next day rates
-      description: The next day rates event sensor supplied by Octopus Energy
+      description: The next day rates event sensor supplied by Octopus Energy. More information can be found at https://bottlecapdave.github.io/HomeAssistant-OctopusEnergy/entities/electricity/#current-day-rates.
       selector:
         entity:
           filter:
@@ -46,7 +46,7 @@ blueprint:
           multiple: false
     octopus_energy_free_electricity:
       name: Free Electricity events
-      description: The free electricity event sensor supplied by Octopus Energy
+      description: The free electricity event sensor supplied by Octopus Energy. More information can be found at https://bottlecapdave.github.io/HomeAssistant-OctopusEnergy/entities/octoplus/#free-electricity-session-events.
       selector:
         entity:
           filter:
@@ -55,15 +55,15 @@ blueprint:
             integration: octopus_energy
           multiple: false
     octopus_energy_free_electricity_weighting:
-      name: Free Electricity events
-      description: The free electricity event sensor supplied by Octopus Energy
+      name: Free Electricity weighting
+      description: The weighting to apply to the value if a rate period falls within a free electricity session.
       default: 1
       selector:
         number:
           mode: box
     carbon_intensity_current_day_rates:
       name: Current day rates
-      description: The current day rates event sensor supplied by Carbon Intensity
+      description: The current day rates event sensor supplied by Carbon Intensity. More information can be found at https://bottlecapdave.github.io/HomeAssistant-CarbonIntensity/entities/#current-day-rates.
       selector:
         entity:
           filter:
@@ -73,7 +73,7 @@ blueprint:
           multiple: false
     carbon_intensity_next_day_rates:
       name: Next day rates
-      description: The next day rates event sensor supplied by Carbon Intensity
+      description: The next day rates event sensor supplied by Carbon Intensity. More information can be found at https://bottlecapdave.github.io/HomeAssistant-CarbonIntensity/entities/#next-day-rates.
       selector:
         entity:
           filter:
@@ -109,71 +109,68 @@ condition: []
 action:
 - action: target_timeframes.update_target_timeframe_data_source
   data: >
-    {% set all_oe_rates = [] %}
-    {% if state_attr(octopus_energy_previous_day_rates, 'rates') != None %}
-      {% set all_oe_rates = all_oe_rates + state_attr(octopus_energy_previous_day_rates, 'rates') %}
-    {% endif %}
-    {% if state_attr(octopus_energy_current_day_rates, 'rates') != None %}
-      {% set all_oe_rates = all_oe_rates + state_attr(octopus_energy_current_day_rates, 'rates') %}
-    {% endif %}
-    {% if state_attr(octopus_energy_next_day_rates, 'rates') != None %}
-      {% set all_oe_rates = all_oe_rates + state_attr(octopus_energy_next_day_rates, 'rates') %}
-    {% endif %}
-    {% set free_electricity_rates = [] %}
-    {% if state_attr(octopus_energy_free_electricity, 'rates') != None %}
-      {% set free_electricity_rates = state_attr(octopus_energy_free_electricity, 'events') %}
-    {% endif %}
+    {%- set all_oe_rates = [] -%}
+    {%- if state_attr(octopus_energy_previous_day_rates, 'rates') != None -%}
+      {%- set all_oe_rates = all_oe_rates + state_attr(octopus_energy_previous_day_rates, 'rates') -%}
+    {%- endif -%}
+    {%- if state_attr(octopus_energy_current_day_rates, 'rates') != None -%}
+      {%- set all_oe_rates = all_oe_rates + state_attr(octopus_energy_current_day_rates, 'rates') -%}
+    {%- endif -%}
+    {%- if state_attr(octopus_energy_next_day_rates, 'rates') != None -%}
+      {%- set all_oe_rates = all_oe_rates + state_attr(octopus_energy_next_day_rates, 'rates') -%}
+    {%- endif -%}
+    {%- set free_electricity_rates = [] -%}
+    {%- if state_attr(octopus_energy_free_electricity, 'rates') != None -%}
+      {%- set free_electricity_rates = state_attr(octopus_energy_free_electricity, 'events') -%}
+    {%- endif -%}
 
-    {% set all_ci_rates = [] %}
-    {% if state_attr(carbon_intensity_current_day_rates, 'rates') != None %}
-      {% set all_ci_rates = all_ci_rates + state_attr(carbon_intensity_current_day_rates, 'rates') %}
-    {% endif %}
-    {% if state_attr(carbon_intensity_next_day_rates, 'rates') != None %}
-      {% set all_ci_rates = all_ci_rates + state_attr(carbon_intensity_next_day_rates, 'rates') %}
-    {% endif %}
+    {%- set all_ci_rates = [] -%}
+    {%- if state_attr(carbon_intensity_current_day_rates, 'rates') != None -%}
+      {%- set all_ci_rates = all_ci_rates + state_attr(carbon_intensity_current_day_rates, 'rates') -%}
+    {%- endif -%}
+    {%- if state_attr(carbon_intensity_next_day_rates, 'rates') != None -%}
+      {%- set all_ci_rates = all_ci_rates + state_attr(carbon_intensity_next_day_rates, 'rates') -%}
+    {%- endif -%}
 
-    {% set data = namespace(new_rates=[]) %}
-    {% for rate in all_oe_rates %}
-      {% set start = rate["start"] | as_timestamp | timestamp_utc %}
-      {% set end = rate["end"] | as_timestamp | timestamp_utc %}
-      {% set value = rate["value_inc_vat"] | float %}
+    {%- set data = namespace(new_rates=[]) -%}
+    {%- for rate in all_oe_rates -%}
+      {%- set start = rate["start"] | as_timestamp | timestamp_utc -%}
+      {%- set end = rate["end"] | as_timestamp | timestamp_utc -%}
+      {%- set value = rate["value_inc_vat"] | float -%}
       
-      {% set free_namespace = namespace(is_free=False) %}
-      {% for free_session in free_electricity_rates %}
-        {% set free_start = free_session["start"] | as_timestamp | timestamp_utc %}
-        {% set free_end = free_session["end"] | as_timestamp | timestamp_utc %}
-        {% if free_start <= start and free_end > start %}
-          {% set free_namespace.is_free = True %}
-        {% endif %}
-      {% endfor %}
+      {%- set free_namespace = namespace(is_free=False) -%}
+      {%- for free_session in free_electricity_rates -%}
+        {%- set free_start = free_session["start"] | as_timestamp | timestamp_utc -%}
+        {%- set free_end = free_session["end"] | as_timestamp | timestamp_utc -%}
+        {%- if free_start <= start and free_end > start -%}
+          {%- set free_namespace.is_free = True -%}
+        {%- endif -%}
+      {%- endfor -%}
       
-      {% set carbon_intensity_namespace = namespace(rate=None) %}
-      {% for carbon_intensity_rate in all_ci_rates %}
-        {% set carbon_intensity_start = carbon_intensity_rate["from"] | as_timestamp | timestamp_utc %}
-        {% set carbon_intensity_end = carbon_intensity_rate["to"] | as_timestamp | timestamp_utc %}
-        {% if carbon_intensity_start == start and carbon_intensity_end == end %}
-          {% set carbon_intensity_namespace.rate = carbon_intensity_rate %}
-        {% endif %}
-      {% endfor %}
+      {%- set carbon_intensity_namespace = namespace(rate=None) -%}
+      {%- for carbon_intensity_rate in all_ci_rates -%}
+        {%- set carbon_intensity_start = carbon_intensity_rate["from"] | as_timestamp | timestamp_utc -%}
+        {%- set carbon_intensity_end = carbon_intensity_rate["to"] | as_timestamp | timestamp_utc -%}
+        {%- if carbon_intensity_start == start and carbon_intensity_end == end -%}
+          {%- set carbon_intensity_namespace.rate = carbon_intensity_rate -%}
+        {%- endif -%}
+      {%- endfor -%}
 
-      {% if carbon_intensity_namespace.rate %}
-        {% set value = value * (carbon_intensity_namespace.rate["intensity_forecast"] | float) %}
-      {% endif %}
+      {%- set metadata = { "rate": rate["value_inc_vat"], "is_capped": rate["is_capped"] } -%}
+      {%- if carbon_intensity_namespace.rate -%}
+        {%- set value = value * (carbon_intensity_namespace.rate["intensity_forecast"] | float) -%}
+        {%- set metadata = dict(metadata.items(), carbon_intensity=carbon_intensity_namespace.rate["intensity_forecast"] | float) -%}
+      {%- endif -%}
       
-      {% set metadata = { "rate": rate["value_inc_vat"], "is_capped": rate["is_capped"] } %}
-      {% if free_namespace.is_free %}
-        {% set value = value * octopus_energy_free_electricity_weighting %}
-        {% set metadata = dict(metadata.items(), is_free_session=free_namespace.is_free) %}
-      {% endif %}
-
-      {% if carbon_intensity_namespace.rate %}
-        {% set metadata = dict(metadata.items(), generation_mix=carbon_intensity_namespace.rate["generation_mix"]) %}
-      {% endif %}
+      {%- if free_namespace.is_free -%}
+        {%- set value = value * octopus_energy_free_electricity_weighting -%}
+        {%- set metadata = dict(metadata.items(), is_free_session=free_namespace.is_free) -%}
+      {%- endif -%}
       
-      {% set new_rate = [{ 'start': start , 'end': end, 'value': value, 'metadata': metadata }] %}
+      {%- set new_rate = [{ 'start': start , 'end': end, 'value': value, 'metadata': metadata }] -%}
       
-      {% set data.new_rates = data.new_rates + new_rate %}
-    {% endfor %}
+      {%- set data.new_rates = data.new_rates + new_rate -%}
+    {%- endfor -%}
     {{ { 'data': data.new_rates } }}
   target:
     entity_id: !input target_timeframe_data_source_sensor
