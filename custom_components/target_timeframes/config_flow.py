@@ -122,7 +122,7 @@ class TargetTimePeriodSubentryFlowHandler(ConfigSubentryFlow):
 
     if len(errors) < 1 and user_input is not None:
       return self.async_update_and_abort(
-        self._get_reconfigure_entry(),
+        self._get_entry(),
         self._get_reconfigure_subentry(),
         data_updates=config,
       )
@@ -167,7 +167,7 @@ class RollingTargetTimePeriodSubentryFlowHandler(ConfigSubentryFlow):
 
     if len(errors) < 1 and user_input is not None:
       return self.async_update_and_abort(
-        self._get_reconfigure_entry(),
+        self._get_entry(),
         self._get_reconfigure_subentry(),
         data_updates=config,
       )
