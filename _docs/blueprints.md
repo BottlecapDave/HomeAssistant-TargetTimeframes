@@ -18,11 +18,21 @@ This blueprint will provide the data source for the UK Carbon Intensity as provi
 
 ### Octopus Energy
 
-[Install blueprint (No Free Electricity)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fbottlecapdave.github.io%2FHomeAssistant-TargetTimeframes%2Fblueprints%2Ftarget_timeframes_octopus_energy.yaml) | [Source](./blueprints/target_timeframes_octopus_energy.yaml)
+#### Default
 
-[Install blueprint (Free Electricity Included)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fbottlecapdave.github.io%2FHomeAssistant-TargetTimeframes%2Fblueprints%2Ftarget_timeframes_octopus_energy_with_free_electricity.yaml) | [Source](./blueprints/target_timeframes_octopus_energy_with_free_electricity.yaml)
+[Install blueprint)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fbottlecapdave.github.io%2FHomeAssistant-TargetTimeframes%2Fblueprints%2Ftarget_timeframes_octopus_energy.yaml) | [Source](./blueprints/target_timeframes_octopus_energy.yaml)
 
-This blueprint will provide the data source for Octopus Energy rates as provided by the [Octopus Energy](https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy) integration.
+This blueprint will provide the data source for Octopus Energy rates as provided by the [Octopus Energy](https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy) integration. This is for accounts that don't have the [free electricity sensor](https://bottlecapdave.github.io/HomeAssistant-OctopusEnergy/entities/octoplus/#free-electricity-session-events) available.
+
+!!! warning
+
+    This automation will run when any of the underlying entities update. This make take a while initially. If you want the data available immediately, then you'll need to run the automation manually.
+
+#### Free Electricity Available
+
+[Install blueprint](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fbottlecapdave.github.io%2FHomeAssistant-TargetTimeframes%2Fblueprints%2Ftarget_timeframes_octopus_energy_with_free_electricity.yaml) | [Source](./blueprints/target_timeframes_octopus_energy_with_free_electricity.yaml)
+
+This blueprint will provide the data source for Octopus Energy rates as provided by the [Octopus Energy](https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy) integration. This is for accounts that have the [free electricity sensor](https://bottlecapdave.github.io/HomeAssistant-OctopusEnergy/entities/octoplus/#free-electricity-session-events) available.
 
 !!! warning
 
