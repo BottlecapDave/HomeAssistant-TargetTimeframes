@@ -552,6 +552,30 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Octopus Energy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#default" class="md-nav__link">
+    <span class="md-ellipsis">
+      Default
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#free-electricity-available" class="md-nav__link">
+    <span class="md-ellipsis">
+      Free Electricity Available
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -668,6 +692,30 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Octopus Energy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#default" class="md-nav__link">
+    <span class="md-ellipsis">
+      Default
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#free-electricity-available" class="md-nav__link">
+    <span class="md-ellipsis">
+      Free Electricity Available
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -714,9 +762,16 @@
 <p>This automation will run when any of the underlying entities update. This make take a while initially. If you want the data available immediately, then you'll need to run the automation manually.</p>
 </div>
 <h3 id="octopus-energy">Octopus Energy<a class="headerlink" href="#octopus-energy" title="Permanent link">#</a></h3>
-<p><a href="https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fbottlecapdave.github.io%2FHomeAssistant-TargetTimeframes%2Fblueprints%2Ftarget_timeframes_octopus_energy.yaml">Install blueprint (No Free Electricity)</a> | <a href="target_timeframes_octopus_energy.yaml">Source</a></p>
-<p><a href="https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fbottlecapdave.github.io%2FHomeAssistant-TargetTimeframes%2Fblueprints%2Ftarget_timeframes_octopus_energy_with_free_electricity.yaml">Install blueprint (Free Electricity Included)</a> | <a href="target_timeframes_octopus_energy_with_free_electricity.yaml">Source</a></p>
-<p>This blueprint will provide the data source for Octopus Energy rates as provided by the <a href="https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy">Octopus Energy</a> integration.</p>
+<h4 id="default">Default<a class="headerlink" href="#default" title="Permanent link">#</a></h4>
+<p><a href="https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fbottlecapdave.github.io%2FHomeAssistant-TargetTimeframes%2Fblueprints%2Ftarget_timeframes_octopus_energy.yaml">Install blueprint)</a> | <a href="target_timeframes_octopus_energy.yaml">Source</a></p>
+<p>This blueprint will provide the data source for Octopus Energy rates as provided by the <a href="https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy">Octopus Energy</a> integration. This is for accounts that don't have the <a href="https://bottlecapdave.github.io/HomeAssistant-OctopusEnergy/entities/octoplus/#free-electricity-session-events">free electricity sensor</a> available.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This automation will run when any of the underlying entities update. This make take a while initially. If you want the data available immediately, then you'll need to run the automation manually.</p>
+</div>
+<h4 id="free-electricity-available">Free Electricity Available<a class="headerlink" href="#free-electricity-available" title="Permanent link">#</a></h4>
+<p><a href="https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fbottlecapdave.github.io%2FHomeAssistant-TargetTimeframes%2Fblueprints%2Ftarget_timeframes_octopus_energy_with_free_electricity.yaml">Install blueprint</a> | <a href="target_timeframes_octopus_energy_with_free_electricity.yaml">Source</a></p>
+<p>This blueprint will provide the data source for Octopus Energy rates as provided by the <a href="https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy">Octopus Energy</a> integration. This is for accounts that have the <a href="https://bottlecapdave.github.io/HomeAssistant-OctopusEnergy/entities/octoplus/#free-electricity-session-events">free electricity sensor</a> available.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>This automation will run when any of the underlying entities update. This make take a while initially. If you want the data available immediately, then you'll need to run the automation manually.</p>
