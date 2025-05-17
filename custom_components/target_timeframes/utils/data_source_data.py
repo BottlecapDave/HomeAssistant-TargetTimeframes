@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any
 
 from pydantic import BaseModel
@@ -79,3 +79,25 @@ def _validate_time(value: datetime, key: str, index: int):
     return f"{key} second and microsecond must equal 0 at index {index}"
   
   return None
+
+def merge_data_source_data(current: datetime, new_data: list[DataSourceItem], current_data: list[DataSourceItem]):
+  merged_data: list[DataSourceItem] = []
+  merged_data.extend(new_data)
+  earliest_item = current.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1)
+
+  if current_data is not None:
+    for item in current_data:
+      if item.end <= earliest_item:
+        continue
+
+      exists = False
+      for merged_item in merged_data:
+        if merged_item.start == item.start and merged_item.end == item.end:
+          exists = True
+          break
+
+      if exists == False:
+        merged_data.append(item)
+
+  merged_data.sort(key=lambda x: x.start)
+  return merged_data

@@ -30,6 +30,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
               }
             ],
           ),
+          vol.Optional("replace_all_existing_data"): bool,
         },
         extra=vol.ALLOW_EXTRA,
       ),

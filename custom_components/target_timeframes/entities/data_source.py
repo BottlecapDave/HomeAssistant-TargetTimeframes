@@ -19,7 +19,7 @@ from homeassistant.helpers.entity import generate_entity_id
 from ..utils.attributes import dict_to_typed_dict
 from ..const import DOMAIN, EVENT_DATA_SOURCE
 from ..storage.data_source_data import async_save_cached_data_source_data
-from ..utils.data_source_data import validate_data_source_data
+from ..utils.data_source_data import DataSourceItem, merge_data_source_data, validate_data_source_data
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -82,7 +82,7 @@ class TargetTimePeriodDataSource(RestoreSensor):
       _LOGGER.debug(f'Restored state: {self._state}')
 
   @callback
-  async def async_update_target_timeframe_data_source(self, data):
+  async def async_update_target_timeframe_data_source(self, data, replace_all_existing_data = False):
     """Update target timeframe data source"""
     result = validate_data_source_data(data, self._source_id)
     if result.success == False:
@@ -94,9 +94,21 @@ class TargetTimePeriodDataSource(RestoreSensor):
         },
       )
     
-    await async_save_cached_data_source_data(self._hass, self._source_id, result.data)
+    data_source_data = (
+      result.data 
+      if replace_all_existing_data
+      else merge_data_source_data(
+        utcnow(),
+        result.data,
+        list(map(lambda x: DataSourceItem.parse_obj(x), self._attributes["data"]))
+        if "data" in self._attributes
+        else None
+      )
+    )
+
+    await async_save_cached_data_source_data(self._hass, self._source_id, data_source_data)
     
-    data_dict = list(map(lambda x: x.dict(), result.data))
+    data_dict = list(map(lambda x: x.dict(), data_source_data))
     self._attributes["data"] = data_dict
     self._state = utcnow()
     self.async_write_ha_state()
