@@ -29,7 +29,7 @@ To install, place the contents of `custom_components` into the `<config director
 
 ## How to setup
 
-You will initially need to setup one or more [data sources](./setup/data_source.md). You'll then need to setup one or more [target timeframe](./setup/target_timeframe.md) or [rolling target timeframe](./setup/rolling_target_timeframe.md) sensors.
+It is recommended to consult the [getting started](./setup/getting_started.md) guide.
 
 ## Events
 
