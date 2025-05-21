@@ -2,7 +2,7 @@ import logging
 
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import ServiceValidationError
-from homeassistant.util.dt import (utcnow)
+from homeassistant.util.dt import (utcnow, now)
 
 from homeassistant.const import (
     STATE_UNAVAILABLE,
@@ -98,7 +98,7 @@ class TargetTimePeriodDataSource(RestoreSensor):
       result.data 
       if replace_all_existing_data
       else merge_data_source_data(
-        utcnow(),
+        now(),
         result.data,
         list(map(lambda x: DataSourceItem.parse_obj(x), self._attributes["data"]))
         if "data" in self._attributes

@@ -49,6 +49,7 @@ from . import (
   extract_config,
   get_fixed_applicable_time_periods,
   get_target_time_period_info,
+  is_target_timeframe_complete_in_period,
   should_evaluate_target_timeframes
 )
 
@@ -128,7 +129,8 @@ class TargetTimeframesTargetRate(BinarySensorEntity, RestoreEntity):
     # Find the current rate. Rates change a maximum of once every 30 minutes.
     current_date = utcnow()
 
-    should_evaluate = should_evaluate_target_timeframes(current_date, self._target_timeframes, self._config[CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE] if CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE in self._config else CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALL_IN_PAST)
+    evaluation_mode = self._config[CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE] if CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE in self._config else CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALL_IN_PAST
+    should_evaluate = should_evaluate_target_timeframes(current_date, self._target_timeframes, evaluation_mode)
     if should_evaluate:
       _LOGGER.debug(f'{len(self._data_source_data) if self._data_source_data is not None else None} time periods found')
 
@@ -172,7 +174,9 @@ class TargetTimeframesTargetRate(BinarySensorEntity, RestoreEntity):
           is_rolling_target
         )
 
-        if applicable_time_periods is not None:
+        is_target_timeframe_complete = is_rolling_target == False and is_target_timeframe_complete_in_period(current_local_date, applicable_time_periods, self._target_timeframes)
+
+        if applicable_time_periods is not None and is_target_timeframe_complete == False:
           number_of_slots = math.ceil(target_hours * 2)
           weighting = create_weighting(self._config[CONFIG_TARGET_WEIGHTING] if CONFIG_TARGET_WEIGHTING in self._config else None, number_of_slots)
 
