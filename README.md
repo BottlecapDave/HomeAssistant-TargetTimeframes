@@ -29,7 +29,7 @@ To install, place the contents of `custom_components` into the `<config director
 
 ## How to setup
 
-You will initially need to setup one or more [data sources](https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/data_source). You'll then need to setup one or more [target timeframe](https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/target_timeframe) or [rolling target timeframe](https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/rolling_target_timeframe) sensors.
+It is recommended to consult the [getting started](https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/getting_started) guide.
 
 ## Events
 

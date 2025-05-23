@@ -6,13 +6,14 @@ There are a few services available within this integration, which are detailed h
 
 ### target_timeframes.update_target_timeframe_data_source
 
-Updates the source data for a given targetframe period. This will replace any existing data for the source.
+Updates the source data for a given target frame. This will update any existing data for the source, but keep any existing data that hasn't been provided. It will also remove any data that is older than 1 day previous to today. For example, if today is 2025-05-17, then all data before 2025-05-16 will be removed.
 
 There are a collection of [blueprints](./blueprints.md#data-sources) available for loading popular data sources.
 
 | Attribute                | Optional | Description                                                                                                           |
 | ------------------------ | -------- | --------------------------------------------------------------------------------------------------------------------- |
 | `target.entity_id`       | `no`     | The name of the [data source last updated](./setup/data_source.md#data-source-last-updated) sensor whose underlying data is to be updated.                                                   |
+| `data.replace_all_existing_data` | `yes` | Determines if the provided data should replace all existing data. If not provided or false, then new data will be added to existing data and existing data will be replaced where start/end times match. |
 | `data.data`      | `no`    | The collection of data to update the data source with. This will override any previous data. For the target rate sensors to work properly, you should target having data for the whole of yesterday, today and tomorrow (e.g. if today is 2025-01-04, you should aim to have data from 2025-01-03T00:00:00 to 2025-01-06T00:00:00).
 
 The structure of the data should match the following

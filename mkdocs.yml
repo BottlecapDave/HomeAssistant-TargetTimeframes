@@ -5,6 +5,7 @@ docs_dir: _docs
 nav:
   - Home: index.md
   - Setup:
+    - ./setup/getting_started.md
     - ./setup/data_source.md
     - ./setup/target_timeframe.md
     - ./setup/rolling_target_timeframe.md

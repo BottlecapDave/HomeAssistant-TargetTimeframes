@@ -148,3 +148,8 @@ update_target_timeframe_data_source:
         ]
       selector:
         object:
+    replace_all_existing_data:
+      name: Replace data
+      description: Determines if the provided data should replace all existing data. If not provided or false, then new data will be added to existing data and existing data will be replaced where start/end times match.
+      selector:
+        boolean:

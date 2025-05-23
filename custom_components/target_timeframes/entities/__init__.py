@@ -33,6 +33,16 @@ def apply_offset(date_time: datetime, offset: str, inverse = False):
   
   return date_time + timedelta(hours=hours, minutes=minutes, seconds=seconds)
 
+def is_target_timeframe_complete_in_period(current_date: datetime, applicable_time_periods: list | None, target_timeframes: list | None):
+  if applicable_time_periods is None or target_timeframes is None or len(applicable_time_periods) < 1 or len(target_timeframes) < 1:
+    return False
+  
+  return (
+    applicable_time_periods[0]["start"] <= target_timeframes[0]["start"] and 
+    applicable_time_periods[-1]["end"] >= target_timeframes[-1]["end"] and
+    target_timeframes[-1]["end"] <= current_date
+  )
+
 def get_fixed_applicable_time_periods(current_date: datetime, target_start_time: str, target_end_time: str, time_period_values: list, is_rolling_target = True):
   if (target_start_time is not None):
     target_start = parse_datetime(current_date.strftime(f"%Y-%m-%dT{target_start_time}:00%z"))
