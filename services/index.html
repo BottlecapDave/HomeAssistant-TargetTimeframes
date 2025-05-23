@@ -308,6 +308,27 @@
   
   
     <li class="md-nav__item">
+      <a href="../setup/getting_started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../setup/data_source/" class="md-nav__link">
         
   
@@ -856,7 +877,7 @@
 <p>There are a few services available within this integration, which are detailed here.</p>
 <h2 id="data-sources">Data Sources<a class="headerlink" href="#data-sources" title="Permanent link">#</a></h2>
 <h3 id="target_timeframesupdate_target_timeframe_data_source">target_timeframes.update_target_timeframe_data_source<a class="headerlink" href="#target_timeframesupdate_target_timeframe_data_source" title="Permanent link">#</a></h3>
-<p>Updates the source data for a given targetframe period. This will replace any existing data for the source.</p>
+<p>Updates the source data for a given target frame. This will update any existing data for the source, but keep any existing data that hasn't been provided. It will also remove any data that is older than 1 day previous to today. For example, if today is 2025-05-17, then all data before 2025-05-16 will be removed.</p>
 <p>There are a collection of <a href="../blueprints/#data-sources">blueprints</a> available for loading popular data sources.</p>
 <table>
 <thead>
@@ -871,6 +892,11 @@
 <td><code>target.entity_id</code></td>
 <td><code>no</code></td>
 <td>The name of the <a href="../setup/data_source/#data-source-last-updated">data source last updated</a> sensor whose underlying data is to be updated.</td>
+</tr>
+<tr>
+<td><code>data.replace_all_existing_data</code></td>
+<td><code>yes</code></td>
+<td>Determines if the provided data should replace all existing data. If not provided or false, then new data will be added to existing data and existing data will be replaced where start/end times match.</td>
 </tr>
 <tr>
 <td><code>data.data</code></td>
