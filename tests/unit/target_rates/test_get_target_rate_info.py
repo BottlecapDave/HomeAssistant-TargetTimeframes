@@ -10,7 +10,7 @@ from zoneinfo import ZoneInfo
 @pytest.mark.asyncio
 async def test_when_called_before_rates_then_not_active_returned():
   # Arrange
-  rates = [
+  values = [
     {
       "start": datetime.strptime("2022-02-09T10:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
       "end":  datetime.strptime("2022-02-09T10:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
@@ -33,7 +33,7 @@ async def test_when_called_before_rates_then_not_active_returned():
   # Act
   result = get_target_time_period_info(
     current_date,
-    rates
+    values
   )
 
   # Assert
@@ -49,7 +49,7 @@ async def test_when_called_before_rates_then_not_active_returned():
   assert result["current_min_value"] == None
   assert result["current_max_value"] == None
 
-  assert result["next_time"] == rates[0]["start"]
+  assert result["next_time"] == values[0]["start"]
   assert result["next_duration_in_hours"] == 1
   assert result["next_average_value"] == 7.5
   assert result["next_min_value"] == 5
@@ -96,7 +96,7 @@ async def test_when_called_before_rates_then_not_active_returned():
   ])
 async def test_when_called_during_rates_then_active_returned(test):
   # Arrange
-  rates = [
+  values = [
     {
       "start": datetime.strptime("2022-02-09T10:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
       "end":  datetime.strptime("2022-02-09T10:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
@@ -131,7 +131,7 @@ async def test_when_called_during_rates_then_active_returned(test):
 
   result = get_target_time_period_info(
     test["current_date"],
-    rates
+    values
   )
 
   # Assert
@@ -160,7 +160,7 @@ async def test_when_called_after_rates_then_not_active_returned():
   period_to = datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z")
   expected_values = [0.1, 0.2]
 
-  rates = create_data_source_data(
+  values = create_data_source_data(
     period_from,
     period_to,
     expected_values
@@ -171,7 +171,7 @@ async def test_when_called_after_rates_then_not_active_returned():
   # Act
   result = get_target_time_period_info(
     current_date,
-    rates
+    values
   )
 
   # Assert
@@ -196,7 +196,7 @@ async def test_when_offset_set_then_active_at_correct_current_time():
   # Arrange
   offset = "-01:00:00"
 
-  rates = [
+  values = [
     {
       "start": datetime.strptime("2022-02-09T10:00:00Z", "%Y-%m-%dT%H:%M:%S%z"),
       "end":  datetime.strptime("2022-02-09T10:30:00Z", "%Y-%m-%dT%H:%M:%S%z"),
@@ -219,7 +219,7 @@ async def test_when_offset_set_then_active_at_correct_current_time():
 
   result = get_target_time_period_info(
     current_date,
-    rates,
+    values,
     offset
   )
 
@@ -239,13 +239,13 @@ async def test_when_offset_set_then_active_at_correct_current_time():
   assert result["next_min_value"] == 10
   assert result["next_max_value"] == 15
 
-  # Check where's within our rates and our offset
+  # Check where's within our values and our offset
   for minutes_to_add in range(60):
-    current_date = rates[0]["start"] - timedelta(hours=1) + timedelta(minutes=minutes_to_add)
+    current_date = values[0]["start"] - timedelta(hours=1) + timedelta(minutes=minutes_to_add)
 
     result = get_target_time_period_info(
       current_date,
-      rates,
+      values,
       offset
     )
 
@@ -266,11 +266,11 @@ async def test_when_offset_set_then_active_at_correct_current_time():
     assert result["next_max_value"] == 5
 
   # Check when within rate but after offset
-  current_date = rates[0]["start"] + timedelta(minutes=1)
+  current_date = values[0]["start"] + timedelta(minutes=1)
 
   result = get_target_time_period_info(
     current_date,
-    rates,
+    values,
     offset
   )
 
@@ -296,7 +296,7 @@ async def test_when_current_date_is_equal_to_last_end_date_then_not_active():
   period_from = datetime.strptime("2022-10-09T00:30:00Z", "%Y-%m-%dT%H:%M:%S%z")
   period_to = datetime.strptime("2022-10-09T04:30:00Z", "%Y-%m-%dT%H:%M:%S%z")
   expected_values = [0.16511, 0.16512, 0.16999]
-  rates = create_data_source_data(
+  values = create_data_source_data(
     period_from,
     period_to,
     expected_values
@@ -306,7 +306,7 @@ async def test_when_current_date_is_equal_to_last_end_date_then_not_active():
 
   result = get_target_time_period_info(
     current_date,
-    rates,
+    values,
     None
   )
 
@@ -335,7 +335,7 @@ async def test_when_clocks_go_back_then_correct_result_returned():
   applicable_time_periods.sort(key=lambda x: (x["start"].timestamp(), x["start"].fold))
 
   # Act
-  rates = calculate_intermittent_times(
+  values = calculate_intermittent_times(
     applicable_time_periods,
     12,
     False,
@@ -348,7 +348,7 @@ async def test_when_clocks_go_back_then_correct_result_returned():
   # Act
   result = get_target_time_period_info(
     current_date,
-    rates
+    values
   )
 
   # Assert

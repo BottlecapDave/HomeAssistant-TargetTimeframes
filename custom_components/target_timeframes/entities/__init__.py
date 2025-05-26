@@ -33,17 +33,17 @@ def apply_offset(date_time: datetime, offset: str, inverse = False):
   
   return date_time + timedelta(hours=hours, minutes=minutes, seconds=seconds)
 
-def is_target_timeframe_complete_in_period(current_date: datetime, applicable_time_periods: list | None, target_timeframes: list | None):
-  if applicable_time_periods is None or target_timeframes is None or len(applicable_time_periods) < 1 or len(target_timeframes) < 1:
+def is_target_timeframe_complete_in_period(current_date: datetime, start_time: datetime, end_time: datetime, target_timeframes: list | None):
+  if target_timeframes is None or len(target_timeframes) < 1:
     return False
   
   return (
-    applicable_time_periods[0]["start"] <= target_timeframes[0]["start"] and 
-    applicable_time_periods[-1]["end"] >= target_timeframes[-1]["end"] and
+    start_time <= target_timeframes[0]["start"] and 
+    end_time >= target_timeframes[-1]["end"] and
     target_timeframes[-1]["end"] <= current_date
   )
 
-def get_fixed_applicable_time_periods(current_date: datetime, target_start_time: str, target_end_time: str, time_period_values: list, is_rolling_target = True):
+def get_start_and_end_times(current_date: datetime, target_start_time: str, target_end_time: str, start_time_not_in_past = True):
   if (target_start_time is not None):
     target_start = parse_datetime(current_date.strftime(f"%Y-%m-%dT{target_start_time}:00%z"))
   else:
@@ -65,7 +65,7 @@ def get_fixed_applicable_time_periods(current_date: datetime, target_start_time:
       target_end = target_end + timedelta(days=1)
 
   # If our start date has passed, reset it to current_date to avoid picking a slot in the past
-  if (is_rolling_target == True and target_start < current_date and current_date < target_end):
+  if (start_time_not_in_past == True and target_start < current_date and current_date < target_end):
     _LOGGER.debug(f'Rolling target and {target_start} is in the past. Setting start to {current_date}')
     target_start = current_date
 
@@ -74,6 +74,9 @@ def get_fixed_applicable_time_periods(current_date: datetime, target_start_time:
     target_start = target_start + timedelta(days=1)
     target_end = target_end + timedelta(days=1)
 
+  return (target_start, target_end)
+
+def get_fixed_applicable_time_periods(target_start: datetime, target_end: datetime, time_period_values: list):
   _LOGGER.debug(f'Finding rates between {target_start} and {target_end}')
 
   # Retrieve the rates that are applicable for our target rate
