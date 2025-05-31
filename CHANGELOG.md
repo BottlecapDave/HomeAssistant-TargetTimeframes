@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/BottlecapDave/homeassistant-targettimeframes/compare/v1.1.0...v1.1.1) (2025-05-31)
+
+
+### Bug Fixes
+
+* Fixed issue where started target timeframes are calculated and it starts in the past (2 hours dev time) ([fe54ba0](https://github.com/BottlecapDave/homeassistant-targettimeframes/commit/fe54ba036c10af23cd2d4a2ee495b6b6123ee025))
+
 # [1.1.0](https://github.com/BottlecapDave/homeassistant-targettimeframes/compare/v1.0.4...v1.1.0) (2025-05-23)
 
 
