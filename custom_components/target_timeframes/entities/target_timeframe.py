@@ -48,6 +48,7 @@ from . import (
   create_weighting,
   extract_config,
   get_fixed_applicable_time_periods,
+  get_start_and_end_times,
   get_target_time_period_info,
   is_target_timeframe_complete_in_period,
   should_evaluate_target_timeframes
@@ -166,22 +167,24 @@ class TargetTimeframesTargetRate(BinarySensorEntity, RestoreEntity):
         if CONFIG_TARGET_MAX_VALUE in self._config:
           max_rate = self._config[CONFIG_TARGET_MAX_VALUE]
 
+        target_start, target_end = get_start_and_end_times(current_local_date, start_time, end_time, True)
         applicable_time_periods = get_fixed_applicable_time_periods(
-          current_local_date,
-          start_time,
-          end_time,
-          self._data_source_data,
-          is_rolling_target
+          target_start,
+          target_end,
+          self._data_source_data
         )
 
-        is_target_timeframe_complete = is_rolling_target == False and is_target_timeframe_complete_in_period(current_local_date, applicable_time_periods, self._target_timeframes)
+        # Make sure we haven't already completed for the current target timeframe
+        applicable_target_start, applicable_target_end = get_start_and_end_times(current_local_date, start_time, end_time, False)
+        is_target_timeframe_complete = is_rolling_target == False and is_target_timeframe_complete_in_period(current_local_date, applicable_target_start, applicable_target_end, self._target_timeframes)
 
         if applicable_time_periods is not None and is_target_timeframe_complete == False:
           number_of_slots = math.ceil(target_hours * 2)
           weighting = create_weighting(self._config[CONFIG_TARGET_WEIGHTING] if CONFIG_TARGET_WEIGHTING in self._config else None, number_of_slots)
 
+          proposed_target_timeframes = None
           if (self._config[CONFIG_TARGET_TYPE] == CONFIG_TARGET_TYPE_CONTINUOUS):
-            self._target_timeframes = calculate_continuous_times(
+            proposed_target_timeframes = calculate_continuous_times(
               applicable_time_periods,
               target_hours,
               find_highest_values,
@@ -192,7 +195,7 @@ class TargetTimeframesTargetRate(BinarySensorEntity, RestoreEntity):
               hours_mode = self._config[CONFIG_TARGET_HOURS_MODE]
             )
           elif (self._config[CONFIG_TARGET_TYPE] == CONFIG_TARGET_TYPE_INTERMITTENT):
-            self._target_timeframes = calculate_intermittent_times(
+            proposed_target_timeframes = calculate_intermittent_times(
               applicable_time_periods,
               target_hours,
               find_highest_values,
@@ -204,6 +207,7 @@ class TargetTimeframesTargetRate(BinarySensorEntity, RestoreEntity):
           else:
             _LOGGER.error(f"Unexpected target type: {self._config[CONFIG_TARGET_TYPE]}")
 
+          self._target_timeframes = proposed_target_timeframes
           self._attributes["target_times"] = self._target_timeframes
           self._attributes["target_times_last_evaluated"] = current_date
           _LOGGER.debug(f"calculated rates: {self._target_timeframes}")

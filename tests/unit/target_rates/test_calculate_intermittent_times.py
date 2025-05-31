@@ -4,7 +4,7 @@ from custom_components.target_timeframes.const import CONFIG_TARGET_HOURS_MODE_M
 import pytest
 
 from unit import (create_data_source_data, default_time_periods)
-from custom_components.target_timeframes.entities import calculate_intermittent_times, get_fixed_applicable_time_periods
+from custom_components.target_timeframes.entities import calculate_intermittent_times, get_fixed_applicable_time_periods, get_start_and_end_times
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("current_date,target_start_time,target_end_time,expected_first_valid_from,is_rolling_target,find_last_rates",[
@@ -63,7 +63,7 @@ async def test_when_intermittent_times_present_then_next_intermittent_times_retu
   period_to = datetime.strptime("2022-02-11T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z")
   expected_values = [0.1, 0.2, 0.3]
 
-  rates = create_data_source_data(
+  values = create_data_source_data(
     period_from,
     period_to,
     expected_values
@@ -72,12 +72,12 @@ async def test_when_intermittent_times_present_then_next_intermittent_times_retu
   # Restrict our time block
   target_hours = 1
 
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, is_rolling_target)
+
   applicable_time_periods = get_fixed_applicable_time_periods(
-    current_date,
-    target_start_time,
-    target_end_time,
-    rates,
-    is_rolling_target
+    target_start_datetime,
+    target_end_datetime,
+    values
   )
 
   # Act
@@ -155,7 +155,7 @@ async def test_when_intermittent_times_present_and_highest_prices_are_true_then_
   period_to = datetime.strptime("2022-02-11T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z")
   expected_values = [0.1, 0.2, 0.3]
 
-  rates = create_data_source_data(
+  values = create_data_source_data(
     period_from,
     period_to,
     expected_values
@@ -164,12 +164,12 @@ async def test_when_intermittent_times_present_and_highest_prices_are_true_then_
   # Restrict our time block
   target_hours = 1
 
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, is_rolling_target)
+
   applicable_time_periods = get_fixed_applicable_time_periods(
-    current_date,
-    target_start_time,
-    target_end_time,
-    rates,
-    is_rolling_target
+    target_start_datetime,
+    target_end_datetime,
+    values
   )
 
   # Act
@@ -198,7 +198,7 @@ async def test_when_current_time_has_not_enough_time_left_then_no_intermittent_t
   period_to = datetime.strptime("2022-02-10T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z")
   expected_values = [0.1, 0.2, 0.3]
 
-  rates = create_data_source_data(
+  values = create_data_source_data(
     period_from,
     period_to,
     expected_values
@@ -210,12 +210,12 @@ async def test_when_current_time_has_not_enough_time_left_then_no_intermittent_t
   target_end_time = "18:00"
   target_hours = 1
 
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, True)
+
   applicable_time_periods = get_fixed_applicable_time_periods(
-    current_date,
-    target_start_time,
-    target_end_time,
-    rates,
-    True
+    target_start_datetime,
+    target_end_datetime,
+    values
   )
 
   # Act
@@ -238,12 +238,12 @@ async def test_when_using_agile_times_then_lowest_rates_are_picked():
   # Restrict our time block
   target_hours = 3
 
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, False)
+
   applicable_time_periods = get_fixed_applicable_time_periods(
-    current_date,
-    target_start_time,
-    target_end_time,
-    default_time_periods,
-    False
+    target_start_datetime,
+    target_end_datetime,
+    default_time_periods
   )
 
   # Act
@@ -290,12 +290,12 @@ async def test_when_available_rates_are_too_low_then_no_times_are_returned():
   # Restrict our time block
   target_hours = 3
 
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, False)
+
   applicable_time_periods = get_fixed_applicable_time_periods(
-    current_date,
-    target_start_time,
-    target_end_time,
-    default_time_periods,
-    False
+    target_start_datetime,
+    target_end_datetime,
+    default_time_periods
   )
 
   # Act
@@ -320,18 +320,18 @@ async def test_when_min_value_is_provided_then_result_does_not_include_any_rate_
   target_end_time = "16:00"
   min_value = 19
 
-  rates = create_data_source_data(
+  values = create_data_source_data(
     datetime.strptime("2022-10-22T16:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     datetime.strptime("2022-10-23T16:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     [19.1, 18.9, 19.5, 17.9, 16.5, 20.1]
   )
 
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, False)
+
   applicable_time_periods = get_fixed_applicable_time_periods(
-    current_date,
-    target_start_time,
-    target_end_time,
-    rates,
-    False
+    target_start_datetime,
+    target_end_datetime,
+    values
   )
 
   # Act
@@ -362,18 +362,18 @@ async def test_when_max_value_is_provided_then_result_does_not_include_any_rate_
   target_end_time = "16:00"
   max_value = 20.0
 
-  rates = create_data_source_data(
+  values = create_data_source_data(
     datetime.strptime("2022-10-22T16:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     datetime.strptime("2022-10-23T16:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     [19.1, 18.9, 19.5, 17.9, 16.5, 20.1]
   )
 
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, False)
+
   applicable_time_periods = get_fixed_applicable_time_periods(
-    current_date,
-    target_start_time,
-    target_end_time,
-    rates,
-    False
+    target_start_datetime,
+    target_end_datetime,
+    values
   )
 
   # Act
@@ -401,18 +401,18 @@ async def test_when_hour_mode_is_maximum_and_not_enough_hours_available_then_red
   target_end_time = "16:00"
   max_value = 19
 
-  rates = create_data_source_data(
+  values = create_data_source_data(
     datetime.strptime("2022-10-22T16:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     datetime.strptime("2022-10-23T16:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     [19.1, 18.9, 19.5, 18.9, 20.1, 18.9]
   )
 
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, False)
+
   applicable_time_periods = get_fixed_applicable_time_periods(
-    current_date,
-    target_start_time,
-    target_end_time,
-    rates,
-    False
+    target_start_datetime,
+    target_end_datetime,
+    values
   )
 
   # Act
@@ -442,18 +442,18 @@ async def test_when_hour_mode_is_maximum_and_more_than_enough_hours_available_th
   target_start_time = "16:00"
   target_end_time = "16:00"
 
-  rates = create_data_source_data(
+  values = create_data_source_data(
     datetime.strptime("2022-10-22T16:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     datetime.strptime("2022-10-23T16:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     [19.1, 18.9, 19.5, 18.9, 20.1, 18.9]
   )
 
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, False)
+
   applicable_time_periods = get_fixed_applicable_time_periods(
-    current_date,
-    target_start_time,
-    target_end_time,
-    rates,
-    False
+    target_start_datetime,
+    target_end_datetime,
+    values
   )
 
   # Act
@@ -483,18 +483,18 @@ async def test_when_hour_mode_is_minimum_and_not_enough_hours_available_then_no_
   target_end_time = "16:00"
   max_value = 19
 
-  rates = create_data_source_data(
+  values = create_data_source_data(
     datetime.strptime("2022-10-22T16:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     datetime.strptime("2022-10-23T16:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     [19.1, 18.9, 19.5, 18.9, 20.1, 18.9]
   )
 
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, False)
+
   applicable_time_periods = get_fixed_applicable_time_periods(
-    current_date,
-    target_start_time,
-    target_end_time,
-    rates,
-    False
+    target_start_datetime,
+    target_end_datetime,
+    values
   )
 
   # Act
@@ -518,18 +518,18 @@ async def test_when_hour_mode_is_minimum_and_more_than_enough_hours_available_th
   target_end_time = "16:00"
   max_value = 19
 
-  rates = create_data_source_data(
+  values = create_data_source_data(
     datetime.strptime("2022-10-22T16:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     datetime.strptime("2022-10-23T16:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"),
     [19.1, 18.9, 19.5, 18.9, 20.1, 18.9]
   )
 
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, False)
+
   applicable_time_periods = get_fixed_applicable_time_periods(
-    current_date,
-    target_start_time,
-    target_end_time,
-    rates,
-    False
+    target_start_datetime,
+    target_end_datetime,
+    values
   )
 
   # Act

@@ -20,7 +20,7 @@ This blueprint will provide the data source for the UK Carbon Intensity as provi
 
 #### Default
 
-[Install blueprint)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fbottlecapdave.github.io%2FHomeAssistant-TargetTimeframes%2Fblueprints%2Ftarget_timeframes_octopus_energy.yaml) | [Source](./blueprints/target_timeframes_octopus_energy.yaml)
+[Install blueprint](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fbottlecapdave.github.io%2FHomeAssistant-TargetTimeframes%2Fblueprints%2Ftarget_timeframes_octopus_energy.yaml) | [Source](./blueprints/target_timeframes_octopus_energy.yaml)
 
 This blueprint will provide the data source for Octopus Energy rates as provided by the [Octopus Energy](https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy) integration. This is for accounts that don't have the [free electricity sensor](https://bottlecapdave.github.io/HomeAssistant-OctopusEnergy/entities/octoplus/#free-electricity-session-events) available.
 

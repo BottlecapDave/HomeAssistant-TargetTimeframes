@@ -8,7 +8,7 @@ logging.getLogger().setLevel(logging.DEBUG)
 _LOGGER = logging.getLogger(__name__)
 
 def create_data_source_data(period_from: datetime, period_to: datetime, expected_values: list):
-  rates = []
+  values = []
   current_valid_from = period_from
   current_valid_to = None
 
@@ -16,7 +16,7 @@ def create_data_source_data(period_from: datetime, period_to: datetime, expected
   while current_valid_to is None or current_valid_to < period_to:
     current_valid_to = current_valid_from + timedelta(minutes=30)
 
-    rates.append({
+    values.append({
       "start": current_valid_from,
       "end": current_valid_to,
       "value": expected_values[rate_index],
@@ -28,19 +28,19 @@ def create_data_source_data(period_from: datetime, period_to: datetime, expected
     if (rate_index > (len(expected_values) - 1)):
       rate_index = 0
 
-  return rates
+  return values
 
 def get_start(rate):
   return rate["start"]
 
 def values_to_thirty_minute_increments(items: list, period_from: datetime, period_to: datetime):
-  """Process the collection of rates to ensure they're in 30 minute periods"""
+  """Process the collection of values to ensure they're in 30 minute periods"""
   starting_period_from = period_from
   results = []
     
   items.sort(key=get_start)
 
-  # We need to normalise our data into 30 minute increments so that all of our rates across all tariffs are the same and it's 
+  # We need to normalise our data into 30 minute increments so that all of our values across all tariffs are the same and it's 
   # easier to calculate our target rate sensors
   for item in items:
     value = float(item["value"])
@@ -53,7 +53,7 @@ def values_to_thirty_minute_increments(items: list, period_from: datetime, perio
     else:
       start = starting_period_from
 
-    # Some rates don't have end dates, so we should treat this as our period to target
+    # Some values don't have end dates, so we should treat this as our period to target
     if "end" in item and item["end"] is not None:
       target_date = as_utc(parse_datetime(item["end"]))
 

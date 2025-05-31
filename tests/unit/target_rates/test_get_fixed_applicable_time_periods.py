@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import pytest
 
-from custom_components.target_timeframes.entities import get_fixed_applicable_time_periods
+from custom_components.target_timeframes.entities import get_fixed_applicable_time_periods, get_start_and_end_times
 from unit import create_data_source_data, default_time_periods, values_to_thirty_minute_increments
 
 @pytest.mark.asyncio
@@ -39,19 +39,19 @@ async def test_when_continuous_times_present_then_next_continuous_times_returned
   period_to = datetime.strptime("2022-02-11T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z")
   expected_values = [0.1, 20, 0.3, 20, 20, 0.1]
 
-  rates = create_data_source_data(
+  values = create_data_source_data(
     period_from,
     period_to,
     expected_values
   )
 
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, is_rolling_target)
+
   # Act
   result = get_fixed_applicable_time_periods(
-    current_date,
-    target_start_time,
-    target_end_time,
-    rates,
-    is_rolling_target
+    target_start_datetime,
+    target_end_datetime,
+    values
   )
 
   assert result is not None
@@ -71,13 +71,13 @@ async def test_when_start_time_is_after_end_time_then_rates_are_overnight():
 
   expected_first_valid_from = datetime.strptime("2022-10-21T23:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
 
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, False)
+
   # Act
   result = get_fixed_applicable_time_periods(
-    current_date,
-    target_start_time,
-    target_end_time,
-    default_time_periods,
-    False
+    target_start_datetime,
+    target_end_datetime,
+    default_time_periods
   )
 
   # Assert
@@ -99,13 +99,13 @@ async def test_when_start_time_and_end_time_is_same_then_rates_are_shifted():
 
   expected_first_valid_from = datetime.strptime("2022-10-21T23:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
 
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, False)
+
   # Act
   result = get_fixed_applicable_time_periods(
-    current_date,
-    target_start_time,
-    target_end_time,
-    default_time_periods,
-    False
+    target_start_datetime,
+    target_end_datetime,
+    default_time_periods
   )
 
   # Assert
@@ -125,7 +125,7 @@ async def test_when_start_time_is_after_end_time_and_rolling_target_then_rates_a
 
   expected_first_valid_from = datetime.strptime("2022-10-21T23:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
 
-  rates = values_to_thirty_minute_increments(
+  values = values_to_thirty_minute_increments(
     [
       {
         "value": 15.1,
@@ -147,13 +147,13 @@ async def test_when_start_time_is_after_end_time_and_rolling_target_then_rates_a
     datetime.strptime("2022-10-24T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z")
   )
 
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, True)
+
   # Act
   result = get_fixed_applicable_time_periods(
-    current_date,
-    target_start_time,
-    target_end_time,
-    rates,
-    True
+    target_start_datetime,
+    target_end_datetime,
+    values
   )
 
   # Assert
@@ -174,7 +174,7 @@ async def test_when_start_time_and_end_time_is_same_and_rolling_target_then_rate
 
   expected_first_valid_from = datetime.strptime("2022-10-22T02:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
 
-  rates = values_to_thirty_minute_increments(
+  values = values_to_thirty_minute_increments(
     [
       {
         "value": 15.1,
@@ -201,13 +201,13 @@ async def test_when_start_time_and_end_time_is_same_and_rolling_target_then_rate
     datetime.strptime("2022-10-24T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z")
   )
 
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, True)
+
   # Act
   result = get_fixed_applicable_time_periods(
-    current_date,
-    target_start_time,
-    target_end_time,
-    rates,
-    True
+    target_start_datetime,
+    target_end_datetime,
+    values
   )
 
   # Assert
@@ -227,13 +227,13 @@ async def test_when_available_rates_are_too_low_then_no_times_are_returned():
   target_start_time = "16:00"
   target_end_time = "16:00"
 
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, False)
+
   # Act
   result = get_fixed_applicable_time_periods(
-    current_date,
-    target_start_time,
-    target_end_time,
-    default_time_periods,
-    False
+    target_start_datetime,
+    target_end_datetime,
+    default_time_periods
   )
 
   # Assert
@@ -250,19 +250,19 @@ async def test_when_times_are_in_bst_then_rates_are_shifted():
   period_to = datetime.strptime("2024-04-07T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
   expected_values = [0.1, 20, 0.3, 20, 20, 0.1]
 
-  rates = create_data_source_data(
+  values = create_data_source_data(
     period_from,
     period_to,
     expected_values
   )
 
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, False)
+
   # Act
   result = get_fixed_applicable_time_periods(
-    current_date,
-    target_start_time,
-    target_end_time,
-    rates,
-    False
+    target_start_datetime,
+    target_end_datetime,
+    values
   )
 
   # Assert
@@ -283,7 +283,7 @@ async def test_when_clocks_go_back_then_correct_times_are_selected():
   target_start_time = "23:00"
   target_end_time = "23:00"
 
-  rates = [
+  values = [
     {
       "value": 13.797,
       "start": datetime.strptime("2024-10-27T22:30:00Z", "%Y-%m-%dT%H:%M:%S%z"), 
@@ -536,15 +536,15 @@ async def test_when_clocks_go_back_then_correct_times_are_selected():
     },
   ]
   
-  rates.sort(key=lambda x: (x["start"].timestamp(), x["start"].fold))
+  values.sort(key=lambda x: (x["start"].timestamp(), x["start"].fold))
+
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, False)
 
   # Act
   result = get_fixed_applicable_time_periods(
-    current_date,
-    target_start_time,
-    target_end_time,
-    rates,
-    False
+    target_start_datetime,
+    target_end_datetime,
+    values
   )
 
   # Assert
