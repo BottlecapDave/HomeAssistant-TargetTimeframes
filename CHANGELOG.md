@@ -1,3 +1,15 @@
+# [1.1.0](https://github.com/BottlecapDave/homeassistant-targettimeframes/compare/v1.0.4...v1.1.0) (2025-05-23)
+
+
+### Bug Fixes
+
+* Fixed issue where target times could be recalculated within the same target time frame once complete, causing the sensor to come on more than it should (1 hour dev time) ([6627bb8](https://github.com/BottlecapDave/homeassistant-targettimeframes/commit/6627bb88a02704b845cd425745193fe8a1e5017a))
+
+
+### Features
+
+* Updated update_data_source service to now append data instead of replace data by default as this caused issues with certain data sources when it was replacing. Replacing is now available as an optional toggle (40 minute dev time) ([4e657f8](https://github.com/BottlecapDave/homeassistant-targettimeframes/commit/4e657f83436beca8261a47f48cf730520cfd8185))
+
 ## [1.0.3](https://github.com/BottlecapDave/homeassistant-targettimeframes/compare/v1.0.2...v1.0.3) (2025-05-09)
 
 
