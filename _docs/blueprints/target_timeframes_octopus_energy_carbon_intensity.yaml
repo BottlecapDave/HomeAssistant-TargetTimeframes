@@ -163,7 +163,7 @@ action:
 
       {%- set metadata = { "rate": rate["value_inc_vat"], "is_capped": rate["is_capped"] } -%}
       {%- if carbon_intensity_namespace.rate -%}
-        {%- set value = value + (1 - ((carbon_intensity_namespace.rate["intensity_forecast"] | float - min_carbon) / (max_rate - min_carbon) * carbon_intensity_weighting)) -%}
+        {%- set value = value + (1 - ((carbon_intensity_namespace.rate["intensity_forecast"] | float - min_carbon) / (max_carbon - min_carbon) * carbon_intensity_weighting)) -%}
         {%- set metadata = dict(metadata.items(), carbon_intensity=carbon_intensity_namespace.rate["intensity_forecast"] | float) -%}
       {%- endif -%}
       
