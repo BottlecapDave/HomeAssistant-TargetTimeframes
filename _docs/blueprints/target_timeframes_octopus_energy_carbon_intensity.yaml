@@ -14,16 +14,6 @@ blueprint:
             - sensor
             integration: target_timeframes
           multiple: false
-    octopus_energy_previous_day_rates:
-      name: Previous day rates
-      description: The previous day rates event sensor supplied by Octopus Energy. More information can be found at https://bottlecapdave.github.io/HomeAssistant-OctopusEnergy/entities/electricity/#previous-day-rates.
-      selector:
-        entity:
-          filter:
-          - domain:
-            - event
-            integration: octopus_energy
-          multiple: false
     octopus_energy_current_day_rates:
       name: Current day rates
       description: The current day rates event sensor supplied by Octopus Energy. More information can be found at https://bottlecapdave.github.io/HomeAssistant-OctopusEnergy/entities/electricity/#current-day-rates.
@@ -61,6 +51,13 @@ blueprint:
       selector:
         number:
           mode: box
+    octopus_energy_weighting:
+      name: Octopus Energy rate weighting
+      description: The weighting to apply to the Octopus Energy rates when calculating the final value for the period.
+      default: 0.7
+      selector:
+        number:
+          mode: box
     carbon_intensity_current_day_rates:
       name: Current day rates
       description: The current day rates event sensor supplied by Carbon Intensity. More information can be found at https://bottlecapdave.github.io/HomeAssistant-CarbonIntensity/entities/#current-day-rates.
@@ -81,20 +78,26 @@ blueprint:
             - event
             integration: carbon_intensity
           multiple: false
+    carbon_intensity_weighting:
+      name: Carbon Intensity forecast weighting
+      description: The weighting to apply to the Carbon Intensity forecast when calculating the final value for the period.
+      default: 0.3
+      selector:
+        number:
+          mode: box
 variables:
   target_timeframe_data_source_sensor: !input target_timeframe_data_source_sensor
-  octopus_energy_previous_day_rates: !input octopus_energy_previous_day_rates
   octopus_energy_current_day_rates: !input octopus_energy_current_day_rates
   octopus_energy_next_day_rates: !input octopus_energy_next_day_rates
   octopus_energy_free_electricity: !input octopus_energy_free_electricity
   octopus_energy_free_electricity_weighting: !input octopus_energy_free_electricity_weighting
   carbon_intensity_current_day_rates: !input carbon_intensity_current_day_rates
   carbon_intensity_next_day_rates: !input carbon_intensity_next_day_rates
+  octopus_energy_weighting: !input octopus_energy_weighting
+  carbon_intensity_weighting: !input carbon_intensity_weighting
 mode: queued
 max: 4
 triggers:
-- platform: state
-  entity_id: !input octopus_energy_previous_day_rates
 - platform: state
   entity_id: !input octopus_energy_current_day_rates
 - platform: state
@@ -110,9 +113,6 @@ action:
 - action: target_timeframes.update_target_timeframe_data_source
   data: >
     {%- set all_oe_rates = [] -%}
-    {%- if state_attr(octopus_energy_previous_day_rates, 'rates') != None -%}
-      {%- set all_oe_rates = all_oe_rates + state_attr(octopus_energy_previous_day_rates, 'rates') -%}
-    {%- endif -%}
     {%- if state_attr(octopus_energy_current_day_rates, 'rates') != None -%}
       {%- set all_oe_rates = all_oe_rates + state_attr(octopus_energy_current_day_rates, 'rates') -%}
     {%- endif -%}
@@ -132,11 +132,16 @@ action:
       {%- set all_ci_rates = all_ci_rates + state_attr(carbon_intensity_next_day_rates, 'rates') -%}
     {%- endif -%}
 
+    {%- set min_rate = all_oe_rates | map(attribute='value_inc_vat') | min -%}
+    {%- set max_rate = all_oe_rates | map(attribute='value_inc_vat') | max -%}
+    {%- set min_carbon = all_ci_rates | map(attribute='intensity_forecast') | min -%}
+    {%- set max_carbon = all_ci_rates | map(attribute='intensity_forecast') | max -%}
+
     {%- set data = namespace(new_rates=[]) -%}
     {%- for rate in all_oe_rates -%}
       {%- set start = rate["start"] | as_timestamp | timestamp_utc -%}
       {%- set end = rate["end"] | as_timestamp | timestamp_utc -%}
-      {%- set value = rate["value_inc_vat"] | float -%}
+      {%- set value = 1 - ((rate["value_inc_vat"] | float - min_rate) / (max_rate - min_rate) * octopus_energy_weighting) -%}
       
       {%- set free_namespace = namespace(is_free=False) -%}
       {%- for free_session in free_electricity_rates -%}
@@ -158,7 +163,7 @@ action:
 
       {%- set metadata = { "rate": rate["value_inc_vat"], "is_capped": rate["is_capped"] } -%}
       {%- if carbon_intensity_namespace.rate -%}
-        {%- set value = value * (carbon_intensity_namespace.rate["intensity_forecast"] | float) -%}
+        {%- set value = value + (1 - ((carbon_intensity_namespace.rate["intensity_forecast"] | float - min_carbon) / (max_rate - min_carbon) * carbon_intensity_weighting)) -%}
         {%- set metadata = dict(metadata.items(), carbon_intensity=carbon_intensity_namespace.rate["intensity_forecast"] | float) -%}
       {%- endif -%}
       
