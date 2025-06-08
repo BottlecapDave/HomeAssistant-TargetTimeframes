@@ -68,6 +68,7 @@ class TargetTimeframesRollingTargetRate(BinarySensorEntity, RestoreEntity):
     self._attributes = self._config.copy()
     self._last_evaluated = None
     self._data_source_id = data_source_id
+    self._attributes["data_source_id"] = self._data_source_id
     
     is_rolling_target = True
     if CONFIG_TARGET_ROLLING_TARGET in self._config:
@@ -205,6 +206,7 @@ class TargetTimeframesRollingTargetRate(BinarySensorEntity, RestoreEntity):
     self._attributes["next_average_value"] = active_result["next_average_value"]
     self._attributes["next_min_value"] = active_result["next_min_value"]
     self._attributes["next_max_value"] = active_result["next_max_value"]
+    self._attributes["data_source_id"] = self._data_source_id
     
     self._state = active_result["is_active"]
 
