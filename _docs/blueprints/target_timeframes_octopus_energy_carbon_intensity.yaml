@@ -143,7 +143,7 @@ action:
     {%- for rate in all_oe_rates -%}
       {%- set start = rate["start"] | as_timestamp | timestamp_utc -%}
       {%- set end = rate["end"] | as_timestamp | timestamp_utc -%}
-      {%- set value = 1 - (((rate["value_inc_vat"] | float - min_rate) / rate_diff) * octopus_energy_weighting) -%}
+      {%- set value = (((rate["value_inc_vat"] | float - min_rate) / rate_diff) * octopus_energy_weighting) -%}
   
       {%- set free_namespace = namespace(is_free=False) -%}
       {%- for free_session in free_electricity_rates -%}
@@ -165,7 +165,7 @@ action:
 
       {%- set metadata = { "rate": rate["value_inc_vat"], "is_capped": rate["is_capped"] } -%}
       {%- if carbon_intensity_namespace.rate -%}
-        {%- set value = value + (1 - (((carbon_intensity_namespace.rate["intensity_forecast"] | float - min_carbon) / carbon_diff) * carbon_intensity_weighting)) -%}
+        {%- set value = value + (((carbon_intensity_namespace.rate["intensity_forecast"] | float - min_carbon) / carbon_diff) * carbon_intensity_weighting) -%}
         {%- set metadata = dict(metadata.items(), carbon_intensity=carbon_intensity_namespace.rate["intensity_forecast"] | float) -%}
       {%- endif -%}
       
