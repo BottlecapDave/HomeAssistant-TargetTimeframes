@@ -136,13 +136,15 @@ action:
     {%- set max_rate = all_oe_rates | map(attribute='value_inc_vat') | max -%}
     {%- set min_carbon = all_ci_rates | map(attribute='intensity_forecast') | min -%}
     {%- set max_carbon = all_ci_rates | map(attribute='intensity_forecast') | max -%}
+    {%- set rate_diff = max_rate - min_rate if max_rate - min_rate != 0 else 1 %}
+    {%- set carbon_diff = max_carbon - min_carbon if max_carbon - min_carbon != 0 else 1  %}
 
     {%- set data = namespace(new_rates=[]) -%}
     {%- for rate in all_oe_rates -%}
       {%- set start = rate["start"] | as_timestamp | timestamp_utc -%}
       {%- set end = rate["end"] | as_timestamp | timestamp_utc -%}
-      {%- set value = 1 - ((rate["value_inc_vat"] | float - min_rate) / (max_rate - min_rate) * octopus_energy_weighting) -%}
-      
+      {%- set value = 1 - (((rate["value_inc_vat"] | float - min_rate) / rate_diff) * octopus_energy_weighting) -%}
+  
       {%- set free_namespace = namespace(is_free=False) -%}
       {%- for free_session in free_electricity_rates -%}
         {%- set free_start = free_session["start"] | as_timestamp | timestamp_utc -%}
@@ -163,7 +165,7 @@ action:
 
       {%- set metadata = { "rate": rate["value_inc_vat"], "is_capped": rate["is_capped"] } -%}
       {%- if carbon_intensity_namespace.rate -%}
-        {%- set value = value + (1 - ((carbon_intensity_namespace.rate["intensity_forecast"] | float - min_carbon) / (max_carbon - min_carbon) * carbon_intensity_weighting)) -%}
+        {%- set value = value + (1 - (((carbon_intensity_namespace.rate["intensity_forecast"] | float - min_carbon) / carbon_diff) * carbon_intensity_weighting)) -%}
         {%- set metadata = dict(metadata.items(), carbon_intensity=carbon_intensity_namespace.rate["intensity_forecast"] | float) -%}
       {%- endif -%}
       
