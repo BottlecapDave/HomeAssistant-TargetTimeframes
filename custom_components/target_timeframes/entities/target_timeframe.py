@@ -329,6 +329,7 @@ class TargetTimeframesTargetRate(BinarySensorEntity, RestoreEntity):
     self._config = config
     self._attributes = self._config.copy()
     self._target_timeframes = []
+    await self.async_update()
     self.async_write_ha_state()
 
     if persist_changes:
