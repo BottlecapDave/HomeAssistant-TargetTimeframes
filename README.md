@@ -2,7 +2,7 @@
 
 Target timeframes was a feature that has been extracted out of the [Octopus Energy integration](https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy). The idea is you can configure binary sensors that will find and turn on during the most optimal time periods based on external data sources, targeting either the lowest or highest values. What these values represent can be anything. In the original integration, the values represented cost of energy, and so the cheapest periods were discovered. But it could represent other things like 
 
-* Temperature to turn on sprinklers during the hottest times of the day
+* Energy prices to turn on devices when cost is the cheapest
 * Carbon emissions to turn on devices when renewables on the grid are at their highest
 * Solar generation to turn on devices when the most energy is being generated.
 

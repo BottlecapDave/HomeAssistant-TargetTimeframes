@@ -54,6 +54,10 @@ The following services are available if you have set up at least one [target tim
 
 For updating a given [target timeframe's](./setup/target_timeframe.md) config. This allows you to change target timeframes sensors dynamically based on other outside criteria (e.g. you need to adjust the target hours to top up home batteries).
 
+!!! warning
+
+    This will cause the sensor to re-evaluate the target times, which may result in different times being picked.
+
 | Attribute                | Optional | Description                                                                                                           |
 | ------------------------ | -------- | --------------------------------------------------------------------------------------------------------------------- |
 | `target.entity_id`       | `no`     | The name of the target sensor whose configuration is to be updated.                                                   |
@@ -125,6 +129,10 @@ The following services are available if you have set up at least one [rolling ta
 ### target_timeframes.update_rolling_target_timeframe_config
 
 For updating a given [rolling target timeframe's](./setup/rolling_target_timeframe.md) config. This allows you to change rolling target timeframes sensors dynamically based on other outside criteria (e.g. you need to adjust the target hours to top up home batteries).
+
+!!! warning
+
+    This will cause the sensor to re-evaluate the target times, which may result in different times being picked.
 
 | Attribute                | Optional | Description                                                                                                           |
 | ------------------------ | -------- | --------------------------------------------------------------------------------------------------------------------- |
