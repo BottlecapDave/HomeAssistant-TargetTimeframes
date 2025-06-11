@@ -1,3 +1,11 @@
+# [1.2.0](https://github.com/BottlecapDave/homeassistant-targettimeframes/compare/v1.1.1...v1.2.0) (2025-06-11)
+
+
+### Features
+
+* Added data source attribute to sensors ([4ff880e](https://github.com/BottlecapDave/homeassistant-targettimeframes/commit/4ff880ebda435371c3e55cc86e4440f8e29a7f89))
+* Updated update config service to re-evaluate straight away (5 minutes dev time) ([54f68ca](https://github.com/BottlecapDave/homeassistant-targettimeframes/commit/54f68ca6fa2c5f4d65ed0c899aea87fc5afc1aa9))
+
 ## [1.1.1](https://github.com/BottlecapDave/homeassistant-targettimeframes/compare/v1.1.0...v1.1.1) (2025-05-31)
 
 
