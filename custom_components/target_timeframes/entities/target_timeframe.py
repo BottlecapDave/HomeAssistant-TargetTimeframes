@@ -88,7 +88,6 @@ class TargetTimeframesTargetRate(BinarySensorEntity, RestoreEntity):
     self._data_source_data = initial_data if initial_data is not None else []
     self._target_timeframes = []
 
-    
     self._hass = hass
     self.entity_id = generate_entity_id("binary_sensor.{}", self.unique_id, hass=hass)
 
@@ -129,13 +128,12 @@ class TargetTimeframesTargetRate(BinarySensorEntity, RestoreEntity):
     current_local_date = now()
     check_for_errors(self._hass, self._config)
 
-    # Find the current rate. Rates change a maximum of once every 30 minutes.
     current_date = utcnow()
 
     evaluation_mode = self._config[CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE] if CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE in self._config else CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALL_IN_PAST
     should_evaluate = should_evaluate_target_timeframes(current_date, self._target_timeframes, evaluation_mode)
     if should_evaluate:
-      _LOGGER.debug(f'{len(self._data_source_data) if self._data_source_data is not None else None} time periods found')
+      _LOGGER.debug(f'{self._config[CONFIG_TARGET_NAME]} - {len(self._data_source_data) if self._data_source_data is not None else None} time periods found')
 
       if len(self._data_source_data) > 0:
         start_time = None
@@ -169,16 +167,22 @@ class TargetTimeframesTargetRate(BinarySensorEntity, RestoreEntity):
         if CONFIG_TARGET_MAX_VALUE in self._config:
           max_rate = self._config[CONFIG_TARGET_MAX_VALUE]
 
-        target_start, target_end = get_start_and_end_times(current_local_date, start_time, end_time, True)
+        target_start, target_end = get_start_and_end_times(current_local_date, start_time, end_time, True, self._config[CONFIG_TARGET_NAME])
         applicable_time_periods = get_fixed_applicable_time_periods(
           target_start,
           target_end,
-          self._data_source_data
+          self._data_source_data,
+          self._config[CONFIG_TARGET_NAME]
         )
 
         # Make sure we haven't already completed for the current target timeframe
-        applicable_target_start, applicable_target_end = get_start_and_end_times(current_local_date, start_time, end_time, False)
-        is_target_timeframe_complete = is_rolling_target == False and is_target_timeframe_complete_in_period(current_local_date, applicable_target_start, applicable_target_end, self._target_timeframes)
+        applicable_target_start, applicable_target_end = get_start_and_end_times(current_local_date, start_time, end_time, False, self._config[CONFIG_TARGET_NAME])
+        is_target_timeframe_complete = is_rolling_target == False and is_target_timeframe_complete_in_period(
+          current_local_date,
+          applicable_target_start,
+          applicable_target_end, self._target_timeframes,
+          self._config[CONFIG_TARGET_NAME]
+        )
 
         if applicable_time_periods is not None and is_target_timeframe_complete == False:
           number_of_slots = math.ceil(target_hours * 2)
@@ -194,7 +198,8 @@ class TargetTimeframesTargetRate(BinarySensorEntity, RestoreEntity):
               min_rate,
               max_rate,
               weighting,
-              hours_mode = self._config[CONFIG_TARGET_HOURS_MODE]
+              self._config[CONFIG_TARGET_HOURS_MODE],
+              self._config[CONFIG_TARGET_NAME]
             )
           elif (self._config[CONFIG_TARGET_TYPE] == CONFIG_TARGET_TYPE_INTERMITTENT):
             proposed_target_timeframes = calculate_intermittent_times(
@@ -204,15 +209,16 @@ class TargetTimeframesTargetRate(BinarySensorEntity, RestoreEntity):
               find_last_rates,
               min_rate,
               max_rate,
-              hours_mode = self._config[CONFIG_TARGET_HOURS_MODE]
+              self._config[CONFIG_TARGET_HOURS_MODE],
+              self._config[CONFIG_TARGET_NAME]
             )
           else:
-            _LOGGER.error(f"Unexpected target type: {self._config[CONFIG_TARGET_TYPE]}")
+            _LOGGER.error(f"{self._config[CONFIG_TARGET_NAME]} - Unexpected target type: {self._config[CONFIG_TARGET_TYPE]}")
 
           self._target_timeframes = proposed_target_timeframes
           self._attributes["target_times"] = self._target_timeframes
           self._attributes["target_times_last_evaluated"] = current_date
-          _LOGGER.debug(f"calculated rates: {self._target_timeframes}")
+          _LOGGER.debug(f"{self._config[CONFIG_TARGET_NAME]} - calculated rates: {self._target_timeframes}")
         
         self._attributes["time_periods_incomplete"] = applicable_time_periods is None
 
@@ -236,7 +242,7 @@ class TargetTimeframesTargetRate(BinarySensorEntity, RestoreEntity):
     
     self._state = active_result["is_active"]
 
-    _LOGGER.debug(f"calculated: {self._state}")
+    _LOGGER.debug(f"{self._config[CONFIG_TARGET_NAME]} - calculated: {self._state}")
     self._attributes = dict_to_typed_dict(self._attributes)
 
   @callback
@@ -267,7 +273,7 @@ class TargetTimeframesTargetRate(BinarySensorEntity, RestoreEntity):
         self._attributes = self._config.copy()
         self._target_timeframes = None
     
-      _LOGGER.debug(f'Restored TargetTimeframesTargetRate state: {self._state}')
+      _LOGGER.debug(f'{self._config[CONFIG_TARGET_NAME]} - Restored state: {self._state}')
 
     self.async_on_remove(
       self._hass.bus.async_listen(EVENT_DATA_SOURCE, self._async_handle_event)
@@ -276,6 +282,7 @@ class TargetTimeframesTargetRate(BinarySensorEntity, RestoreEntity):
   @callback
   async def async_update_target_timeframe_config(self, target_start_time=None, target_end_time=None, target_hours=None, target_offset=None, target_minimum_value=None, target_maximum_value=None, target_weighting=None, persist_changes=False):
     """Update sensors config"""
+    _LOGGER.debug(f"{self._config[CONFIG_TARGET_NAME]} - async_update_target_timeframe_config called: {self._config}")
 
     config = dict(self._config)
     if target_hours is not None:

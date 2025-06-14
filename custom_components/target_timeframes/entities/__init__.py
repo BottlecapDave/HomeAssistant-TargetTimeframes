@@ -33,7 +33,7 @@ def apply_offset(date_time: datetime, offset: str, inverse = False):
   
   return date_time + timedelta(hours=hours, minutes=minutes, seconds=seconds)
 
-def is_target_timeframe_complete_in_period(current_date: datetime, start_time: datetime, end_time: datetime, target_timeframes: list | None):
+def is_target_timeframe_complete_in_period(current_date: datetime, start_time: datetime, end_time: datetime, target_timeframes: list | None, context: str = None):
   if target_timeframes is None or len(target_timeframes) < 1:
     return False
   
@@ -43,7 +43,7 @@ def is_target_timeframe_complete_in_period(current_date: datetime, start_time: d
     target_timeframes[-1]["end"] <= current_date
   )
 
-def get_start_and_end_times(current_date: datetime, target_start_time: str, target_end_time: str, start_time_not_in_past = True):
+def get_start_and_end_times(current_date: datetime, target_start_time: str, target_end_time: str, start_time_not_in_past = True, context: str = None):
   if (target_start_time is not None):
     target_start = parse_datetime(current_date.strftime(f"%Y-%m-%dT{target_start_time}:00%z"))
   else:
@@ -58,7 +58,7 @@ def get_start_and_end_times(current_date: datetime, target_start_time: str, targ
   target_end = as_utc(target_end)
 
   if (target_start >= target_end):
-    _LOGGER.debug(f'{target_start} is after {target_end}, so setting target end to tomorrow')
+    _LOGGER.debug(f'{context} - {target_start} is after {target_end}, so setting target end to tomorrow')
     if target_start > current_date:
       target_start = target_start - timedelta(days=1)
     else:
@@ -66,7 +66,7 @@ def get_start_and_end_times(current_date: datetime, target_start_time: str, targ
 
   # If our start date has passed, reset it to current_date to avoid picking a slot in the past
   if (start_time_not_in_past == True and target_start < current_date and current_date < target_end):
-    _LOGGER.debug(f'Rolling target and {target_start} is in the past. Setting start to {current_date}')
+    _LOGGER.debug(f'{context} - Rolling target and {target_start} is in the past. Setting start to {current_date}')
     target_start = current_date
 
   # If our start and end are both in the past, then look to the next day
@@ -76,8 +76,8 @@ def get_start_and_end_times(current_date: datetime, target_start_time: str, targ
 
   return (target_start, target_end)
 
-def get_fixed_applicable_time_periods(target_start: datetime, target_end: datetime, time_period_values: list):
-  _LOGGER.debug(f'Finding rates between {target_start} and {target_end}')
+def get_fixed_applicable_time_periods(target_start: datetime, target_end: datetime, time_period_values: list, context: str = None):
+  _LOGGER.debug(f'{context} - Finding rates between {target_start} and {target_end}')
 
   # Retrieve the rates that are applicable for our target rate
   applicable_rates = []
@@ -93,12 +93,12 @@ def get_fixed_applicable_time_periods(target_start: datetime, target_end: dateti
   hours = (date_diff.days * 24) + (date_diff.seconds // 3600)
   periods = hours * 2
   if len(applicable_rates) < periods:
-    _LOGGER.debug(f'Incorrect number of periods discovered. Require {periods}, but only have {len(applicable_rates)}')
+    _LOGGER.debug(f'{context} - Incorrect number of periods discovered. Require {periods}, but only have {len(applicable_rates)}')
     return None
 
   return applicable_rates
 
-def get_rolling_applicable_time_periods(current_date: datetime, time_period_values: list, target_hours: float):
+def get_rolling_applicable_time_periods(current_date: datetime, time_period_values: list, target_hours: float, context: str = None):
   # Retrieve the rates that are applicable for our target rate
   applicable_time_periods = []
   periods = target_hours * 2
@@ -114,12 +114,12 @@ def get_rolling_applicable_time_periods(current_date: datetime, time_period_valu
 
   # Make sure that we have enough rates that meet our target period
   if len(applicable_time_periods) < periods:
-    _LOGGER.debug(f'Incorrect number of periods discovered. Require {periods}, but only have {len(applicable_time_periods)}')
+    _LOGGER.debug(f'{context} - Incorrect number of periods discovered. Require {periods}, but only have {len(applicable_time_periods)}')
     return None
 
   return applicable_time_periods
 
-def __get_valid_to(rate):
+def __get_end(rate):
   return (rate["end"].timestamp(), rate["end"].fold)
 
 def calculate_continuous_times(
@@ -130,7 +130,8 @@ def calculate_continuous_times(
     min_value = None,
     max_value = None,
     weighting: list = None,
-    hours_mode = CONFIG_TARGET_HOURS_MODE_EXACT
+    hours_mode = CONFIG_TARGET_HOURS_MODE_EXACT,
+    context: str = None
   ):
   if (applicable_time_periods is None or target_hours <= 0):
     return []
@@ -139,12 +140,12 @@ def calculate_continuous_times(
   total_required_time_periods = math.ceil(target_hours * 2)
 
   if weighting is not None and len(weighting) != total_required_time_periods:
-    raise ValueError("Weighting does not match target hours")
+    raise ValueError(f"{context} - Weighting does not match target hours")
 
   best_continuous_time_periods = None
   best_continuous_time_periods_total = None
 
-  _LOGGER.debug(f'{applicable_time_periods_count} applicable time periods found')
+  _LOGGER.debug(f'{context} - {applicable_time_periods_count} applicable time periods found')
 
   # Loop through our rates and try and find the block of time that meets our desired
   # hours and has the lowest combined rates
@@ -196,15 +197,14 @@ def calculate_continuous_times(
     if ((best_continuous_time_periods is None or is_best_continuous_rates) and has_required_hours):
       best_continuous_time_periods = continuous_time_periods
       best_continuous_time_periods_total = continuous_rates_total
-      _LOGGER.debug(f'New best block discovered {continuous_rates_total} ({continuous_time_periods[0]["start"] if len(continuous_time_periods) > 0 else None} - {continuous_time_periods[-1]["end"] if len(continuous_time_periods) > 0 else None})')
+      _LOGGER.debug(f'{context} - New best block discovered {continuous_rates_total} ({continuous_time_periods[0]["start"] if len(continuous_time_periods) > 0 else None} - {continuous_time_periods[-1]["end"] if len(continuous_time_periods) > 0 else None})')
     else:
-      _LOGGER.debug(f'Total rates for current block {continuous_rates_total} ({continuous_time_periods[0]["start"] if len(continuous_time_periods) > 0 else None} - {continuous_time_periods[-1]["end"] if len(continuous_time_periods) > 0 else None}). Total rates for best block {best_continuous_time_periods_total}')
+      _LOGGER.debug(f'{context} - Total rates for current block {continuous_rates_total} ({continuous_time_periods[0]["start"] if len(continuous_time_periods) > 0 else None} - {continuous_time_periods[-1]["end"] if len(continuous_time_periods) > 0 else None}). Total rates for best block {best_continuous_time_periods_total}')
 
   if best_continuous_time_periods is not None:
     # Make sure our rates are in ascending order before returning
-    best_continuous_time_periods.sort(key=__get_valid_to)
+    best_continuous_time_periods.sort(key=__get_end)
     return best_continuous_time_periods
-  
   return []
 
 def highest_last_time_period(time_period):
@@ -230,7 +230,8 @@ def calculate_intermittent_times(
     find_latest_time_periods = False,
     min_value = None,
     max_value = None,
-    hours_mode = CONFIG_TARGET_HOURS_MODE_EXACT
+    hours_mode = CONFIG_TARGET_HOURS_MODE_EXACT,
+    context: str = None
   ):
   if (applicable_time_periods is None):
     return []
@@ -250,29 +251,29 @@ def calculate_intermittent_times(
 
   applicable_time_periods = list(filter(lambda rate: (min_value is None or rate["value"] >= min_value) and (max_value is None or rate["value"] <= max_value), applicable_time_periods))
   
-  _LOGGER.debug(f'{len(applicable_time_periods)} applicable time periods found')
+  _LOGGER.debug(f'{context} - {len(applicable_time_periods)} applicable time periods found')
 
   if ((hours_mode == CONFIG_TARGET_HOURS_MODE_EXACT and len(applicable_time_periods) >= total_required_time_periods) or hours_mode == CONFIG_TARGET_HOURS_MODE_MAXIMUM):
     applicable_time_periods = applicable_time_periods[:total_required_time_periods]
 
     # Make sure our rates are in ascending order before returning
-    applicable_time_periods.sort(key=__get_valid_to)
+    applicable_time_periods.sort(key=__get_end)
 
     return applicable_time_periods
   elif len(applicable_time_periods) >= total_required_time_periods:
     # Make sure our rates are in ascending order before returning
-    applicable_time_periods.sort(key=__get_valid_to)
+    applicable_time_periods.sort(key=__get_end)
 
     return applicable_time_periods
   
   return []
 
-def get_target_time_period_info(current_date: datetime, applicable_rates, offset: str = None):
+def get_target_time_period_info(current_date: datetime, applicable_time_periods, offset: str = None, context: str = None):
   is_active = False
   next_time = None
   current_duration_in_hours = 0
   next_duration_in_hours = 0
-  total_applicable_rates = len(applicable_rates) if applicable_rates is not None else 0
+  total_applicable_time_periods = len(applicable_time_periods) if applicable_time_periods is not None else 0
 
   overall_total_value = 0
   overall_min_value = None
@@ -286,30 +287,30 @@ def get_target_time_period_info(current_date: datetime, applicable_rates, offset
   next_min_value = None
   next_max_value = None
 
-  if (total_applicable_rates > 0):
+  if (total_applicable_time_periods > 0):
 
     # Find the applicable rates that when combine become a continuous block. This is more for
     # intermittent rates.
-    applicable_rates.sort(key=__get_valid_to)
+    applicable_time_periods.sort(key=__get_end)
     applicable_rate_blocks = list()
-    block_valid_from = applicable_rates[0]["start"]
+    block_valid_from = applicable_time_periods[0]["start"]
 
     total_value = 0
     min_value = None
     max_value = None
 
-    for index, rate in enumerate(applicable_rates):
-      if (index > 0 and applicable_rates[index - 1]["end"] != rate["start"]):
-        diff = applicable_rates[index - 1]["end"] - block_valid_from
+    for index, rate in enumerate(applicable_time_periods):
+      if (index > 0 and applicable_time_periods[index - 1]["end"] != rate["start"]):
+        diff = applicable_time_periods[index - 1]["end"] - block_valid_from
         minutes = diff.total_seconds() / 60
         periods = minutes / 30
         if periods < 1:
-          _LOGGER.error(f"Less than 1 period discovered. Defaulting to 1 period. Rate start: {rate["start"]}; Applicable rates: {applicable_rates}")
+          _LOGGER.error(f"{context} - Less than 1 period discovered. Defaulting to 1 period. Rate start: {rate["start"]}; Applicable rates: {applicable_time_periods}")
           periods = 1
 
         applicable_rate_blocks.append({
           "start": block_valid_from,
-          "end": applicable_rates[index - 1]["end"],
+          "end": applicable_time_periods[index - 1]["end"],
           "duration_in_hours": minutes / 60,
           "average_value": total_value / periods,
           "min_value": min_value,
@@ -336,11 +337,11 @@ def get_target_time_period_info(current_date: datetime, applicable_rates, offset
         overall_max_value = rate["value"]
 
     # Make sure our final block is added
-    diff = applicable_rates[-1]["end"] - block_valid_from
+    diff = applicable_time_periods[-1]["end"] - block_valid_from
     minutes = diff.total_seconds() / 60
     applicable_rate_blocks.append({
       "start": block_valid_from,
-      "end": applicable_rates[-1]["end"],
+      "end": applicable_time_periods[-1]["end"],
       "duration_in_hours": minutes / 60,
       "average_value": total_value / (minutes / 30),
       "min_value": min_value,
@@ -372,7 +373,7 @@ def get_target_time_period_info(current_date: datetime, applicable_rates, offset
 
   return {
     "is_active": is_active,
-    "overall_average_value": round(overall_total_value / total_applicable_rates, 5) if total_applicable_rates > 0  else 0,
+    "overall_average_value": round(overall_total_value / total_applicable_time_periods, 5) if total_applicable_time_periods > 0  else 0,
     "overall_min_value": overall_min_value,
     "overall_max_value": overall_max_value,
     "current_duration_in_hours": current_duration_in_hours,

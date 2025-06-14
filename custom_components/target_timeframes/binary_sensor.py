@@ -35,16 +35,12 @@ async def async_setup_entry(hass, entry, async_add_entities):
     for sub_entry_id, sub_entry in entry.subentries.items():
       config = dict(sub_entry.data)
       entities = []
+      platform = entity_platform.async_get_current_platform()
 
       if config[CONFIG_KIND] == CONFIG_KIND_TARGET_RATE or config[CONFIG_KIND] == CONFIG_KIND_ROLLING_TARGET_RATE:
         if config[CONFIG_KIND] == CONFIG_KIND_TARGET_RATE:
           entities.append(TargetTimeframesTargetRate(hass, data_source_id, entry, sub_entry, config, data_dict))
-        else:
-          entities.append(TargetTimeframesRollingTargetRate(hass, data_source_id, entry, sub_entry, config, data_dict))
 
-        platform = entity_platform.async_get_current_platform()
-
-        if config[CONFIG_KIND] == CONFIG_KIND_TARGET_RATE:
           platform.async_register_entity_service(
             "update_target_timeframe_config",
             vol.All(
@@ -68,6 +64,8 @@ async def async_setup_entry(hass, entry, async_add_entities):
             "async_update_target_timeframe_config",
           )
         else:
+          entities.append(TargetTimeframesRollingTargetRate(hass, data_source_id, entry, sub_entry, config, data_dict))
+
           platform.async_register_entity_service(
             "update_rolling_target_timeframe_config",
             vol.All(
@@ -89,6 +87,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
             ),
             "async_update_rolling_target_timeframe_config",
           )
-
+      
       async_add_entities(entities, config_subentry_id=sub_entry_id)
+  
   return True
