@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/BottlecapDave/homeassistant-targettimeframes/compare/v1.2.0...v1.2.1) (2025-06-14)
+
+
+### Bug Fixes
+
+* added additional logging for debugging purposes ([99d0bb6](https://github.com/BottlecapDave/homeassistant-targettimeframes/commit/99d0bb60cb6da0df69fd8b82c8752a072a571794))
+
 # [1.2.0](https://github.com/BottlecapDave/homeassistant-targettimeframes/compare/v1.1.1...v1.2.0) (2025-06-11)
 
 
