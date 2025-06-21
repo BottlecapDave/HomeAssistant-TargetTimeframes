@@ -56,7 +56,7 @@ blueprint:
           multiple: false
     octopus_energy_free_electricity_weighting:
       name: Free Electricity weighting
-      description: The weighting to apply to the value if a rate period falls within a free electricity session.
+      description: The weighting to apply to the value if a rate period falls within a free electricity session. The lower, the more the period will be favoured.
       default: 1
       selector:
         number:
@@ -94,7 +94,7 @@ action:
       {%- set all_rates = all_rates + state_attr(octopus_energy_next_day_rates, 'rates') -%}
     {%- endif -%}
     {%- set free_electricity_rates = [] -%}
-    {%- if state_attr(octopus_energy_free_electricity, 'rates') != None -%}
+    {%- if state_attr(octopus_energy_free_electricity, 'events') != None -%}
       {%- set free_electricity_rates = state_attr(octopus_energy_free_electricity, 'events') -%}
     {%- endif -%}
     {%- set data = namespace(new_rates=[]) -%}
