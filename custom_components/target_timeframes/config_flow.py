@@ -7,7 +7,6 @@ from .config.target_timeframe import merge_target_timeframe_config, validate_tar
 from .config.rolling_target_timeframe import merge_rolling_target_timeframe_config, validate_rolling_target_timeframe_config
 
 from .const import (
-  CONFIG_DATA_SOURCE_ID,
   CONFIG_DATA_UNIQUE_ID,
   CONFIG_KIND,
   CONFIG_KIND_ROLLING_TARGET_RATE,

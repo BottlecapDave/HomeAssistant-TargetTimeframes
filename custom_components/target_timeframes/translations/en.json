@@ -98,7 +98,8 @@
         "invalid_weighting_slots": "The number of weighting blocks does not equal the specified number of hours.",
         "weighting_not_supported_for_type": "Weighting is only supported for continuous target values",
         "weighting_not_supported_for_hour_mode": "Weighting is not supported for this hour mode",
-        "minimum_or_maximum_value_not_specified": "Either minimum and/or maximum value must be specified for minimum hours mode"
+        "minimum_or_maximum_value_not_specified": "Either minimum and/or maximum value must be specified for minimum hours mode",
+        "minimum_value_not_less_than_maximum_value": "Minimum value must be less or equal to the maximum value if both are specified"
       }
     },
     "rolling_target_time_period": {
@@ -154,7 +155,8 @@
         "invalid_weighting_slots": "The number of weighting blocks does not equal the specified number of hours.",
         "weighting_not_supported_for_type": "Weighting is only supported for continuous target values",
         "weighting_not_supported_for_hour_mode": "Weighting is not supported for this hour mode",
-        "minimum_or_maximum_value_not_specified": "Either minimum and/or maximum value must be specified for minimum hours mode"
+        "minimum_or_maximum_value_not_specified": "Either minimum and/or maximum value must be specified for minimum hours mode",
+        "minimum_value_not_less_than_maximum_value": "Minimum value must be less or equal to the maximum value if both are specified"
       }
     }
   },

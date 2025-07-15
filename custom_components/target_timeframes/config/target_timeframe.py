@@ -104,21 +104,32 @@ def validate_target_timeframe_config(data):
     if matches is None:
       errors[CONFIG_TARGET_OFFSET] = "invalid_offset"
 
+  minimum_value: float | None = None
   if CONFIG_TARGET_MIN_VALUE in data and data[CONFIG_TARGET_MIN_VALUE] is not None:
     if isinstance(data[CONFIG_TARGET_MIN_VALUE], float) == False:
       matches = re.search(REGEX_VALUE, data[CONFIG_TARGET_MIN_VALUE])
       if matches is None:
         errors[CONFIG_TARGET_MIN_VALUE] = "invalid_value"
       else:
-        data[CONFIG_TARGET_MIN_VALUE] = float(data[CONFIG_TARGET_MIN_VALUE])
+        minimum_value = float(data[CONFIG_TARGET_MIN_VALUE])
+        data[CONFIG_TARGET_MIN_VALUE] = minimum_value
+    else:
+      minimum_value = data[CONFIG_TARGET_MIN_VALUE]
 
+  maximum_value: float | None = None
   if CONFIG_TARGET_MAX_VALUE in data and data[CONFIG_TARGET_MAX_VALUE] is not None:
     if isinstance(data[CONFIG_TARGET_MAX_VALUE], float) == False:
       matches = re.search(REGEX_VALUE, data[CONFIG_TARGET_MAX_VALUE])
       if matches is None:
         errors[CONFIG_TARGET_MAX_VALUE] = "invalid_value"
       else:
-        data[CONFIG_TARGET_MAX_VALUE] = float(data[CONFIG_TARGET_MAX_VALUE])
+        maximum_value = float(data[CONFIG_TARGET_MAX_VALUE])
+        data[CONFIG_TARGET_MAX_VALUE] = maximum_value
+    else:
+      maximum_value = data[CONFIG_TARGET_MAX_VALUE]
+
+  if minimum_value is not None and maximum_value is not None and minimum_value > maximum_value:
+    errors[CONFIG_TARGET_MIN_VALUE] = "minimum_value_not_less_than_maximum_value"
 
   if CONFIG_TARGET_WEIGHTING in data and data[CONFIG_TARGET_WEIGHTING] is not None:
     matches = re.search(REGEX_WEIGHTING, data[CONFIG_TARGET_WEIGHTING])
