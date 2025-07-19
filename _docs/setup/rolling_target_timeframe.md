@@ -96,22 +96,22 @@ There may be times that you want the target timeframe sensors to not take into a
 
     If hours mode is set to **minimum**, then a minimum and/or maximum rate must be specified in order for the target timeframe sensor to know what the cut off is for discovered times.
 
-### Weighting
+### Weighting/Multipliers
 
 !!! info
 
-    This is only available for **continuous** target timeframe sensors in **exact** hours mode.
+    This is only available for **continuous** target value sensors in **exact** hours mode.
 
-There may be times when the device you're wanting the target timeframe sensor to turn on doesn't have a consistent power draw. You can specify a weighting which can be applied to each discovered 30 minute slot. This can be specified in a few different ways. Take the following example weighting for a required 2 hours.
+There may be times when the device you're wanting the target value sensor to turn on doesn't have a consistent power draw. You can specify a weighting/multiplier which can be applied to the value of each discovered 30 minute slot. This can be specified in a few different ways. Take the following example weighting/multiplier for a required 2 hours.
 
-* `1,1,2,1` - This applies a weighting of 1 to the first, second and forth slot and a weighting of 2 to the third slot. This will try and make the lowest slot fall on the third slot, as long as the surrounding slots are cheaper than other continuous slots.
-* `*,2,1` - This applies a weighting of 1 to the first, second and forth slot and a weighting of 2 to the third slot. The `*` can be used as a placeholder for the standard weighting of 1 for all slots before the ones specified.
-* `1,1,2,*` - This applies a weighting of 1 to the first, second and forth slot and a weighting of 2 to the third slot. The `*` can be used as a placeholder for the standard weighting of 1 for all slots after the ones specified.
-* `2,*,2` - This applies a weighting of 2 to the first and forth slot and a weighting of 1 to all slots in between. The `*` can be used as a placeholder for the standard weighting of 1 for all slots in between the specified slots.
+* `1,1,2,1` - This applies a weighting/multiplier of 1 to the first, second and forth slot and a weighting/multiplier of 2 to the third slot. This will try and make the lowest slot fall on the third slot, as long as the surrounding slots are cheaper than other continuous slots.
+* `*,2,1` - This applies a weighting/multiplier of 1 to the first, second and forth slot and a weighting/multiplier of 2 to the third slot. The `*` can be used as a placeholder for the standard weighting/multiplier of 1 for all slots before the ones specified.
+* `1,1,2,*` - This applies a weighting/multiplier of 1 to the first, second and forth slot and a weighting/multiplier of 2 to the third slot. The `*` can be used as a placeholder for the standard weighting/multiplier of 1 for all slots after the ones specified.
+* `2,*,2` - This applies a weighting/multiplier of 2 to the first and forth slot and a weighting/multiplier of 1 to all slots in between. The `*` can be used as a placeholder for the standard weighting/multiplier of 1 for all slots in between the specified slots.
 
-Each slot weighting must be a whole number or decimal number and be positive.
+Each slot weighting/multiplier must be a whole number or decimal number and be positive.
 
-You can also use weightings to ignore slots. This can be done by assigning a value of 0 for the desired slot.
+You can also use weightings/multipliers to ignore slots. This can be done by assigning a value of 0 for the desired slot.
 
 ## Attributes
 
