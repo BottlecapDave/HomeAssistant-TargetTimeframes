@@ -76,7 +76,7 @@ def get_start_and_end_times(current_date: datetime, target_start_time: str, targ
 
   return (target_start, target_end)
 
-def get_fixed_applicable_time_periods(target_start: datetime, target_end: datetime, time_period_values: list, context: str = None):
+def get_fixed_applicable_time_periods(target_start: datetime, target_end: datetime, time_period_values: list, calculate_with_incomplete_data = False, context: str = None):
   _LOGGER.debug(f'{context} - Finding rates between {target_start} and {target_end}')
 
   # Retrieve the rates that are applicable for our target rate
@@ -92,13 +92,13 @@ def get_fixed_applicable_time_periods(target_start: datetime, target_end: dateti
   date_diff = target_end - target_start
   hours = (date_diff.days * 24) + (date_diff.seconds // 3600)
   periods = hours * 2
-  if len(applicable_rates) < periods:
+  if len(applicable_rates) < periods and calculate_with_incomplete_data == False:
     _LOGGER.debug(f'{context} - Incorrect number of periods discovered. Require {periods}, but only have {len(applicable_rates)}')
     return None
 
   return applicable_rates
 
-def get_rolling_applicable_time_periods(current_date: datetime, time_period_values: list, target_hours: float, context: str = None):
+def get_rolling_applicable_time_periods(current_date: datetime, time_period_values: list, target_hours: float, calculate_with_incomplete_data = False, context: str = None):
   # Retrieve the rates that are applicable for our target rate
   applicable_time_periods = []
   periods = target_hours * 2
@@ -113,7 +113,7 @@ def get_rolling_applicable_time_periods(current_date: datetime, time_period_valu
           break
 
   # Make sure that we have enough rates that meet our target period
-  if len(applicable_time_periods) < periods:
+  if len(applicable_time_periods) < periods and calculate_with_incomplete_data == False:
     _LOGGER.debug(f'{context} - Incorrect number of periods discovered. Require {periods}, but only have {len(applicable_time_periods)}')
     return None
 

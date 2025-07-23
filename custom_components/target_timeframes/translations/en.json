@@ -57,6 +57,15 @@
             "hours": "This has to be a multiple of 0.5.",
             "minimum_value": "This is in decimal format (e.g. 0.12)",
             "maximum_value": "This is in decimal format (e.g. 0.12)"
+          },
+          "sections": {
+            "dangerous_settings": {
+              "name": "Dangerous settings",
+              "description": "These settings can have undesired consequences if changed. Change at your own risk.",
+              "data": {
+                "calculate_with_incomplete_data": "Calculate with incomplete data"
+              }
+            }
           }
         },
         "reconfigure": {
@@ -83,6 +92,15 @@
             "hours": "This has to be a multiple of 0.5.",
             "minimum_value": "This is in decimal format (e.g. 0.12)",
             "maximum_value": "This is in decimal format (e.g. 0.12)"
+          },
+          "sections": {
+            "dangerous_settings": {
+              "name": "Dangerous settings",
+              "description": "These settings can have undesired consequences if changed. Change at your own risk.",
+              "data": {
+                "calculate_with_incomplete_data": "Calculate with incomplete data"
+              }
+            }
           }
         }
       },
@@ -123,6 +141,15 @@
             "maximum_value": "The optional maximum value for target hours",
             "weighting": "The optional weighting to apply to the discovered time period values",
             "target_times_evaluation_mode": "When should target times be selected"
+          },
+          "sections": {
+            "dangerous_settings": {
+              "name": "Dangerous settings",
+              "description": "These settings can have undesired consequences if changed. Change at your own risk.",
+              "data": {
+                "calculate_with_incomplete_data": "Calculate with incomplete data"
+              }
+            }
           }
         },
         "reconfigure": {
@@ -140,6 +167,15 @@
             "maximum_value": "The optional maximum value for target hours",
             "weighting": "The optional weighting to apply to the discovered time period values",
             "target_times_evaluation_mode": "When should target times be selected"
+          },
+          "sections": {
+            "dangerous_settings": {
+              "name": "Dangerous settings",
+              "description": "These settings can have undesired consequences if changed. Change at your own risk.",
+              "data": {
+                "calculate_with_incomplete_data": "Calculate with incomplete data"
+              }
+            }
           }
         }
       },

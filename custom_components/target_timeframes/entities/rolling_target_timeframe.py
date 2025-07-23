@@ -20,6 +20,8 @@ from homeassistant.helpers import translation
 
 from ..const import (
   CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD,
+  CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA,
+  CONFIG_TARGET_DANGEROUS_SETTINGS,
   CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE,
   CONFIG_TARGET_HOURS_MODE,
   CONFIG_TARGET_MAX_VALUE,
@@ -69,16 +71,7 @@ class TargetTimeframesRollingTargetRate(BinarySensorEntity, RestoreEntity):
     self._last_evaluated = None
     self._data_source_id = data_source_id
     self._attributes["data_source_id"] = self._data_source_id
-    
-    is_rolling_target = True
-    if CONFIG_TARGET_ROLLING_TARGET in self._config:
-      is_rolling_target = self._config[CONFIG_TARGET_ROLLING_TARGET]
-    self._attributes[CONFIG_TARGET_ROLLING_TARGET] = is_rolling_target
-
-    find_last_rates = False
-    if CONFIG_TARGET_LATEST_VALUES in self._config:
-      find_last_rates = self._config[CONFIG_TARGET_LATEST_VALUES]
-    self._attributes[CONFIG_TARGET_LATEST_VALUES] = find_last_rates
+    self.update_default_attributes()
 
     self._data_source_data = initial_data if initial_data is not None else []
     self._target_timeframes = []
@@ -150,10 +143,15 @@ class TargetTimeframesRollingTargetRate(BinarySensorEntity, RestoreEntity):
         if CONFIG_TARGET_MAX_VALUE in self._config:
           max_value = self._config[CONFIG_TARGET_MAX_VALUE]
 
+        calculate_with_incomplete_data = False
+        if CONFIG_TARGET_DANGEROUS_SETTINGS in self._config and CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA in self._config[CONFIG_TARGET_DANGEROUS_SETTINGS]:
+          calculate_with_incomplete_data = self._config[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA]
+
         applicable_time_periods = get_rolling_applicable_time_periods(
           current_local_date,
           self._data_source_data,
           self._config[CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD],
+          calculate_with_incomplete_data,
           self._config[CONFIG_TARGET_NAME]
         )
 
@@ -191,7 +189,7 @@ class TargetTimeframesRollingTargetRate(BinarySensorEntity, RestoreEntity):
           self._attributes["target_times_last_evaluated"] = current_date
           _LOGGER.debug(f"{self._config[CONFIG_TARGET_NAME]} - calculated rates: {self._target_timeframes}")
         
-        self._attributes["time_periods_incomplete"] = applicable_time_periods is None
+        self._attributes["time_periods_incomplete"] = applicable_time_periods is None or len(applicable_time_periods) < (target_hours * 2)
 
     active_result = get_target_time_period_info(current_date, self._target_timeframes, offset)
 
@@ -242,6 +240,7 @@ class TargetTimeframesRollingTargetRate(BinarySensorEntity, RestoreEntity):
       if compare_config(self._config, self._attributes) == False:
         self._state = False
         self._attributes = self._config.copy()
+        self.update_default_attributes()
         self._target_timeframes = None
     
       _LOGGER.debug(f'{self._config[CONFIG_TARGET_NAME]} - Restored state: {self._state}')
@@ -300,6 +299,7 @@ class TargetTimeframesRollingTargetRate(BinarySensorEntity, RestoreEntity):
 
     self._config = config
     self._attributes = self._config.copy()
+    self.update_default_attributes()
     self._target_timeframes = []
     await self.async_update()
     self.async_write_ha_state()
@@ -314,3 +314,23 @@ class TargetTimeframesRollingTargetRate(BinarySensorEntity, RestoreEntity):
         self._config_subentry,
         data = new_config_data
       )
+
+  def update_default_attributes(self):
+    """Update the default attributes."""
+    self._attributes["data_source_id"] = self._data_source_id
+
+    is_rolling_target = True
+    if CONFIG_TARGET_ROLLING_TARGET in self._config:
+      is_rolling_target = self._config[CONFIG_TARGET_ROLLING_TARGET]
+    self._attributes[CONFIG_TARGET_ROLLING_TARGET] = is_rolling_target
+
+    find_last_rates = False
+    if CONFIG_TARGET_LATEST_VALUES in self._config:
+      find_last_rates = self._config[CONFIG_TARGET_LATEST_VALUES]
+    self._attributes[CONFIG_TARGET_LATEST_VALUES] = find_last_rates
+
+    calculate_with_incomplete_data = False
+    if CONFIG_TARGET_DANGEROUS_SETTINGS in self._config and CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA in self._config[CONFIG_TARGET_DANGEROUS_SETTINGS]:
+      calculate_with_incomplete_data = self._config[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA]
+      del self._attributes[CONFIG_TARGET_DANGEROUS_SETTINGS]
+    self._attributes[CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA] = calculate_with_incomplete_data

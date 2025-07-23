@@ -113,6 +113,14 @@ Each slot weighting/multiplier must be a whole number or decimal number and be p
 
 You can also use weightings/multipliers to ignore slots. This can be done by assigning a value of 0 for the desired slot.
 
+### Dangerous settings
+
+These settings can have undesired effects and are not recommended to be changed, but there might be certain scenarios where this is the desired outcome.
+
+#### Calculate with incomplete data
+
+By default, the target timeframe isn't calculated if there isn't enough data for the period of time being evaluated. For example, if you have a look ahead hours set to 4 hours, it's 9pm and you only have data up to midnight, then the next target timeframe will not be calculated. If you turn this setting on, then the sensor will attempt to look for 4 hours worth of data if available, otherwise it will evaluate with whatever data is available (in this scenario 2 hours between 10pm and 12am).
+
 ## Attributes
 
 The following attributes are available on each sensor
@@ -141,6 +149,7 @@ The following attributes are available on each sensor
 | `next_min_value` | `float` | The average value for the next continuous discovered period. This will only be populated if `target_times` has been calculated and at least one period/block is in the future. |
 | `next_max_value` | `float` | The average value for the next continuous discovered period. This will only be populated if `target_times` has been calculated and at least one period/block is in the future. |
 | `target_times_last_evaluated` | datetime | The datetime the target times collection was last evaluated. This will occur if all previous target times are in the past and all values are available for the requested future time period. For example, if you are targeting 16:00 (day 1) to 16:00 (day 2), and you only have values up to 23:00 (day 1), then the target timeframes won't be calculated. |
+| `calculate_with_incomplete_data` | boolean | Determines if calculations should occur when there isn't enough data to satisfy the look ahead hours |
 
 ## Services
 
