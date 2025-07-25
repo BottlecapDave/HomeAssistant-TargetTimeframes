@@ -11,6 +11,7 @@ from ..const import (
   CONFIG_TARGET_HOURS_MODE_MINIMUM,
   CONFIG_TARGET_MAX_VALUE,
   CONFIG_TARGET_MIN_VALUE,
+  CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT,
   CONFIG_TARGET_NAME,
   CONFIG_TARGET_OFFSET,
   CONFIG_TARGET_START_TIME,
@@ -161,5 +162,20 @@ def validate_target_timeframe_config(data):
   if CONFIG_TARGET_HOURS not in errors and is_time_valid:
     if is_time_frame_long_enough(data[CONFIG_TARGET_HOURS], start_time, end_time) == False:
       errors[CONFIG_TARGET_HOURS] = "invalid_hours_time_frame"
+
+  minimum_required_minutes_in_slot: int | None = None
+  if CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT in data and data[CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT] is not None:
+    if isinstance(data[CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT], int) == False:
+      matches = re.search(REGEX_VALUE, data[CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT])
+      if matches is None:
+        errors[CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT] = "invalid_integer"
+      else:
+        minimum_required_minutes_in_slot = float(data[CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT])
+        data[CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT] = minimum_required_minutes_in_slot
+    else:
+      minimum_required_minutes_in_slot = data[CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT]
+
+  if minimum_required_minutes_in_slot is not None and (minimum_required_minutes_in_slot < 1 or minimum_required_minutes_in_slot > 30):
+    errors[CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT] = "invalid_minimum_required_minutes_in_slot"
 
   return errors

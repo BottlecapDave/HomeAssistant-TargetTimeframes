@@ -43,7 +43,7 @@ def is_target_timeframe_complete_in_period(current_date: datetime, start_time: d
     target_timeframes[-1]["end"] <= current_date
   )
 
-def get_start_and_end_times(current_date: datetime, target_start_time: str, target_end_time: str, start_time_not_in_past = True, context: str = None):
+def get_start_and_end_times(current_date: datetime, target_start_time: str, target_end_time: str, minimum_slot_minutes = None, context: str = None):
   if (target_start_time is not None):
     target_start = parse_datetime(current_date.strftime(f"%Y-%m-%dT{target_start_time}:00%z"))
   else:
@@ -64,10 +64,15 @@ def get_start_and_end_times(current_date: datetime, target_start_time: str, targ
     else:
       target_end = target_end + timedelta(days=1)
 
-  # If our start date has passed, reset it to current_date to avoid picking a slot in the past
-  if (start_time_not_in_past == True and target_start < current_date and current_date < target_end):
-    _LOGGER.debug(f'{context} - Rolling target and {target_start} is in the past. Setting start to {current_date}')
-    target_start = current_date
+  if (minimum_slot_minutes is not None and target_start < current_date and current_date < target_end):
+    current_date_start = current_date.replace(minute=30 if current_date.minute >= 30 else 0, second=0, microsecond=0)
+    minutes_remaining_in_current_slot = 30 - ((current_date.replace(second=0, microsecond=0) - current_date_start).total_seconds() / 60)
+    if (minutes_remaining_in_current_slot >= minimum_slot_minutes):
+      _LOGGER.debug(f'{context} - Current slot is sufficient for minimum slot minutes, so using current date start: {current_date_start}')
+      target_start = current_date_start
+    else:
+      target_start = current_date_start + timedelta(minutes=30)
+      _LOGGER.debug(f'{context} - Current slot is not sufficient for minimum slot minutes, so using next slot start: {target_start}')
 
   # If our start and end are both in the past, then look to the next day
   if (target_start < current_date and target_end < current_date):
