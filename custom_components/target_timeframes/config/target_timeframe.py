@@ -4,6 +4,7 @@ from datetime import timedelta
 from homeassistant.util.dt import (parse_datetime)
 
 from ..const import (
+  CONFIG_TARGET_DANGEROUS_SETTINGS,
   CONFIG_TARGET_END_TIME,
   CONFIG_TARGET_HOURS,
   CONFIG_TARGET_HOURS_MODE,
@@ -164,18 +165,20 @@ def validate_target_timeframe_config(data):
       errors[CONFIG_TARGET_HOURS] = "invalid_hours_time_frame"
 
   minimum_required_minutes_in_slot: int | None = None
-  if CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT in data and data[CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT] is not None:
-    if isinstance(data[CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT], int) == False:
-      matches = re.search(REGEX_VALUE, data[CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT])
+  if (CONFIG_TARGET_DANGEROUS_SETTINGS in data and
+      CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT in data[CONFIG_TARGET_DANGEROUS_SETTINGS] and 
+      data[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT] is not None):
+    if isinstance(data[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT], int) == False:
+      matches = re.search(REGEX_VALUE, data[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT])
       if matches is None:
-        errors[CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT] = "invalid_integer"
+        errors[CONFIG_TARGET_DANGEROUS_SETTINGS] = "invalid_integer"
       else:
-        minimum_required_minutes_in_slot = float(data[CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT])
-        data[CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT] = minimum_required_minutes_in_slot
+        minimum_required_minutes_in_slot = float(data[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT])
+        data[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT] = minimum_required_minutes_in_slot
     else:
-      minimum_required_minutes_in_slot = data[CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT]
+      minimum_required_minutes_in_slot = data[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT]
 
   if minimum_required_minutes_in_slot is not None and (minimum_required_minutes_in_slot < 1 or minimum_required_minutes_in_slot > 30):
-    errors[CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT] = "invalid_minimum_required_minutes_in_slot"
+    errors[CONFIG_TARGET_DANGEROUS_SETTINGS] = "invalid_minimum_required_minutes_in_slot"
 
   return errors
