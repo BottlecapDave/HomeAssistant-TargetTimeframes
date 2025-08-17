@@ -2,12 +2,14 @@ import re
 
 from ..const import (
   CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD,
+  CONFIG_TARGET_DANGEROUS_SETTINGS,
   CONFIG_TARGET_HOURS,
   CONFIG_TARGET_HOURS_MODE,
   CONFIG_TARGET_HOURS_MODE_EXACT,
   CONFIG_TARGET_HOURS_MODE_MINIMUM,
   CONFIG_TARGET_MAX_VALUE,
   CONFIG_TARGET_MIN_VALUE,
+  CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT,
   CONFIG_TARGET_NAME,
   CONFIG_TARGET_OFFSET,
   CONFIG_TARGET_TYPE,
@@ -15,6 +17,7 @@ from ..const import (
   CONFIG_TARGET_WEIGHTING,
   REGEX_ENTITY_NAME,
   REGEX_HOURS,
+  REGEX_INTEGER,
   REGEX_OFFSET_PARTS,
   REGEX_VALUE,
   REGEX_WEIGHTING
@@ -81,21 +84,32 @@ def validate_rolling_target_timeframe_config(data):
     if matches is None:
       errors[CONFIG_TARGET_OFFSET] = "invalid_offset"
 
+  minimum_value: float | None = None
   if CONFIG_TARGET_MIN_VALUE in data and data[CONFIG_TARGET_MIN_VALUE] is not None:
     if isinstance(data[CONFIG_TARGET_MIN_VALUE], float) == False:
       matches = re.search(REGEX_VALUE, data[CONFIG_TARGET_MIN_VALUE])
       if matches is None:
         errors[CONFIG_TARGET_MIN_VALUE] = "invalid_value"
       else:
-        data[CONFIG_TARGET_MIN_VALUE] = float(data[CONFIG_TARGET_MIN_VALUE])
+        minimum_value = float(data[CONFIG_TARGET_MIN_VALUE])
+        data[CONFIG_TARGET_MIN_VALUE] = minimum_value
+    else:
+      minimum_value = data[CONFIG_TARGET_MIN_VALUE]
 
+  maximum_value: float | None = None
   if CONFIG_TARGET_MAX_VALUE in data and data[CONFIG_TARGET_MAX_VALUE] is not None:
     if isinstance(data[CONFIG_TARGET_MAX_VALUE], float) == False:
       matches = re.search(REGEX_VALUE, data[CONFIG_TARGET_MAX_VALUE])
       if matches is None:
         errors[CONFIG_TARGET_MAX_VALUE] = "invalid_value"
       else:
-        data[CONFIG_TARGET_MAX_VALUE] = float(data[CONFIG_TARGET_MAX_VALUE])
+        maximum_value = float(data[CONFIG_TARGET_MAX_VALUE])
+        data[CONFIG_TARGET_MAX_VALUE] = maximum_value
+    else:
+      maximum_value = data[CONFIG_TARGET_MAX_VALUE]
+
+  if minimum_value is not None and maximum_value is not None and minimum_value > maximum_value:
+    errors[CONFIG_TARGET_MIN_VALUE] = "minimum_value_not_less_than_maximum_value"
 
   if CONFIG_TARGET_WEIGHTING in data and data[CONFIG_TARGET_WEIGHTING] is not None:
     matches = re.search(REGEX_WEIGHTING, data[CONFIG_TARGET_WEIGHTING])
@@ -121,5 +135,26 @@ def validate_rolling_target_timeframe_config(data):
 
   if CONFIG_TARGET_HOURS not in errors and CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD not in errors and data[CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD] < data[CONFIG_TARGET_HOURS]:
     errors[CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD] = "look_ahead_hours_not_long_enough"
+
+  minimum_required_minutes_in_slot: int | None = None
+  if (CONFIG_TARGET_DANGEROUS_SETTINGS in data and
+      CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT in data[CONFIG_TARGET_DANGEROUS_SETTINGS] and 
+      data[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT] is not None):
+    
+    if isinstance(data[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT], int) == False:
+      if isinstance(data[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT], str):
+        matches = re.search(REGEX_INTEGER, data[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT])
+        if matches is None:
+          errors[CONFIG_TARGET_DANGEROUS_SETTINGS] = "invalid_integer"
+        else:
+          minimum_required_minutes_in_slot = int(data[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT])
+          data[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT] = minimum_required_minutes_in_slot
+      else:
+        errors[CONFIG_TARGET_DANGEROUS_SETTINGS] = "invalid_integer"
+    else:
+      minimum_required_minutes_in_slot = data[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT]
+
+  if minimum_required_minutes_in_slot is not None and (minimum_required_minutes_in_slot < 1 or minimum_required_minutes_in_slot > 30):
+    errors[CONFIG_TARGET_DANGEROUS_SETTINGS] = "invalid_minimum_required_minutes_in_slot"
 
   return errors

@@ -1,13 +1,13 @@
 import pytest
 
 from homeassistant.util.dt import (as_utc, parse_datetime)
-from custom_components.target_timeframes.config.target_timeframe import validate_target_timeframe_config
-from custom_components.target_timeframes.const import CONFIG_TARGET_DANGEROUS_SETTINGS, CONFIG_TARGET_END_TIME, CONFIG_TARGET_HOURS, CONFIG_TARGET_HOURS_MODE, CONFIG_TARGET_HOURS_MODE_EXACT, CONFIG_TARGET_HOURS_MODE_MAXIMUM, CONFIG_TARGET_HOURS_MODE_MINIMUM, CONFIG_TARGET_MAX_VALUE, CONFIG_TARGET_MIN_VALUE, CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT, CONFIG_TARGET_NAME, CONFIG_TARGET_OFFSET, CONFIG_TARGET_START_TIME, CONFIG_TARGET_TYPE, CONFIG_TARGET_TYPE_CONTINUOUS, CONFIG_TARGET_TYPE_INTERMITTENT, CONFIG_TARGET_WEIGHTING, DATA_SCHEMA_ROLLING_TARGET_TIME_PERIOD, DATA_SCHEMA_TARGET_TIME_PERIOD
+from custom_components.target_timeframes.config.rolling_target_timeframe import validate_rolling_target_timeframe_config
+from custom_components.target_timeframes.const import CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD, CONFIG_TARGET_DANGEROUS_SETTINGS, CONFIG_TARGET_HOURS, CONFIG_TARGET_HOURS_MODE, CONFIG_TARGET_HOURS_MODE_EXACT, CONFIG_TARGET_HOURS_MODE_MAXIMUM, CONFIG_TARGET_HOURS_MODE_MINIMUM, CONFIG_TARGET_MAX_VALUE, CONFIG_TARGET_MIN_VALUE, CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT, CONFIG_TARGET_NAME, CONFIG_TARGET_OFFSET, CONFIG_TARGET_TYPE, CONFIG_TARGET_TYPE_CONTINUOUS, CONFIG_TARGET_TYPE_INTERMITTENT, CONFIG_TARGET_WEIGHTING, DATA_SCHEMA_ROLLING_TARGET_TIME_PERIOD
 from ..config import assert_errors_not_present, get_schema_keys
 
 now = as_utc(parse_datetime("2023-08-20T10:00:00Z"))
 
-default_keys = get_schema_keys(DATA_SCHEMA_TARGET_TIME_PERIOD.schema)
+default_keys = get_schema_keys(DATA_SCHEMA_ROLLING_TARGET_TIME_PERIOD.schema)
 
 @pytest.mark.asyncio
 async def test_when_config_is_valid_no_errors_returned():
@@ -16,8 +16,7 @@ async def test_when_config_is_valid_no_errors_returned():
     CONFIG_TARGET_TYPE: CONFIG_TARGET_TYPE_CONTINUOUS,
     CONFIG_TARGET_NAME: "test",
     CONFIG_TARGET_HOURS: "1.5",
-    CONFIG_TARGET_START_TIME: "00:00",
-    CONFIG_TARGET_END_TIME: "00:00",
+    CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD: "2",
     CONFIG_TARGET_OFFSET: "-00:30:00",
     CONFIG_TARGET_MIN_VALUE: "0",
     CONFIG_TARGET_MAX_VALUE: "10",
@@ -26,7 +25,7 @@ async def test_when_config_is_valid_no_errors_returned():
   }
 
   # Act
-  errors = validate_target_timeframe_config(data)
+  errors = validate_rolling_target_timeframe_config(data)
 
   # Assert
   assert_errors_not_present(errors, default_keys)
@@ -38,8 +37,7 @@ async def test_when_optional_config_is_valid_no_errors_returned():
     CONFIG_TARGET_TYPE: CONFIG_TARGET_TYPE_CONTINUOUS,
     CONFIG_TARGET_NAME: "test",
     CONFIG_TARGET_HOURS: "1.5",
-    CONFIG_TARGET_START_TIME: None,
-    CONFIG_TARGET_END_TIME: None,
+    CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD: "2",
     CONFIG_TARGET_OFFSET: None,
     CONFIG_TARGET_MIN_VALUE: None,
     CONFIG_TARGET_MAX_VALUE: None,
@@ -48,7 +46,7 @@ async def test_when_optional_config_is_valid_no_errors_returned():
   }
 
   # Act
-  errors = validate_target_timeframe_config(data)
+  errors = validate_rolling_target_timeframe_config(data)
 
   # Assert
   assert_errors_not_present(errors, default_keys)
@@ -65,14 +63,13 @@ async def test_when_config_has_invalid_name_then_errors_returned(name):
     CONFIG_TARGET_TYPE: CONFIG_TARGET_TYPE_CONTINUOUS,
     CONFIG_TARGET_NAME: name,
     CONFIG_TARGET_HOURS: "1.5",
-    CONFIG_TARGET_START_TIME: "00:00",
-    CONFIG_TARGET_END_TIME: "16:00",
+    CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD: "2",
     CONFIG_TARGET_OFFSET: "-00:00:00",
     CONFIG_TARGET_HOURS_MODE: CONFIG_TARGET_HOURS_MODE_EXACT
   }
 
   # Act
-  errors = validate_target_timeframe_config(data)
+  errors = validate_rolling_target_timeframe_config(data)
 
   # Assert
   assert CONFIG_TARGET_NAME in errors
@@ -86,14 +83,13 @@ async def test_when_config_has_valid_hours_then_no_errors_returned():
     CONFIG_TARGET_TYPE: CONFIG_TARGET_TYPE_CONTINUOUS,
     CONFIG_TARGET_NAME: "test",
     CONFIG_TARGET_HOURS: "0",
-    CONFIG_TARGET_START_TIME: "00:00",
-    CONFIG_TARGET_END_TIME: "16:00",
+    CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD: "2",
     CONFIG_TARGET_OFFSET: "-00:00:00",
     CONFIG_TARGET_HOURS_MODE: CONFIG_TARGET_HOURS_MODE_EXACT
   }
 
   # Act
-  errors = validate_target_timeframe_config(data)
+  errors = validate_rolling_target_timeframe_config(data)
 
   # Assert
   assert_errors_not_present(errors, default_keys)
@@ -114,14 +110,13 @@ async def test_when_config_has_invalid_hours_then_errors_returned(hours):
     CONFIG_TARGET_TYPE: CONFIG_TARGET_TYPE_CONTINUOUS,
     CONFIG_TARGET_NAME: "test",
     CONFIG_TARGET_HOURS: hours,
-    CONFIG_TARGET_START_TIME: "00:00",
-    CONFIG_TARGET_END_TIME: "16:00",
+    CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD: "2",
     CONFIG_TARGET_OFFSET: "-00:00:00",
     CONFIG_TARGET_HOURS_MODE: CONFIG_TARGET_HOURS_MODE_EXACT
   }
 
   # Act
-  errors = validate_target_timeframe_config(data)
+  errors = validate_rolling_target_timeframe_config(data)
 
   # Assert
   assert CONFIG_TARGET_HOURS in errors
@@ -129,64 +124,30 @@ async def test_when_config_has_invalid_hours_then_errors_returned(hours):
   assert_errors_not_present(errors, default_keys, CONFIG_TARGET_HOURS)
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("start_time",[
+@pytest.mark.parametrize("look_ahead",[
   (""),
   ("s"),
-  ("24:00"),
-  ("-0:01"),
-  ("00:000"),
-  ("00:60"),
-  ("00:00:00"),
+  ("-0"),
+  ("-0.01"),
 ])
-async def test_when_config_has_invalid_start_time_then_errors_returned(start_time):
+async def test_when_config_has_invalid_look_ahead_hours_then_errors_returned(look_ahead):
   # Arrange
   data = {
     CONFIG_TARGET_TYPE: CONFIG_TARGET_TYPE_CONTINUOUS,
     CONFIG_TARGET_NAME: "test",
     CONFIG_TARGET_HOURS: "1.5",
-    CONFIG_TARGET_START_TIME: start_time,
-    CONFIG_TARGET_END_TIME: "16:00",
+    CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD: look_ahead,
     CONFIG_TARGET_OFFSET: "-00:00:00",
     CONFIG_TARGET_HOURS_MODE: CONFIG_TARGET_HOURS_MODE_EXACT
   }
 
   # Act
-  errors = validate_target_timeframe_config(data)
+  errors = validate_rolling_target_timeframe_config(data)
 
   # Assert
-  assert CONFIG_TARGET_START_TIME in errors
-  assert errors[CONFIG_TARGET_START_TIME] == "invalid_target_time"
-  assert_errors_not_present(errors, default_keys, CONFIG_TARGET_START_TIME)
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("end_time",[
-  (""),
-  ("s"),
-  ("24:00"),
-  ("-0:01"),
-  ("00:000"),
-  ("00:60"),
-  ("00:00:00"),
-])
-async def test_when_config_has_invalid_end_time_then_errors_returned(end_time):
-  # Arrange
-  data = {
-    CONFIG_TARGET_TYPE: CONFIG_TARGET_TYPE_CONTINUOUS,
-    CONFIG_TARGET_NAME: "test",
-    CONFIG_TARGET_HOURS: "1.5",
-    CONFIG_TARGET_START_TIME: "00:00",
-    CONFIG_TARGET_END_TIME: end_time,
-    CONFIG_TARGET_OFFSET: "-00:00:00",
-    CONFIG_TARGET_HOURS_MODE: CONFIG_TARGET_HOURS_MODE_EXACT,
-  }
-
-  # Act
-  errors = validate_target_timeframe_config(data)
-
-  # Assert
-  assert CONFIG_TARGET_END_TIME in errors
-  assert errors[CONFIG_TARGET_END_TIME] == "invalid_target_time"
-  assert_errors_not_present(errors, default_keys, CONFIG_TARGET_END_TIME)
+  assert CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD in errors
+  assert errors[CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD] == "invalid_target_hours"
+  assert_errors_not_present(errors, default_keys, CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD)
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("offset",[
@@ -209,14 +170,13 @@ async def test_when_config_has_invalid_offset_then_errors_returned(offset):
     CONFIG_TARGET_TYPE: CONFIG_TARGET_TYPE_CONTINUOUS,
     CONFIG_TARGET_NAME: "test",
     CONFIG_TARGET_HOURS: "1.5",
-    CONFIG_TARGET_START_TIME: "00:00",
-    CONFIG_TARGET_END_TIME: "16:00",
+    CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD: "2",
     CONFIG_TARGET_OFFSET: offset,
     CONFIG_TARGET_HOURS_MODE: CONFIG_TARGET_HOURS_MODE_EXACT,
   }
 
   # Act
-  errors = validate_target_timeframe_config(data)
+  errors = validate_rolling_target_timeframe_config(data)
 
   # Assert
   assert CONFIG_TARGET_OFFSET in errors
@@ -224,95 +184,24 @@ async def test_when_config_has_invalid_offset_then_errors_returned(offset):
   assert_errors_not_present(errors, default_keys, CONFIG_TARGET_OFFSET)
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("start_time,end_time",[
-  ("01:00","02:00"),
-  ("23:00","00:00"),
-])
-async def test_when_hours_exceed_selected_time_frame_then_errors_returned(start_time, end_time):
+async def test_when_hours_exceed_selected_look_ahead_hours_then_errors_returned():
   # Arrange
   data = {
     CONFIG_TARGET_TYPE: CONFIG_TARGET_TYPE_CONTINUOUS,
     CONFIG_TARGET_NAME: "test",
     CONFIG_TARGET_HOURS: "1.5",
-    CONFIG_TARGET_START_TIME: start_time,
-    CONFIG_TARGET_END_TIME: end_time,
+    CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD: "1.49",
     CONFIG_TARGET_OFFSET: "-00:00:00",
     CONFIG_TARGET_HOURS_MODE: CONFIG_TARGET_HOURS_MODE_EXACT,
   }
 
   # Act
-  errors = validate_target_timeframe_config(data)
+  errors = validate_rolling_target_timeframe_config(data)
 
   # Assert
-  assert CONFIG_TARGET_HOURS in errors
-  assert errors[CONFIG_TARGET_HOURS] == "invalid_hours_time_frame"
-  assert_errors_not_present(errors, default_keys, CONFIG_TARGET_HOURS)
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("start_time,end_time,offset",[
-  ("00:00","00:00","00:00:00"),
-  (None, None, None),
-])
-async def test_when_config_is_valid_and_not_agile_then_no_errors_returned(start_time, end_time, offset):
-  # Arrange
-  data = {
-    CONFIG_TARGET_TYPE: CONFIG_TARGET_TYPE_CONTINUOUS,
-    CONFIG_TARGET_NAME: "test",
-    CONFIG_TARGET_HOURS: "1.5",
-    CONFIG_TARGET_HOURS_MODE: CONFIG_TARGET_HOURS_MODE_EXACT,
-  }
-
-  if start_time is not None:
-    data[CONFIG_TARGET_START_TIME] = start_time
-
-  if end_time is not None:
-    data[CONFIG_TARGET_END_TIME] = end_time
-  
-  if offset is not None:
-    data[CONFIG_TARGET_OFFSET] = offset
-
-  # Act
-  errors = validate_target_timeframe_config(data)
-
-  # Assert
-  assert_errors_not_present(errors, default_keys)
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("start_time,end_time,offset",[
-  ("00:00","23:00","00:00:00"),
-  ("00:00","16:00","00:00:00"),
-  ("23:00","16:00","00:00:00"),
-  ("16:00","16:00","00:00:00"),
-  ("16:00","00:00","00:00:00"),
-  (None, "23:00", None),
-  ("16:00", None, None),
-  ("10:00","23:00","00:00:00"),
-  ("16:30","23:30","00:00:00"),
-  ("17:00","14:00","00:00:00"),
-])
-async def test_when_config_is_valid_and_agile_then_no_errors_returned(start_time, end_time, offset):
-  # Arrange
-  data = {
-    CONFIG_TARGET_NAME: "test",
-    CONFIG_TARGET_HOURS: "1.5",
-    CONFIG_TARGET_HOURS_MODE: CONFIG_TARGET_HOURS_MODE_EXACT,
-  }
-
-  if start_time is not None:
-    data[CONFIG_TARGET_START_TIME] = start_time
-
-  if end_time is not None:
-    data[CONFIG_TARGET_END_TIME] = end_time
-  
-  if offset is not None:
-    data[CONFIG_TARGET_OFFSET] = offset
-
-
-  # Act
-  errors = validate_target_timeframe_config(data)
-
-  # Assert
-  assert_errors_not_present(errors, default_keys, CONFIG_TARGET_NAME)
+  assert CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD in errors
+  assert errors[CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD] == "invalid_target_hours"
+  assert_errors_not_present(errors, default_keys, CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD)
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("weighting,expected_error",[
@@ -329,12 +218,13 @@ async def test_when_weighting_is_invalid_then_weighting_error_returned(weighting
     CONFIG_TARGET_TYPE: CONFIG_TARGET_TYPE_CONTINUOUS,
     CONFIG_TARGET_NAME: "test",
     CONFIG_TARGET_HOURS: "1.5",
+    CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD: "2",
     CONFIG_TARGET_WEIGHTING: weighting,
     CONFIG_TARGET_HOURS_MODE: CONFIG_TARGET_HOURS_MODE_EXACT,
   }
 
   # Act
-  errors = validate_target_timeframe_config(data)
+  errors = validate_rolling_target_timeframe_config(data)
 
   # Assert
   assert CONFIG_TARGET_WEIGHTING in errors
@@ -351,12 +241,13 @@ async def test_when_weighting_set_and_type_invalid_then_weighting_error_returned
     CONFIG_TARGET_TYPE: type,
     CONFIG_TARGET_NAME: "test",
     CONFIG_TARGET_HOURS: "1.5",
+    CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD: "2",
     CONFIG_TARGET_WEIGHTING: "1,2,3",
     CONFIG_TARGET_HOURS_MODE: CONFIG_TARGET_HOURS_MODE_EXACT,
   }
 
   # Act
-  errors = validate_target_timeframe_config(data)
+  errors = validate_rolling_target_timeframe_config(data)
 
   # Assert
   assert CONFIG_TARGET_WEIGHTING in errors
@@ -384,8 +275,7 @@ async def test_when_hour_mode_is_minimum_and_minimum_or_maximum_value_is_specifi
     CONFIG_TARGET_TYPE: CONFIG_TARGET_TYPE_CONTINUOUS,
     CONFIG_TARGET_NAME: "test",
     CONFIG_TARGET_HOURS: "1.5",
-    CONFIG_TARGET_START_TIME: "00:00",
-    CONFIG_TARGET_END_TIME: "00:00",
+    CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD: "2",
     CONFIG_TARGET_OFFSET: "-00:30:00",
     CONFIG_TARGET_MIN_VALUE: min_value,
     CONFIG_TARGET_MAX_VALUE: max_value,
@@ -393,7 +283,7 @@ async def test_when_hour_mode_is_minimum_and_minimum_or_maximum_value_is_specifi
   }
 
   # Act
-  errors = validate_target_timeframe_config(data)
+  errors = validate_rolling_target_timeframe_config(data)
 
   # Assert
   assert_errors_not_present(errors, default_keys)
@@ -411,8 +301,7 @@ async def test_when_minimum_value_greater_to_maximum_value_is_specified_then_err
     CONFIG_TARGET_TYPE: CONFIG_TARGET_TYPE_CONTINUOUS,
     CONFIG_TARGET_NAME: "test",
     CONFIG_TARGET_HOURS: "1.5",
-    CONFIG_TARGET_START_TIME: "00:00",
-    CONFIG_TARGET_END_TIME: "00:00",
+    CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD: "2",
     CONFIG_TARGET_OFFSET: "-00:30:00",
     CONFIG_TARGET_MIN_VALUE: min_value,
     CONFIG_TARGET_MAX_VALUE: max_value,
@@ -420,7 +309,7 @@ async def test_when_minimum_value_greater_to_maximum_value_is_specified_then_err
   }
 
   # Act
-  errors = validate_target_timeframe_config(data)
+  errors = validate_rolling_target_timeframe_config(data)
 
   # Assert
   assert CONFIG_TARGET_MIN_VALUE in errors
@@ -438,8 +327,7 @@ async def test_when_hour_mode_is_not_exact_and_weighting_specified_then_error_re
     CONFIG_TARGET_TYPE: CONFIG_TARGET_TYPE_CONTINUOUS,
     CONFIG_TARGET_NAME: "test",
     CONFIG_TARGET_HOURS: "1.5",
-    CONFIG_TARGET_START_TIME: "00:00",
-    CONFIG_TARGET_END_TIME: "00:00",
+    CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD: "2",
     CONFIG_TARGET_OFFSET: "-00:30:00",
     CONFIG_TARGET_WEIGHTING: "2,*,2",
     CONFIG_TARGET_MIN_VALUE: "0.18",
@@ -447,7 +335,7 @@ async def test_when_hour_mode_is_not_exact_and_weighting_specified_then_error_re
   }
 
   # Act
-  errors = validate_target_timeframe_config(data)
+  errors = validate_rolling_target_timeframe_config(data)
 
   # Assert
   assert CONFIG_TARGET_WEIGHTING in errors
@@ -461,16 +349,16 @@ async def test_when_hour_mode_is_minimum_and_minimum_and_maximum_value_is_not_sp
     CONFIG_TARGET_TYPE: CONFIG_TARGET_TYPE_CONTINUOUS,
     CONFIG_TARGET_NAME: "test",
     CONFIG_TARGET_HOURS: "1.5",
-    CONFIG_TARGET_START_TIME: "00:00",
-    CONFIG_TARGET_END_TIME: "00:00",
+    CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD: "2",
     CONFIG_TARGET_OFFSET: "-00:30:00",
     CONFIG_TARGET_HOURS_MODE: CONFIG_TARGET_HOURS_MODE_MINIMUM
   }
 
   # Act
-  errors = validate_target_timeframe_config(data)
+  errors = validate_rolling_target_timeframe_config(data)
 
   # Assert
+  assert CONFIG_TARGET_HOURS_MODE in errors
   assert errors[CONFIG_TARGET_HOURS_MODE] == "minimum_or_maximum_value_not_specified"
   assert_errors_not_present(errors, default_keys, CONFIG_TARGET_HOURS_MODE)
 
@@ -487,8 +375,7 @@ async def test_when_minimum_required_minutes_set_to_valid_integer_then_no_error_
     CONFIG_TARGET_TYPE: CONFIG_TARGET_TYPE_CONTINUOUS,
     CONFIG_TARGET_NAME: "test",
     CONFIG_TARGET_HOURS: "1.5",
-    CONFIG_TARGET_START_TIME: "00:00",
-    CONFIG_TARGET_END_TIME: "00:00",
+    CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD: "2",
     CONFIG_TARGET_OFFSET: "-00:30:00",
     CONFIG_TARGET_MIN_VALUE: "0",
     CONFIG_TARGET_MAX_VALUE: "10",
@@ -500,7 +387,7 @@ async def test_when_minimum_required_minutes_set_to_valid_integer_then_no_error_
   }
 
   # Act
-  errors = validate_target_timeframe_config(data)
+  errors = validate_rolling_target_timeframe_config(data)
 
   # Assert
   assert_errors_not_present(errors, default_keys)
@@ -517,8 +404,7 @@ async def test_when_minimum_required_minutes_set_to_invalid_integer_then_error_r
     CONFIG_TARGET_TYPE: CONFIG_TARGET_TYPE_CONTINUOUS,
     CONFIG_TARGET_NAME: "test",
     CONFIG_TARGET_HOURS: "1.5",
-    CONFIG_TARGET_START_TIME: "00:00",
-    CONFIG_TARGET_END_TIME: "00:00",
+    CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD: "2",
     CONFIG_TARGET_OFFSET: "-00:30:00",
     CONFIG_TARGET_MIN_VALUE: "0",
     CONFIG_TARGET_MAX_VALUE: "10",
@@ -530,7 +416,7 @@ async def test_when_minimum_required_minutes_set_to_invalid_integer_then_error_r
   }
 
   # Act
-  errors = validate_target_timeframe_config(data)
+  errors = validate_rolling_target_timeframe_config(data)
 
   # Assert
   assert CONFIG_TARGET_DANGEROUS_SETTINGS in errors
@@ -550,8 +436,7 @@ async def test_when_minimum_required_minutes_set_to_invalid_value_then_error_ret
     CONFIG_TARGET_TYPE: CONFIG_TARGET_TYPE_CONTINUOUS,
     CONFIG_TARGET_NAME: "test",
     CONFIG_TARGET_HOURS: "1.5",
-    CONFIG_TARGET_START_TIME: "00:00",
-    CONFIG_TARGET_END_TIME: "00:00",
+    CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD: "2",
     CONFIG_TARGET_OFFSET: "-00:30:00",
     CONFIG_TARGET_MIN_VALUE: "0",
     CONFIG_TARGET_MAX_VALUE: "10",
@@ -563,7 +448,7 @@ async def test_when_minimum_required_minutes_set_to_invalid_value_then_error_ret
   }
 
   # Act
-  errors = validate_target_timeframe_config(data)
+  errors = validate_rolling_target_timeframe_config(data)
 
   # Assert
   assert CONFIG_TARGET_DANGEROUS_SETTINGS in errors

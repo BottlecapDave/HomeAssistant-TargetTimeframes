@@ -4,40 +4,43 @@ import pytest
 from custom_components.target_timeframes.entities import get_fixed_applicable_time_periods, get_start_and_end_times
 from unit import create_data_source_data, default_time_periods, values_to_thirty_minute_increments
 
+default_minimum_slot_minutes = 30
+
 @pytest.mark.asyncio
-@pytest.mark.parametrize("current_date,target_start_time,target_end_time,expected_first_valid_from,is_rolling_target,expected_number_of_rates",[
-  (datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), "10:00", "18:00", datetime.strptime("2022-02-09T10:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), True, 16),
-  (datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), "10:00", "18:00", datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), True, 12),
-  (datetime.strptime("2022-02-09T19:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), "10:00", "18:00", datetime.strptime("2022-02-10T10:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), True, 16),
-  (datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), "10:00", "18:00", datetime.strptime("2022-02-09T10:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), False, 16),
-  (datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), "10:00", "18:00", datetime.strptime("2022-02-09T10:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), False, 16),
-  (datetime.strptime("2022-02-09T19:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), "10:00", "18:00", datetime.strptime("2022-02-10T10:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), False, 16),
+@pytest.mark.parametrize("current_date,target_start_time,target_end_time,expected_first_valid_from,minimum_slot_minutes,expected_number_of_rates",[
+  (datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), "10:00", "18:00", datetime.strptime("2022-02-09T10:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), 30, 16),
+  (datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), "10:00", "18:00", datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), 30, 12),
+  (datetime.strptime("2022-02-09T19:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), "10:00", "18:00", datetime.strptime("2022-02-10T10:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), 30, 16),
+  (datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), "10:00", "18:00", datetime.strptime("2022-02-09T10:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, 16),
+  (datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), "10:00", "18:00", datetime.strptime("2022-02-09T10:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, 16),
+  (datetime.strptime("2022-02-09T19:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), "10:00", "18:00", datetime.strptime("2022-02-10T10:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, 16),
   
   # No start set
-  (datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, "18:00", datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), True, 36),
-  (datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, "18:00", datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), True, 12),
-  (datetime.strptime("2022-02-09T19:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, "18:00", datetime.strptime("2022-02-10T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), True, 36),
-  (datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, "18:00", datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), False, 36),
-  (datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, "18:00", datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), False, 36),
-  (datetime.strptime("2022-02-09T19:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, "18:00", datetime.strptime("2022-02-10T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), False, 36),
+  (datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, "18:00", datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), 30, 36),
+  (datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, "18:00", datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), 30, 12),
+  (datetime.strptime("2022-02-09T19:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, "18:00", datetime.strptime("2022-02-10T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), 30, 36),
+  (datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, "18:00", datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, 36),
+  (datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, "18:00", datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, 36),
+  (datetime.strptime("2022-02-09T19:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, "18:00", datetime.strptime("2022-02-10T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, 36),
   
   # No end set
-  (datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), "10:00", None, datetime.strptime("2022-02-09T10:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), True, 28),
-  (datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), "10:00", None, datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), True, 24),
-  (datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), "10:00", None, datetime.strptime("2022-02-09T10:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), False, 28),
-  (datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), "10:00", None, datetime.strptime("2022-02-09T10:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), False, 28),
+  (datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), "10:00", None, datetime.strptime("2022-02-09T10:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), 30, 28),
+  (datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), "10:00", None, datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), 30, 24),
+  (datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), "10:00", None, datetime.strptime("2022-02-09T10:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, 28),
+  (datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), "10:00", None, datetime.strptime("2022-02-09T10:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, 28),
   
   # No start or end set
-  (datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, None, datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), True, 48),
-  (datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, None, datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), True, 24),
-  (datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, None, datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), False, 48),
-  (datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, None, datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), False, 48),
+  (datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, None, datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), 30, 48),
+  (datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, None, datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), 30, 24),
+  (datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, None, datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, 48),
+  (datetime.strptime("2022-02-09T12:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, None, datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z"), None, 48),
 ])
-async def test_when_continuous_times_present_then_next_continuous_times_returned(current_date, target_start_time, target_end_time, expected_first_valid_from, is_rolling_target, expected_number_of_rates):
+async def test_when_continuous_times_present_then_next_continuous_times_returned(current_date, target_start_time, target_end_time, expected_first_valid_from, minimum_slot_minutes, expected_number_of_rates):
   # Arrange
   period_from = datetime.strptime("2022-02-09T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z")
   period_to = datetime.strptime("2022-02-11T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z")
   expected_values = [0.1, 20, 0.3, 20, 20, 0.1]
+  calculate_with_incomplete_data = False
 
   values = create_data_source_data(
     period_from,
@@ -45,13 +48,14 @@ async def test_when_continuous_times_present_then_next_continuous_times_returned
     expected_values
   )
 
-  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, is_rolling_target)
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, minimum_slot_minutes)
 
   # Act
   result = get_fixed_applicable_time_periods(
     target_start_datetime,
     target_end_datetime,
-    values
+    values,
+    calculate_with_incomplete_data
   )
 
   assert result is not None
@@ -68,16 +72,18 @@ async def test_when_start_time_is_after_end_time_then_rates_are_overnight():
   current_date = datetime.strptime("2022-10-21T09:10:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
   target_start_time = "20:00"
   target_end_time = "09:00"
+  calculate_with_incomplete_data = False
 
   expected_first_valid_from = datetime.strptime("2022-10-21T23:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
 
-  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, False)
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, None)
 
   # Act
   result = get_fixed_applicable_time_periods(
     target_start_datetime,
     target_end_datetime,
-    default_time_periods
+    default_time_periods,
+    calculate_with_incomplete_data
   )
 
   # Assert
@@ -96,16 +102,18 @@ async def test_when_start_time_and_end_time_is_same_then_rates_are_shifted():
   current_date = datetime.strptime("2022-10-21T17:10:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
   target_start_time = "16:00"
   target_end_time = "16:00"
+  calculate_with_incomplete_data = False
 
   expected_first_valid_from = datetime.strptime("2022-10-21T23:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
 
-  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, False)
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, None)
 
   # Act
   result = get_fixed_applicable_time_periods(
     target_start_datetime,
     target_end_datetime,
-    default_time_periods
+    default_time_periods,
+    calculate_with_incomplete_data
   )
 
   # Assert
@@ -122,6 +130,7 @@ async def test_when_start_time_is_after_end_time_and_rolling_target_then_rates_a
   current_date = datetime.strptime("2022-10-21T23:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
   target_start_time = "22:00"
   target_end_time = "01:00"
+  calculate_with_incomplete_data = False
 
   expected_first_valid_from = datetime.strptime("2022-10-21T23:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
 
@@ -147,13 +156,14 @@ async def test_when_start_time_is_after_end_time_and_rolling_target_then_rates_a
     datetime.strptime("2022-10-24T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z")
   )
 
-  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, True)
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, default_minimum_slot_minutes)
 
   # Act
   result = get_fixed_applicable_time_periods(
     target_start_datetime,
     target_end_datetime,
-    values
+    values,
+    calculate_with_incomplete_data
   )
 
   # Assert
@@ -171,6 +181,7 @@ async def test_when_start_time_and_end_time_is_same_and_rolling_target_then_rate
   current_date = datetime.strptime("2022-10-21T23:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
   target_start_time = "16:00"
   target_end_time = "16:00"
+  calculate_with_incomplete_data = False
 
   expected_first_valid_from = datetime.strptime("2022-10-22T02:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
 
@@ -201,13 +212,14 @@ async def test_when_start_time_and_end_time_is_same_and_rolling_target_then_rate
     datetime.strptime("2022-10-24T00:00:00Z", "%Y-%m-%dT%H:%M:%S%z")
   )
 
-  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, True)
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, default_minimum_slot_minutes)
 
   # Act
   result = get_fixed_applicable_time_periods(
     target_start_datetime,
     target_end_datetime,
-    values
+    values,
+    calculate_with_incomplete_data
   )
 
   # Assert
@@ -226,18 +238,47 @@ async def test_when_available_rates_are_too_low_then_no_times_are_returned():
   current_date = datetime.strptime("2022-10-22T22:40:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
   target_start_time = "16:00"
   target_end_time = "16:00"
+  calculate_with_incomplete_data = False
 
-  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, False)
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, None)
 
   # Act
   result = get_fixed_applicable_time_periods(
     target_start_datetime,
     target_end_datetime,
-    default_time_periods
+    default_time_periods,
+    calculate_with_incomplete_data
   )
 
   # Assert
   assert result is None
+
+@pytest.mark.asyncio
+async def test_when_available_rates_are_too_low_and_incomplete_data_is_true_then_target_rates_returned():
+  # Arrange
+  current_date = datetime.strptime("2022-10-22T22:40:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
+  target_start_time = "16:00"
+  target_end_time = "16:00"
+  calculate_with_incomplete_data = True
+
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, None)
+
+  # Act
+  result = get_fixed_applicable_time_periods(
+    target_start_datetime,
+    target_end_datetime,
+    default_time_periods,
+    calculate_with_incomplete_data
+  )
+
+  # Assert
+  assert result is not None
+  assert len(result) == 14
+  expected_first_valid_from = datetime.strptime("2022-10-22T16:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
+  for item in result:
+    assert item["start"] == expected_first_valid_from
+    assert item["end"] == expected_first_valid_from + timedelta(minutes=30)
+    expected_first_valid_from = item["end"]
 
 @pytest.mark.asyncio
 async def test_when_times_are_in_bst_then_rates_are_shifted():
@@ -245,6 +286,7 @@ async def test_when_times_are_in_bst_then_rates_are_shifted():
   current_date = datetime.strptime("2024-04-06T17:10:00+01:00", "%Y-%m-%dT%H:%M:%S%z")
   target_start_time = "16:00"
   target_end_time = "21:00"
+  calculate_with_incomplete_data = False
 
   period_from = datetime.strptime("2024-04-06T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
   period_to = datetime.strptime("2024-04-07T00:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
@@ -256,13 +298,14 @@ async def test_when_times_are_in_bst_then_rates_are_shifted():
     expected_values
   )
 
-  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, False)
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, None)
 
   # Act
   result = get_fixed_applicable_time_periods(
     target_start_datetime,
     target_end_datetime,
-    values
+    values,
+    calculate_with_incomplete_data
   )
 
   # Assert
@@ -282,6 +325,7 @@ async def test_when_clocks_go_back_then_correct_times_are_selected():
   current_date = datetime.strptime("2024-10-27T10:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
   target_start_time = "23:00"
   target_end_time = "23:00"
+  calculate_with_incomplete_data = False
 
   values = [
     {
@@ -538,13 +582,14 @@ async def test_when_clocks_go_back_then_correct_times_are_selected():
   
   values.sort(key=lambda x: (x["start"].timestamp(), x["start"].fold))
 
-  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, False)
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, None)
 
   # Act
   result = get_fixed_applicable_time_periods(
     target_start_datetime,
     target_end_datetime,
-    values
+    values,
+    calculate_with_incomplete_data
   )
 
   # Assert

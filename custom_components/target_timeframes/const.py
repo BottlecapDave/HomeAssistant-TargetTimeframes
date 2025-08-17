@@ -1,6 +1,7 @@
 import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers import selector
+from homeassistant.data_entry_flow import section
 
 DOMAIN = "target_timeframes"
 INTEGRATION_VERSION = "1.2.1"
@@ -37,6 +38,10 @@ CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE = "target_times_evaluation_mode"
 CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALL_IN_PAST = "all_target_times_in_past"
 CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALL_IN_FUTURE_OR_PAST = "all_target_times_in_future_or_past"
 CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALWAYS = "always"
+CONFIG_TARGET_DANGEROUS_SETTINGS = "dangerous_settings"
+CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA = "calculate_with_incomplete_data"
+CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT = "minimum_required_minutes_in_slot"
+CONFIG_TARGET_DEFAULT_MINIMUM_REQUIRED_MINUTES_IN_SLOT = 29
 
 CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD = "look_ahead_hours"
 
@@ -54,7 +59,8 @@ CONFIG_TARGET_KEYS = [
   CONFIG_TARGET_MAX_VALUE,
   CONFIG_TARGET_WEIGHTING,
   CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD,
-  CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE
+  CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE,
+  CONFIG_TARGET_DANGEROUS_SETTINGS
 ]
 
 REGEX_HOURS = "^[0-9]+(\\.[0-9]+)*$"
@@ -63,6 +69,7 @@ REGEX_ENTITY_NAME = "^[a-z0-9_]+$"
 REGEX_OFFSET_PARTS = "^(-)?([0-1]?[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$"
 REGEX_DATE = "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
 REGEX_VALUE = "^(-)?[0-9]+(\\.[0-9]+)*$"
+REGEX_INTEGER = "^(-)?[0-9]+$"
 
 REGEX_WEIGHTING_NUMBERS = "([0-9]+\\.?[0-9]*(,[0-9]+\\.?[0-9]*+)*)"
 REGEX_WEIGHTING_START = "(\\*(,[0-9]+\\.?[0-9]*+)+)"
@@ -112,9 +119,18 @@ DATA_SCHEMA_TARGET_TIME_PERIOD = vol.Schema({
   vol.Optional(CONFIG_TARGET_ROLLING_TARGET, default=False): bool,
   vol.Optional(CONFIG_TARGET_LATEST_VALUES, default=False): bool,
   vol.Optional(CONFIG_TARGET_FIND_HIGHEST_VALUES, default=False): bool,
-  vol.Optional(CONFIG_TARGET_MIN_VALUE): vol.Coerce(float),
-  vol.Optional(CONFIG_TARGET_MAX_VALUE): vol.Coerce(float),
+  vol.Optional(CONFIG_TARGET_MIN_VALUE): float,
+  vol.Optional(CONFIG_TARGET_MAX_VALUE): float,
   vol.Optional(CONFIG_TARGET_WEIGHTING): str,
+  vol.Required(CONFIG_TARGET_DANGEROUS_SETTINGS): section(
+    vol.Schema(
+        {
+            vol.Required(CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA, default=False): bool,
+            vol.Required(CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT, default=CONFIG_TARGET_DEFAULT_MINIMUM_REQUIRED_MINUTES_IN_SLOT): int,
+        }
+    ),
+    {"collapsed": True},
+  ),
 })
 
 DATA_SCHEMA_ROLLING_TARGET_TIME_PERIOD = vol.Schema({
@@ -153,9 +169,18 @@ DATA_SCHEMA_ROLLING_TARGET_TIME_PERIOD = vol.Schema({
   ),
   vol.Optional(CONFIG_TARGET_LATEST_VALUES): bool,
   vol.Optional(CONFIG_TARGET_FIND_HIGHEST_VALUES): bool,
-  vol.Optional(CONFIG_TARGET_MIN_VALUE): vol.Coerce(float),
-  vol.Optional(CONFIG_TARGET_MAX_VALUE): vol.Coerce(float),
+  vol.Optional(CONFIG_TARGET_MIN_VALUE): float,
+  vol.Optional(CONFIG_TARGET_MAX_VALUE): float,
   vol.Optional(CONFIG_TARGET_WEIGHTING): str,
+  vol.Required(CONFIG_TARGET_DANGEROUS_SETTINGS): section(
+    vol.Schema(
+        {
+            vol.Required(CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA, default=False): bool,
+            vol.Required(CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT, default=CONFIG_TARGET_DEFAULT_MINIMUM_REQUIRED_MINUTES_IN_SLOT): int,
+        }
+    ),
+    {"collapsed": True},
+  ),
 })
 
 EVENT_DATA_SOURCE = "target_time_period_data_source_updated"

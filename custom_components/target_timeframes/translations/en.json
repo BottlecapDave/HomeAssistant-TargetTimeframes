@@ -24,6 +24,9 @@
           "source_id": "This must be unique across all sources. This is used in all related entity names. Changing will create new entities."
         }
       }
+    },
+    "abort": {
+      "reconfigure_successful": "Reconfiguration successful"
     }
   },
   "config_subentries": {
@@ -57,6 +60,19 @@
             "hours": "This has to be a multiple of 0.5.",
             "minimum_value": "This is in decimal format (e.g. 0.12)",
             "maximum_value": "This is in decimal format (e.g. 0.12)"
+          },
+          "sections": {
+            "dangerous_settings": {
+              "name": "Dangerous settings",
+              "description": "These settings can have undesired consequences if changed. Change at your own risk.",
+              "data": {
+                "calculate_with_incomplete_data": "Calculate with incomplete data",
+                "minimum_required_minutes_in_slot": "Minimum required minutes in slot"
+              },
+              "data_description": {
+                "minimum_required_minutes_in_slot": "The minimum number of minutes that must be present in a slot for it to be considered. Changing this can cause chosen slots to be partially in the past and therefore turn on for less than the desired time."
+              }
+            }
           }
         },
         "reconfigure": {
@@ -83,8 +99,24 @@
             "hours": "This has to be a multiple of 0.5.",
             "minimum_value": "This is in decimal format (e.g. 0.12)",
             "maximum_value": "This is in decimal format (e.g. 0.12)"
+          },
+          "sections": {
+            "dangerous_settings": {
+              "name": "Dangerous settings",
+              "description": "These settings can have undesired consequences if changed. Change at your own risk.",
+              "data": {
+                "calculate_with_incomplete_data": "Calculate with incomplete data",
+                "minimum_required_minutes_in_slot": "Minimum required minutes in slot"
+              },
+              "data_description": {
+                "minimum_required_minutes_in_slot": "The minimum number of minutes that must be present in a slot for it to be considered. Changing this can cause chosen slots to be partially in the past and therefore turn on for less than the desired time."
+              }
+            }
           }
         }
+      },
+      "abort": {
+        "reconfigure_successful": "Reconfiguration successful"
       },
       "error": {
         "value_greater_than_zero": "Value must be greater or equal to 1",
@@ -98,7 +130,10 @@
         "invalid_weighting_slots": "The number of weighting blocks does not equal the specified number of hours.",
         "weighting_not_supported_for_type": "Weighting is only supported for continuous target values",
         "weighting_not_supported_for_hour_mode": "Weighting is not supported for this hour mode",
-        "minimum_or_maximum_value_not_specified": "Either minimum and/or maximum value must be specified for minimum hours mode"
+        "minimum_or_maximum_value_not_specified": "Either minimum and/or maximum value must be specified for minimum hours mode",
+        "minimum_value_not_less_than_maximum_value": "Minimum value must be less or equal to the maximum value if both are specified",
+        "invalid_integer": "Value must be a number with no decimal places",
+        "invalid_minimum_required_minutes_in_slot": "Value must be between 1 and 30"
       }
     },
     "rolling_target_time_period": {
@@ -122,6 +157,15 @@
             "maximum_value": "The optional maximum value for target hours",
             "weighting": "The optional weighting to apply to the discovered time period values",
             "target_times_evaluation_mode": "When should target times be selected"
+          },
+          "sections": {
+            "dangerous_settings": {
+              "name": "Dangerous settings",
+              "description": "These settings can have undesired consequences if changed. Change at your own risk.",
+              "data": {
+                "calculate_with_incomplete_data": "Calculate with incomplete data"
+              }
+            }
           }
         },
         "reconfigure": {
@@ -139,8 +183,20 @@
             "maximum_value": "The optional maximum value for target hours",
             "weighting": "The optional weighting to apply to the discovered time period values",
             "target_times_evaluation_mode": "When should target times be selected"
+          },
+          "sections": {
+            "dangerous_settings": {
+              "name": "Dangerous settings",
+              "description": "These settings can have undesired consequences if changed. Change at your own risk.",
+              "data": {
+                "calculate_with_incomplete_data": "Calculate with incomplete data"
+              }
+            }
           }
         }
+      },
+      "abort": {
+        "reconfigure_successful": "Reconfiguration successful"
       },
       "error": {
         "value_greater_than_zero": "Value must be greater or equal to 1",
@@ -154,7 +210,10 @@
         "invalid_weighting_slots": "The number of weighting blocks does not equal the specified number of hours.",
         "weighting_not_supported_for_type": "Weighting is only supported for continuous target values",
         "weighting_not_supported_for_hour_mode": "Weighting is not supported for this hour mode",
-        "minimum_or_maximum_value_not_specified": "Either minimum and/or maximum value must be specified for minimum hours mode"
+        "minimum_or_maximum_value_not_specified": "Either minimum and/or maximum value must be specified for minimum hours mode",
+        "minimum_value_not_less_than_maximum_value": "Minimum value must be less or equal to the maximum value if both are specified",
+        "invalid_integer": "Value must be a number with no decimal places",
+        "invalid_minimum_required_minutes_in_slot": "Value must be between 1 and 30"
       }
     }
   },
