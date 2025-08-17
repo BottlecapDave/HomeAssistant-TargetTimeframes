@@ -567,11 +567,44 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#weighting" class="md-nav__link">
+  <a href="#weightingmultipliers" class="md-nav__link">
     <span class="md-ellipsis">
-      Weighting
+      Weighting/Multipliers
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dangerous-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dangerous settings
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dangerous settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#calculate-with-incomplete-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      Calculate with incomplete data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimum-required-minutes-in-slots" class="md-nav__link">
+    <span class="md-ellipsis">
+      Minimum required minutes in slots
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -952,11 +985,44 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#weighting" class="md-nav__link">
+  <a href="#weightingmultipliers" class="md-nav__link">
     <span class="md-ellipsis">
-      Weighting
+      Weighting/Multipliers
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dangerous-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dangerous settings
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dangerous settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#calculate-with-incomplete-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      Calculate with incomplete data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimum-required-minutes-in-slots" class="md-nav__link">
+    <span class="md-ellipsis">
+      Minimum required minutes in slots
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1060,20 +1126,26 @@
 <p class="admonition-title">Info</p>
 <p>If hours mode is set to <strong>minimum</strong>, then a minimum and/or maximum rate must be specified in order for the target timeframe sensor to know what the cut off is for discovered times.</p>
 </div>
-<h3 id="weighting">Weighting<a class="headerlink" href="#weighting" title="Permanent link">#</a></h3>
+<h3 id="weightingmultipliers">Weighting/Multipliers<a class="headerlink" href="#weightingmultipliers" title="Permanent link">#</a></h3>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
-<p>This is only available for <strong>continuous</strong> target timeframe sensors in <strong>exact</strong> hours mode.</p>
+<p>This is only available for <strong>continuous</strong> target value sensors in <strong>exact</strong> hours mode.</p>
 </div>
-<p>There may be times when the device you're wanting the target timeframe sensor to turn on doesn't have a consistent power draw. You can specify a weighting which can be applied to each discovered 30 minute slot. This can be specified in a few different ways. Take the following example weighting for a required 2 hours.</p>
+<p>There may be times when the device you're wanting the target value sensor to turn on doesn't have a consistent power draw. You can specify a weighting/multiplier which can be applied to the value of each discovered 30 minute slot. This can be specified in a few different ways. Take the following example weighting/multiplier for a required 2 hours.</p>
 <ul>
-<li><code>1,1,2,1</code> - This applies a weighting of 1 to the first, second and forth slot and a weighting of 2 to the third slot. This will try and make the lowest slot fall on the third slot, as long as the surrounding slots are cheaper than other continuous slots.</li>
-<li><code>*,2,1</code> - This applies a weighting of 1 to the first, second and forth slot and a weighting of 2 to the third slot. The <code>*</code> can be used as a placeholder for the standard weighting of 1 for all slots before the ones specified.</li>
-<li><code>1,1,2,*</code> - This applies a weighting of 1 to the first, second and forth slot and a weighting of 2 to the third slot. The <code>*</code> can be used as a placeholder for the standard weighting of 1 for all slots after the ones specified.</li>
-<li><code>2,*,2</code> - This applies a weighting of 2 to the first and forth slot and a weighting of 1 to all slots in between. The <code>*</code> can be used as a placeholder for the standard weighting of 1 for all slots in between the specified slots.</li>
+<li><code>1,1,2,1</code> - This applies a weighting/multiplier of 1 to the first, second and forth slot and a weighting/multiplier of 2 to the third slot. This will try and make the lowest slot fall on the third slot, as long as the surrounding slots are cheaper than other continuous slots.</li>
+<li><code>*,2,1</code> - This applies a weighting/multiplier of 1 to the first, second and forth slot and a weighting/multiplier of 2 to the third slot. The <code>*</code> can be used as a placeholder for the standard weighting/multiplier of 1 for all slots before the ones specified.</li>
+<li><code>1,1,2,*</code> - This applies a weighting/multiplier of 1 to the first, second and forth slot and a weighting/multiplier of 2 to the third slot. The <code>*</code> can be used as a placeholder for the standard weighting/multiplier of 1 for all slots after the ones specified.</li>
+<li><code>2,*,2</code> - This applies a weighting/multiplier of 2 to the first and forth slot and a weighting/multiplier of 1 to all slots in between. The <code>*</code> can be used as a placeholder for the standard weighting/multiplier of 1 for all slots in between the specified slots.</li>
 </ul>
-<p>Each slot weighting must be a whole number or decimal number and be positive.</p>
-<p>You can also use weightings to ignore slots. This can be done by assigning a value of 0 for the desired slot.</p>
+<p>Each slot weighting/multiplier must be a whole number or decimal number and be positive.</p>
+<p>You can also use weightings/multipliers to ignore slots. This can be done by assigning a value of 0 for the desired slot.</p>
+<h3 id="dangerous-settings">Dangerous settings<a class="headerlink" href="#dangerous-settings" title="Permanent link">#</a></h3>
+<p>These settings can have undesired effects and are not recommended to be changed, but there might be certain scenarios where this is the desired outcome.</p>
+<h4 id="calculate-with-incomplete-data">Calculate with incomplete data<a class="headerlink" href="#calculate-with-incomplete-data" title="Permanent link">#</a></h4>
+<p>By default, the target timeframe isn't calculated if there isn't enough data for the period of time being evaluated. For example, if you have a look ahead hours set to 4 hours, it's 9pm and you only have data up to midnight, then the next target timeframe will not be calculated. If you turn this setting on, then the sensor will attempt to look for 4 hours worth of data if available, otherwise it will evaluate with whatever data is available (in this scenario 2 hours between 10pm and 12am).</p>
+<h4 id="minimum-required-minutes-in-slots">Minimum required minutes in slots<a class="headerlink" href="#minimum-required-minutes-in-slots" title="Permanent link">#</a></h4>
+<p>By default, 30 minute slots that are part way through are not considered when evaluating rolling target time frames. For example, if you are looking for the best slots for the next 4 hours and it's 10:01, then only slots between 10:30 to 14:30 will be evaluated. This threshold can be changed here to a lower value if you want to take account of slots that are partially in the past. For example if this was set to 29, then the previous example would evaluate slots between 10:00 to 14:00.</p>
 <h2 id="attributes">Attributes<a class="headerlink" href="#attributes" title="Permanent link">#</a></h2>
 <p>The following attributes are available on each sensor</p>
 <table>
@@ -1194,6 +1266,11 @@
 <td><code>target_times_last_evaluated</code></td>
 <td>datetime</td>
 <td>The datetime the target times collection was last evaluated. This will occur if all previous target times are in the past and all values are available for the requested future time period. For example, if you are targeting 16:00 (day 1) to 16:00 (day 2), and you only have values up to 23:00 (day 1), then the target timeframes won't be calculated.</td>
+</tr>
+<tr>
+<td><code>calculate_with_incomplete_data</code></td>
+<td>boolean</td>
+<td>Determines if calculations should occur when there isn't enough data to satisfy the look ahead hours</td>
 </tr>
 </tbody>
 </table>
