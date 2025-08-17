@@ -24,6 +24,9 @@
           "source_id": "This must be unique across all sources. This is used in all related entity names. Changing will create new entities."
         }
       }
+    },
+    "abort": {
+      "reconfigure_successful": "[%key:common::config_flow::abort::reconfigure_successful%]"
     }
   },
   "config_subentries": {
@@ -112,6 +115,9 @@
           }
         }
       },
+      "abort": {
+        "reconfigure_successful": "[%key:common::config_flow::abort::reconfigure_successful%]"
+      },
       "error": {
         "value_greater_than_zero": "Value must be greater or equal to 1",
         "invalid_target_hours": "Hours must be in half hour increments (e.g. 0.5 = 30 minutes; 1 = 60 minutes).",
@@ -188,6 +194,9 @@
             }
           }
         }
+      },
+      "abort": {
+        "reconfigure_successful": "[%key:common::config_flow::abort::reconfigure_successful%]"
       },
       "error": {
         "value_greater_than_zero": "Value must be greater or equal to 1",

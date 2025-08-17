@@ -6,7 +6,7 @@ import logging
 
 from homeassistant.util.dt import (as_utc, parse_datetime)
 
-from ..const import CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALL_IN_FUTURE_OR_PAST, CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALL_IN_PAST, CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALWAYS, CONFIG_TARGET_HOURS_MODE_EXACT, CONFIG_TARGET_HOURS_MODE_MAXIMUM, CONFIG_TARGET_HOURS_MODE_MINIMUM, CONFIG_TARGET_KEYS, REGEX_OFFSET_PARTS, REGEX_WEIGHTING
+from ..const import CONFIG_TARGET_DEFAULT_MINIMUM_REQUIRED_MINUTES_IN_SLOT, CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALL_IN_FUTURE_OR_PAST, CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALL_IN_PAST, CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALWAYS, CONFIG_TARGET_HOURS_MODE_EXACT, CONFIG_TARGET_HOURS_MODE_MAXIMUM, CONFIG_TARGET_HOURS_MODE_MINIMUM, CONFIG_TARGET_KEYS, REGEX_OFFSET_PARTS, REGEX_WEIGHTING
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -103,15 +103,22 @@ def get_fixed_applicable_time_periods(target_start: datetime, target_end: dateti
 
   return applicable_rates
 
-def get_rolling_applicable_time_periods(current_date: datetime, time_period_values: list, target_hours: float, calculate_with_incomplete_data = False, context: str = None):
+def get_rolling_applicable_time_periods(current_date: datetime, 
+                                        time_period_values: list,
+                                        target_hours: float,
+                                        minimum_slot_minutes: int = CONFIG_TARGET_DEFAULT_MINIMUM_REQUIRED_MINUTES_IN_SLOT,
+                                        calculate_with_incomplete_data = False,
+                                        context: str = None):
   # Retrieve the rates that are applicable for our target rate
   applicable_time_periods = []
   periods = target_hours * 2
 
   if time_period_values is not None:
-    for rate in time_period_values:
-      if rate["end"] >= current_date:
-        new_rate = dict(rate)
+    for time_period in time_period_values:
+
+      minutes_remaining_in_current_slot = 30 - ((current_date.replace(second=0, microsecond=0) - time_period["start"]).total_seconds() / 60)
+      if minutes_remaining_in_current_slot >= minimum_slot_minutes and time_period["end"] >= current_date:
+        new_rate = dict(time_period)
         applicable_time_periods.append(new_rate)
 
         if len(applicable_time_periods) >= periods:

@@ -22,6 +22,8 @@ from ..const import (
   CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD,
   CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA,
   CONFIG_TARGET_DANGEROUS_SETTINGS,
+  CONFIG_TARGET_DEFAULT_MINIMUM_REQUIRED_MINUTES_IN_SLOT,
+  CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT,
   CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE,
   CONFIG_TARGET_HOURS_MODE,
   CONFIG_TARGET_MAX_VALUE,
@@ -147,10 +149,15 @@ class TargetTimeframesRollingTargetRate(BinarySensorEntity, RestoreEntity):
         if CONFIG_TARGET_DANGEROUS_SETTINGS in self._config and CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA in self._config[CONFIG_TARGET_DANGEROUS_SETTINGS]:
           calculate_with_incomplete_data = self._config[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA]
 
+        minimum_slot_minutes = CONFIG_TARGET_DEFAULT_MINIMUM_REQUIRED_MINUTES_IN_SLOT
+        if CONFIG_TARGET_DANGEROUS_SETTINGS in self._config and CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT in self._config[CONFIG_TARGET_DANGEROUS_SETTINGS]:
+          minimum_slot_minutes = self._config[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT]
+
         applicable_time_periods = get_rolling_applicable_time_periods(
           current_local_date,
           self._data_source_data,
           self._config[CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD],
+          minimum_slot_minutes,
           calculate_with_incomplete_data,
           self._config[CONFIG_TARGET_NAME]
         )
@@ -332,5 +339,7 @@ class TargetTimeframesRollingTargetRate(BinarySensorEntity, RestoreEntity):
     calculate_with_incomplete_data = False
     if CONFIG_TARGET_DANGEROUS_SETTINGS in self._config and CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA in self._config[CONFIG_TARGET_DANGEROUS_SETTINGS]:
       calculate_with_incomplete_data = self._config[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA]
-      del self._attributes[CONFIG_TARGET_DANGEROUS_SETTINGS]
     self._attributes[CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA] = calculate_with_incomplete_data
+
+    if CONFIG_TARGET_DANGEROUS_SETTINGS in self._attributes:
+      del self._attributes[CONFIG_TARGET_DANGEROUS_SETTINGS]

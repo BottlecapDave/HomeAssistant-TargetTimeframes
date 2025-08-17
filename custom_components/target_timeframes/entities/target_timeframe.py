@@ -166,11 +166,15 @@ class TargetTimeframesTargetRate(BinarySensorEntity, RestoreEntity):
         if CONFIG_TARGET_DANGEROUS_SETTINGS in self._config and CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA in self._config[CONFIG_TARGET_DANGEROUS_SETTINGS]:
           calculate_with_incomplete_data = self._config[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA]
 
+        minimum_slot_minutes = CONFIG_TARGET_DEFAULT_MINIMUM_REQUIRED_MINUTES_IN_SLOT
+        if CONFIG_TARGET_DANGEROUS_SETTINGS in self._config and CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT in self._config[CONFIG_TARGET_DANGEROUS_SETTINGS]:
+          minimum_slot_minutes = self._config[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT]      
+
         target_start, target_end = get_start_and_end_times(
           current_local_date,
           start_time,
           end_time,
-          self._config[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT] if CONFIG_TARGET_DANGEROUS_SETTINGS in self._config and CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT in self._config[CONFIG_TARGET_DANGEROUS_SETTINGS] else CONFIG_TARGET_DEFAULT_MINIMUM_REQUIRED_MINUTES_IN_SLOT,
+          minimum_slot_minutes,
           self._config[CONFIG_TARGET_NAME]
         )
         applicable_time_periods = get_fixed_applicable_time_periods(
@@ -375,11 +379,12 @@ class TargetTimeframesTargetRate(BinarySensorEntity, RestoreEntity):
     calculate_with_incomplete_data = False
     if CONFIG_TARGET_DANGEROUS_SETTINGS in self._config and CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA in self._config[CONFIG_TARGET_DANGEROUS_SETTINGS]:
       calculate_with_incomplete_data = self._config[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA]
-      del self._attributes[CONFIG_TARGET_DANGEROUS_SETTINGS]
     self._attributes[CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA] = calculate_with_incomplete_data
 
     minimum_required_minutes_in_slot = CONFIG_TARGET_DEFAULT_MINIMUM_REQUIRED_MINUTES_IN_SLOT
     if CONFIG_TARGET_DANGEROUS_SETTINGS in self._config and CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT in self._config[CONFIG_TARGET_DANGEROUS_SETTINGS]:
       minimum_required_minutes_in_slot = self._config[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT]
-      del self._attributes[CONFIG_TARGET_DANGEROUS_SETTINGS]
     self._attributes[CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT] = minimum_required_minutes_in_slot
+
+    if CONFIG_TARGET_DANGEROUS_SETTINGS in self._attributes:
+      del self._attributes[CONFIG_TARGET_DANGEROUS_SETTINGS]
