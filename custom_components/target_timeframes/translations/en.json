@@ -26,7 +26,7 @@
       }
     },
     "abort": {
-      "reconfigure_successful": "[%key:common::config_flow::abort::reconfigure_successful%]"
+      "reconfigure_successful": "Reconfiguration successful"
     }
   },
   "config_subentries": {
@@ -116,7 +116,7 @@
         }
       },
       "abort": {
-        "reconfigure_successful": "[%key:common::config_flow::abort::reconfigure_successful%]"
+        "reconfigure_successful": "Reconfiguration successful"
       },
       "error": {
         "value_greater_than_zero": "Value must be greater or equal to 1",
@@ -196,7 +196,7 @@
         }
       },
       "abort": {
-        "reconfigure_successful": "[%key:common::config_flow::abort::reconfigure_successful%]"
+        "reconfigure_successful": "Reconfiguration successful"
       },
       "error": {
         "value_greater_than_zero": "Value must be greater or equal to 1",
