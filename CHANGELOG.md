@@ -1,3 +1,16 @@
+# [1.3.0](https://github.com/BottlecapDave/homeassistant-targettimeframes/compare/v1.2.1...v1.3.0) (2025-08-17)
+
+
+### Bug Fixes
+
+* fixed minimum/maximum targets to support negative values (45 minutes dev time) ([8d27582](https://github.com/BottlecapDave/homeassistant-targettimeframes/commit/8d27582d7b037e23bb2d285d6b4aca2e5586f02a))
+
+
+### Features
+
+* Added configuration for standard and rolling target timeframes to determine minimum minutes for a slot to be evaluated (3.5 hours dev time) ([3d4ba9d](https://github.com/BottlecapDave/homeassistant-targettimeframes/commit/3d4ba9dfc24005cd77b5961553faacb765dcf593))
+* added support to evaluate with incomplete data (1 hour dev time) ([a61edfa](https://github.com/BottlecapDave/homeassistant-targettimeframes/commit/a61edfa71c23f5c88a7017ac0606f70f73b2b659))
+
 ## [1.2.1](https://github.com/BottlecapDave/homeassistant-targettimeframes/compare/v1.2.0...v1.2.1) (2025-06-14)
 
 
