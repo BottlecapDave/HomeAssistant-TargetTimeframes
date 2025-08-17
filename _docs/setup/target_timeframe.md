@@ -131,6 +131,14 @@ These settings can have undesired effects and are not recommended to be changed,
 
 By default, the target timeframe isn't calculated if there isn't enough data for the period of time being evaluated. For example, if you have a timeframe looking between 10pm and 2am, it's 9pm and you only have data up to midnight, then the next target timeframe will not be calculated. If you turn this setting on, then the sensor will attempt to look for data between 10pm and 2am if available, otherwise it will evaluate with whatever data is available (in this scenario 10pm to 12am).
 
+#### Minimum required minutes in slots
+
+By default, 30 minute slots that are part way through are not considered when evaluating target time frames. For example, if you are looking for the best slots between 10:00 to 12:00 and it's 10:01, then only slots between 10:30 to 12:00 will be evaluated. This threshold can be changed here to a lower value if you want to take account of slots that are partially in the past. For example if this was set to 29, then the previous example would evaluate slots between 10:00 to 12:00.
+
+!!! warn
+
+    Changing this can cause sensors to not come on for the correct amount of time by up to 30 minutes.
+
 ## Attributes
 
 The following attributes are available on each sensor
@@ -163,6 +171,7 @@ The following attributes are available on each sensor
 | `next_max_value` | `float` | The average value for the next continuous discovered period. This will only be populated if `target_times` has been calculated and at least one period/block is in the future. |
 | `target_times_last_evaluated` | datetime | The datetime the target times collection was last evaluated. This will occur if all previous target times are in the past and all values are available for the requested future time period. For example, if you are targeting 16:00 (day 1) to 16:00 (day 2), and you only have values up to 23:00 (day 1), then the target values won't be calculated. |
 | `calculate_with_incomplete_data` | boolean | Determines if calculations should occur when there isn't enough data to satisfy the look ahead hours |
+| `minimum_required_minutes_in_slot` | integer | Determines the configured minimum number of minutes to be present in a slot for it to be considered |
 
 ## Services
 
