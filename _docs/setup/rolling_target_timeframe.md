@@ -121,6 +121,10 @@ These settings can have undesired effects and are not recommended to be changed,
 
 By default, the target timeframe isn't calculated if there isn't enough data for the period of time being evaluated. For example, if you have a look ahead hours set to 4 hours, it's 9pm and you only have data up to midnight, then the next target timeframe will not be calculated. If you turn this setting on, then the sensor will attempt to look for 4 hours worth of data if available, otherwise it will evaluate with whatever data is available (in this scenario 2 hours between 10pm and 12am).
 
+#### Minimum required minutes in slots
+
+By default, 30 minute slots that are part way through are not considered when evaluating rolling target time frames. For example, if you are looking for the best slots for the next 4 hours and it's 10:01, then only slots between 10:30 to 14:30 will be evaluated. This threshold can be changed here to a lower value if you want to take account of slots that are partially in the past. For example if this was set to 29, then the previous example would evaluate slots between 10:00 to 14:00.
+
 ## Attributes
 
 The following attributes are available on each sensor
