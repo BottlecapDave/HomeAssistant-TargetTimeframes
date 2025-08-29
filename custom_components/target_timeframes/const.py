@@ -119,8 +119,8 @@ DATA_SCHEMA_TARGET_TIME_PERIOD = vol.Schema({
   vol.Optional(CONFIG_TARGET_ROLLING_TARGET, default=False): bool,
   vol.Optional(CONFIG_TARGET_LATEST_VALUES, default=False): bool,
   vol.Optional(CONFIG_TARGET_FIND_HIGHEST_VALUES, default=False): bool,
-  vol.Optional(CONFIG_TARGET_MIN_VALUE): float,
-  vol.Optional(CONFIG_TARGET_MAX_VALUE): float,
+  vol.Optional(CONFIG_TARGET_MIN_VALUE): vol.Coerce(float),
+  vol.Optional(CONFIG_TARGET_MAX_VALUE): vol.Coerce(float),
   vol.Optional(CONFIG_TARGET_WEIGHTING): str,
   vol.Required(CONFIG_TARGET_DANGEROUS_SETTINGS): section(
     vol.Schema(
@@ -169,8 +169,8 @@ DATA_SCHEMA_ROLLING_TARGET_TIME_PERIOD = vol.Schema({
   ),
   vol.Optional(CONFIG_TARGET_LATEST_VALUES): bool,
   vol.Optional(CONFIG_TARGET_FIND_HIGHEST_VALUES): bool,
-  vol.Optional(CONFIG_TARGET_MIN_VALUE): float,
-  vol.Optional(CONFIG_TARGET_MAX_VALUE): float,
+  vol.Optional(CONFIG_TARGET_MIN_VALUE): vol.Coerce(float),
+  vol.Optional(CONFIG_TARGET_MAX_VALUE): vol.Coerce(float),
   vol.Optional(CONFIG_TARGET_WEIGHTING): str,
   vol.Required(CONFIG_TARGET_DANGEROUS_SETTINGS): section(
     vol.Schema(
