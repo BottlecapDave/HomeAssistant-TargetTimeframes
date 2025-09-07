@@ -2,7 +2,9 @@
 
 ## I've updated the configuration of one of my target timeframe sensors but it's not updating. Is there something wrong?
 
-For some reason when you update the configuration via the integration page, the associated entities don't update. You'll need to reload the parent entry to get the configuration to take effect. This is something I'm currently investigating.
+This was an issue before Home Assistant 2025.09. If you update to 2025.09 or later, this should no longer be an issue.
+
+If you are on a version before Home Assistant 2025.09, then you'll need to reload the parent entry to get the configuration to take effect.
 
 ## I've setup a target timeframe with the default time period (00:00-00:00) or a rolling target timeframe looking ahead for 24 hours but it's not updating. Is something broken?
 
