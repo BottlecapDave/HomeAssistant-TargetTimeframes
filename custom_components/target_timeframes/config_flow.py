@@ -120,7 +120,7 @@ class TargetTimePeriodSubentryFlowHandler(ConfigSubentryFlow):
     errors = validate_target_timeframe_config(config)
 
     if len(errors) < 1 and user_input is not None:
-      return self.async_update_and_abort(
+      return self.async_update_reload_and_abort(
         self._get_entry(),
         self._get_reconfigure_subentry(),
         data_updates=config,
@@ -165,7 +165,7 @@ class RollingTargetTimePeriodSubentryFlowHandler(ConfigSubentryFlow):
     errors = validate_rolling_target_timeframe_config(config)
 
     if len(errors) < 1 and user_input is not None:
-      return self.async_update_and_abort(
+      return self.async_update_reload_and_abort(
         self._get_entry(),
         self._get_reconfigure_subentry(),
         data_updates=config,
