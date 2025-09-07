@@ -1,3 +1,11 @@
+## [1.3.1](https://github.com/BottlecapDave/homeassistant-targettimeframes/compare/v1.3.0...v1.3.1) (2025-09-07)
+
+
+### Bug Fixes
+
+* fixed ability to set zero for min/max values (30 minutes dev time) ([e542f71](https://github.com/BottlecapDave/homeassistant-targettimeframes/commit/e542f71593738496568898bb783951c605786c6d))
+* fixed target timeframes to support reloading entity upon updating configuration (15 minutes dev time) ([c4a2f84](https://github.com/BottlecapDave/homeassistant-targettimeframes/commit/c4a2f844a5e959583a798a91d3393280b7f7ed6c))
+
 # [1.3.0](https://github.com/BottlecapDave/homeassistant-targettimeframes/compare/v1.2.1...v1.3.0) (2025-08-17)
 
 
