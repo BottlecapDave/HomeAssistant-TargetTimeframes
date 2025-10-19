@@ -133,7 +133,8 @@
         "minimum_or_maximum_value_not_specified": "Either minimum and/or maximum value must be specified for minimum hours mode",
         "minimum_value_not_less_than_maximum_value": "Minimum value must be less or equal to the maximum value if both are specified",
         "invalid_integer": "Value must be a number with no decimal places",
-        "invalid_minimum_required_minutes_in_slot": "Value must be between 1 and 30"
+        "invalid_minimum_required_minutes_in_slot": "Value must be between 1 and 30",
+        "always_evaluation_not_supported": "Always evaluation mode is only supported when \"Re-evaluate multiple times a day\" is enabled"
       }
     },
     "rolling_target_time_period": {

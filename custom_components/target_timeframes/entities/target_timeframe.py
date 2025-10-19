@@ -190,7 +190,8 @@ class TargetTimeframesTargetRate(BinarySensorEntity, RestoreEntity):
         is_target_timeframe_complete = is_rolling_target == False and is_target_timeframe_complete_in_period(
           current_local_date,
           applicable_target_start,
-          applicable_target_end, self._target_timeframes,
+          applicable_target_end,
+          self._target_timeframes,
           self._config[CONFIG_TARGET_NAME]
         )
 
