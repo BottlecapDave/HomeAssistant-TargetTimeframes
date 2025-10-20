@@ -15,7 +15,10 @@ from ..const import (
   CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT,
   CONFIG_TARGET_NAME,
   CONFIG_TARGET_OFFSET,
+  CONFIG_TARGET_ROLLING_TARGET,
   CONFIG_TARGET_START_TIME,
+  CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE,
+  CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALWAYS,
   CONFIG_TARGET_TYPE,
   CONFIG_TARGET_TYPE_CONTINUOUS,
   CONFIG_TARGET_WEIGHTING,
@@ -185,5 +188,9 @@ def validate_target_timeframe_config(data):
 
   if minimum_required_minutes_in_slot is not None and (minimum_required_minutes_in_slot < 1 or minimum_required_minutes_in_slot > 30):
     errors[CONFIG_TARGET_DANGEROUS_SETTINGS] = "invalid_minimum_required_minutes_in_slot"
+
+  if (data[CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE] == CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALWAYS and
+      (CONFIG_TARGET_ROLLING_TARGET not in data or data[CONFIG_TARGET_ROLLING_TARGET] == False)):
+    errors[CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE] = "always_evaluation_not_supported"
 
   return errors

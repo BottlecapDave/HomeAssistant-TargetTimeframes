@@ -112,6 +112,7 @@ DATA_SCHEMA_TARGET_TIME_PERIOD = vol.Schema({
           options=[
             selector.SelectOptionDict(value=CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALL_IN_PAST, label="All existing target rates are in the past"),
             selector.SelectOptionDict(value=CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALL_IN_FUTURE_OR_PAST, label="Existing target rates haven't started or finished"),
+            selector.SelectOptionDict(value=CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALWAYS, label="Always"),
           ],
           mode=selector.SelectSelectorMode.DROPDOWN,
       )

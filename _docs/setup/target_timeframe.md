@@ -64,9 +64,27 @@ This will only evaluate target times if no target times have been calculated or 
 
 For example, lets say we have a continuous target which looks between `00:00` and `08:00` has existing target times from `2023-01-02T01:00` to `2023-01-02T02:00`. 
 
-* If the current time is `2023-01-02T00:59`, then the target times will be re-evaluated and might change if the target period (i.e. `2023-01-02T00:30` to `2023-01-02T08:30`) has better values than the existing target times (e.g. the external weightings have changed).
+* If the current time is `2023-01-02T00:59`, then the target times will be re-evaluated and might change if the target period (i.e. `2023-01-02T00:30` to `2023-01-02T08:00`) has better values than the existing target times (e.g. the external weightings have changed).
 * If the current time is `2023-01-02T01:00`, the the target times will not be re-evaluated because we've entered our current target times, even if the evaluation period has cheaper times. 
-* If the current time is `2023-01-02T02:01`, the the target times will be re-evaluated because our existing target times are in the past and will find the best times in the new rolling target period (i.e. `2023-01-02T02:00` to `2023-01-02T10:00`). 
+* If the current time is `2023-01-02T02:01`, the the target times will be re-evaluated because our existing target times are in the past and will find the best times in the new target period (i.e. `2023-01-02T02:00` to `2023-01-02T08:00`). 
+
+#### Always
+
+This will always evaluate the best target times for the target period, even if the sensor is in the middle of an existing target time period.
+
+For example, lets say we have a continuous target which looks between `00:00` and `08:00` and has existing target times from `2023-01-02T01:00` to `2023-01-02T02:00`. 
+
+* If the current time is `2023-01-02T00:59`, then the target times will be re-evaluated and might change if the new target period (i.e. `2023-01-02T00:30` to `2023-01-02T08:30`) has better times than the existing target times.
+* If the current time is `2023-01-02T01:31`, then the target times will be re-evaluated and might change if the new target period (i.e. `2023-01-02T01:30` to `2023-01-02T08:30`) has better times than the existing target times.
+* If the current time is `2023-01-02T02:01`, the the target times will be re-evaluated because our existing target times are in the past and will find the best times in the new target period (i.e. `2023-01-02T02:00` to `2023-01-02T08:00`).
+
+!!! note
+
+    This is only supported when [Re-evaluate within time frame](#re-evaluate-within-time-frame) is enabled, otherwise it will behave the same as the other options.
+
+!!! warning
+
+    This setting means that you could end up with the sensor not turning on for the fully requested hours as the target times might be moved ahead half way through the picked times. It also could mean that the sensor doesn't come on at all during the requested look ahead hours (e.g. 8) because the lowest period kept moving back. 
 
 ### Offset
 

@@ -47,3 +47,9 @@ This blueprint will provide the data source for Octopus Energy rates as provided
 !!! warning
 
     This automation will run when any of the underlying entities update. This make take a while initially. If you want the data available immediately, then you'll need to run the automation manually.
+
+### Weather
+
+[Install blueprint](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fbottlecapdave.github.io%2FHomeAssistant-TargetTimeframes%2Fblueprints%2Ftarget_timeframes_weather.yaml) | [Source](./blueprints/target_timeframes_weather.yaml)
+
+This blueprint will provide the data source based on the forecast of the provide weather sensor and will use the specified `Forecast attribute` as the value for the calculation of the target timeframes. The forecast will be refreshed every 30 minutes.

@@ -1,0 +1,78 @@
+blueprint:
+  name: Target Timeframes - Weather source
+  description: Configures a target timeframe data source from Weather
+  domain: automation
+  author: BottlecapDave
+  input:
+    target_timeframe_data_source_sensor:
+      name: Target timeframe data source sensor
+      description: The data source sensor which represents the data source to update
+      selector:
+        entity:
+          filter:
+          - domain:
+            - sensor
+            integration: target_timeframes
+          multiple: false
+    weather_sensor:
+      name: Weather sensor
+      description: The weather sensor to get the forecast for.
+      selector:
+        entity:
+          filter:
+          - domain:
+            - weather
+          multiple: false
+    forecast_attribute:
+      name: Forecast attribute
+      description: Type in the name of the desired forecast attribute to use as the value (e.g. "precipitation", "uv_index" or "temperature"). See the metadata of the result for possible options
+      default: "condition"
+      selector:
+        text:
+variables:
+  target_timeframe_data_source_sensor: !input target_timeframe_data_source_sensor
+  weather_sensor: !input weather_sensor
+  forecast_attribute: !input forecast_attribute
+  millisecond_jitter: >
+    {{ range(1, 1000) | random }}
+mode: queued
+max: 4
+triggers:
+- trigger: time_pattern
+  minutes: '/30'
+condition: []
+action:
+# Add a bit of jitter so the API isn't hit at once
+- delay:
+    milliseconds: >
+        {{ millisecond_jitter }}
+- action: weather.get_forecasts
+  target:
+    entity_id: !input weather_sensor
+  data:
+    type: hourly
+  response_variable: weather_forecast
+- variables:
+    data_source_data: >
+      {%- set forecast_items = weather_forecast[weather_sensor]["forecast"] -%}
+      {%- set data = namespace(items=[]) -%}
+      {%- for forecast in forecast_items -%}
+        {%- set start = forecast["datetime"] | as_timestamp | timestamp_utc -%}
+        {%- set end = ((start | as_datetime) + timedelta(minutes=30)) | as_timestamp | timestamp_utc -%}
+        {%- set value = forecast[forecast_attribute] | float -%}
+        {%- set new_item = [{ 'start': start , 'end': end, 'value': value, 'metadata': forecast }] -%}
+        
+        {%- set data.items = data.items + new_item -%}
+
+        {%- set start = end -%}
+        {%- set end = ((start | as_datetime) + timedelta(minutes=30)) | as_timestamp | timestamp_utc -%}
+        {%- set new_item = [{ 'start': start , 'end': end, 'value': value, 'metadata': forecast }] -%}
+        
+        {%- set data.items = data.items + new_item -%}
+      {%- endfor -%}
+      {{ data.items }}
+- action: target_timeframes.update_target_timeframe_data_source
+  data: >
+    {{ { 'data': data_source_data } }}
+  target:
+    entity_id: !input target_timeframe_data_source_sensor
