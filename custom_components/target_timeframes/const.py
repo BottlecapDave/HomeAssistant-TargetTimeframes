@@ -4,7 +4,7 @@ from homeassistant.helpers import selector
 from homeassistant.data_entry_flow import section
 
 DOMAIN = "target_timeframes"
-INTEGRATION_VERSION = "1.3.1"
+INTEGRATION_VERSION = "1.4.0"
 
 CONFIG_VERSION = 2
 
