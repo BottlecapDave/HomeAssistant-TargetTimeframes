@@ -495,6 +495,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#always" class="md-nav__link">
+    <span class="md-ellipsis">
+      Always
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -967,6 +976,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#always" class="md-nav__link">
+    <span class="md-ellipsis">
+      Always
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1169,10 +1187,26 @@
 <p>This will only evaluate target times if no target times have been calculated or all existing target times are either in the future or all existing target times are in the past. </p>
 <p>For example, lets say we have a continuous target which looks between <code>00:00</code> and <code>08:00</code> has existing target times from <code>2023-01-02T01:00</code> to <code>2023-01-02T02:00</code>. </p>
 <ul>
-<li>If the current time is <code>2023-01-02T00:59</code>, then the target times will be re-evaluated and might change if the target period (i.e. <code>2023-01-02T00:30</code> to <code>2023-01-02T08:30</code>) has better values than the existing target times (e.g. the external weightings have changed).</li>
+<li>If the current time is <code>2023-01-02T00:59</code>, then the target times will be re-evaluated and might change if the target period (i.e. <code>2023-01-02T00:30</code> to <code>2023-01-02T08:00</code>) has better values than the existing target times (e.g. the external weightings have changed).</li>
 <li>If the current time is <code>2023-01-02T01:00</code>, the the target times will not be re-evaluated because we've entered our current target times, even if the evaluation period has cheaper times. </li>
-<li>If the current time is <code>2023-01-02T02:01</code>, the the target times will be re-evaluated because our existing target times are in the past and will find the best times in the new rolling target period (i.e. <code>2023-01-02T02:00</code> to <code>2023-01-02T10:00</code>). </li>
+<li>If the current time is <code>2023-01-02T02:01</code>, the the target times will be re-evaluated because our existing target times are in the past and will find the best times in the new target period (i.e. <code>2023-01-02T02:00</code> to <code>2023-01-02T08:00</code>). </li>
 </ul>
+<h4 id="always">Always<a class="headerlink" href="#always" title="Permanent link">#</a></h4>
+<p>This will always evaluate the best target times for the target period, even if the sensor is in the middle of an existing target time period.</p>
+<p>For example, lets say we have a continuous target which looks between <code>00:00</code> and <code>08:00</code> and has existing target times from <code>2023-01-02T01:00</code> to <code>2023-01-02T02:00</code>. </p>
+<ul>
+<li>If the current time is <code>2023-01-02T00:59</code>, then the target times will be re-evaluated and might change if the new target period (i.e. <code>2023-01-02T00:30</code> to <code>2023-01-02T08:30</code>) has better times than the existing target times.</li>
+<li>If the current time is <code>2023-01-02T01:31</code>, then the target times will be re-evaluated and might change if the new target period (i.e. <code>2023-01-02T01:30</code> to <code>2023-01-02T08:30</code>) has better times than the existing target times.</li>
+<li>If the current time is <code>2023-01-02T02:01</code>, the the target times will be re-evaluated because our existing target times are in the past and will find the best times in the new target period (i.e. <code>2023-01-02T02:00</code> to <code>2023-01-02T08:00</code>).</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is only supported when <a href="#re-evaluate-within-time-frame">Re-evaluate within time frame</a> is enabled, otherwise it will behave the same as the other options.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This setting means that you could end up with the sensor not turning on for the fully requested hours as the target times might be moved ahead half way through the picked times. It also could mean that the sensor doesn't come on at all during the requested look ahead hours (e.g. 8) because the lowest period kept moving back. </p>
+</div>
 <h3 id="offset">Offset<a class="headerlink" href="#offset" title="Permanent link">#</a></h3>
 <p>You may want your target value sensors to turn on a period of time before the optimum discovered period. For example, you may be turning on a robot vacuum cleaner for a 30 minute clean and want it to charge during the optimum period. For this, you'd use the <code>offset</code> field and set it to <code>-00:30:00</code>, which can be both positive and negative and go up to a maximum of 24 hours. This will shift when the sensor turns on relative to the optimum period. For example, if the optimum period is between <code>2023-01-18T10:00</code> and <code>2023-01-18T11:00</code> with an offset of <code>-00:30:00</code>, the sensor will turn on between <code>2023-01-18T09:30</code> and <code>2023-01-18T10:30</code>.</p>
 <h3 id="re-evaluate-within-time-frame">Re-evaluate within time frame<a class="headerlink" href="#re-evaluate-within-time-frame" title="Permanent link">#</a></h3>
