@@ -45,7 +45,7 @@ from ..const import (
 from . import (
   calculate_continuous_times,
   calculate_intermittent_times,
-  compare_config,
+  compare_config_to_attributes,
   create_weighting,
   extract_config,
   get_rolling_applicable_time_periods,
@@ -238,13 +238,15 @@ class TargetTimeframesRollingTargetRate(BinarySensorEntity, RestoreEntity):
       self._state = None if state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN) or state.state is None else state.state.lower() == 'on'
       self._attributes = dict_to_typed_dict(
         state.attributes,
-        []
+        [CONFIG_TARGET_ROLLING_TARGET] # This was incorrectly included
       )
+      self.update_default_attributes()
 
       self._target_timeframes = self._attributes["target_times"] if "target_times" in self._attributes else []
 
       # Reset everything if our settings have changed
-      if compare_config(self._config, self._attributes) == False:
+      if compare_config_to_attributes(self.expand_config_attributes(self._config), self._attributes) == False:
+        _LOGGER.debug(f'Not restoring target times for {self._config[CONFIG_TARGET_NAME]} as attributes have changed')
         self._state = False
         self._attributes = self._config.copy()
         self.update_default_attributes()
@@ -322,24 +324,32 @@ class TargetTimeframesRollingTargetRate(BinarySensorEntity, RestoreEntity):
         data = new_config_data
       )
 
+  def expand_config_attributes(self, attributes: dict):
+    new_attributes = attributes.copy()
+
+    find_last_rates = False
+    if CONFIG_TARGET_LATEST_VALUES in new_attributes:
+      find_last_rates = new_attributes[CONFIG_TARGET_LATEST_VALUES]
+    new_attributes[CONFIG_TARGET_LATEST_VALUES] = find_last_rates
+
+    if CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA not in new_attributes:
+      calculate_with_incomplete_data = False
+      if CONFIG_TARGET_DANGEROUS_SETTINGS in new_attributes and CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA in new_attributes[CONFIG_TARGET_DANGEROUS_SETTINGS]:
+        calculate_with_incomplete_data = new_attributes[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA]
+      new_attributes[CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA] = calculate_with_incomplete_data
+
+    if CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT not in new_attributes:
+      minimum_required_minutes_in_slot = CONFIG_TARGET_DEFAULT_MINIMUM_REQUIRED_MINUTES_IN_SLOT
+      if CONFIG_TARGET_DANGEROUS_SETTINGS in new_attributes and CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT in new_attributes[CONFIG_TARGET_DANGEROUS_SETTINGS]:
+        minimum_required_minutes_in_slot = new_attributes[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT]
+      new_attributes[CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT] = minimum_required_minutes_in_slot
+
+    if CONFIG_TARGET_DANGEROUS_SETTINGS in new_attributes:
+      del new_attributes[CONFIG_TARGET_DANGEROUS_SETTINGS]
+
+    return new_attributes
+
   def update_default_attributes(self):
     """Update the default attributes."""
     self._attributes["data_source_id"] = self._data_source_id
-
-    is_rolling_target = True
-    if CONFIG_TARGET_ROLLING_TARGET in self._config:
-      is_rolling_target = self._config[CONFIG_TARGET_ROLLING_TARGET]
-    self._attributes[CONFIG_TARGET_ROLLING_TARGET] = is_rolling_target
-
-    find_last_rates = False
-    if CONFIG_TARGET_LATEST_VALUES in self._config:
-      find_last_rates = self._config[CONFIG_TARGET_LATEST_VALUES]
-    self._attributes[CONFIG_TARGET_LATEST_VALUES] = find_last_rates
-
-    calculate_with_incomplete_data = False
-    if CONFIG_TARGET_DANGEROUS_SETTINGS in self._config and CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA in self._config[CONFIG_TARGET_DANGEROUS_SETTINGS]:
-      calculate_with_incomplete_data = self._config[CONFIG_TARGET_DANGEROUS_SETTINGS][CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA]
-    self._attributes[CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA] = calculate_with_incomplete_data
-
-    if CONFIG_TARGET_DANGEROUS_SETTINGS in self._attributes:
-      del self._attributes[CONFIG_TARGET_DANGEROUS_SETTINGS]
+    self._attributes = self.expand_config_attributes(self._attributes)
