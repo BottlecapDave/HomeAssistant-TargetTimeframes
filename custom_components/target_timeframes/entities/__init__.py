@@ -6,7 +6,7 @@ import logging
 
 from homeassistant.util.dt import (as_utc, parse_datetime)
 
-from ..const import CONFIG_TARGET_DEFAULT_MINIMUM_REQUIRED_MINUTES_IN_SLOT, CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALL_IN_FUTURE_OR_PAST, CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALL_IN_PAST, CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALWAYS, CONFIG_TARGET_HOURS_MODE_EXACT, CONFIG_TARGET_HOURS_MODE_MAXIMUM, CONFIG_TARGET_HOURS_MODE_MINIMUM, CONFIG_TARGET_KEYS, REGEX_OFFSET_PARTS, REGEX_WEIGHTING
+from ..const import CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA, CONFIG_TARGET_DANGEROUS_SETTINGS, CONFIG_TARGET_DEFAULT_MINIMUM_REQUIRED_MINUTES_IN_SLOT, CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT, CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALL_IN_FUTURE_OR_PAST, CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALL_IN_PAST, CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALWAYS, CONFIG_TARGET_HOURS_MODE_EXACT, CONFIG_TARGET_HOURS_MODE_MAXIMUM, CONFIG_TARGET_HOURS_MODE_MINIMUM, CONFIG_TARGET_KEYS, REGEX_OFFSET_PARTS, REGEX_WEIGHTING
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -423,14 +423,15 @@ def create_weighting(config: str, number_of_slots: int):
 
   return weighting
 
-def compare_config(current_config: dict, existing_config: dict):
-  if current_config is None or existing_config is None:
+def compare_config_to_attributes(current_config: dict, existing_attributes: dict):
+  if current_config is None or existing_attributes is None:
     return False
 
   for key in CONFIG_TARGET_KEYS:
-    if ((key not in existing_config and key in current_config) or 
-        (key in existing_config and key not in current_config) or
-        (key in existing_config and key in current_config and current_config[key] != existing_config[key])):
+    if ((key not in existing_attributes and key in current_config) or 
+        (key in existing_attributes and key not in current_config) or
+        (key in existing_attributes and key in current_config and current_config[key] != existing_attributes[key])):
+      _LOGGER.debug(f'Configuration key "{key}" has changed from "{existing_attributes[key] if key in existing_attributes else None}" to "{current_config[key] if key in current_config else None}"')
       return False
     
   return True
