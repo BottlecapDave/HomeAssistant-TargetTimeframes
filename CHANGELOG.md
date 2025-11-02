@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/BottlecapDave/homeassistant-targettimeframes/compare/v1.4.0...v1.4.1) (2025-11-02)
+
+
+### Bug Fixes
+
+* Fixed issue where discovered target times were being reset incorrectly on reload (2 hours dev time) ([8bf07a1](https://github.com/BottlecapDave/homeassistant-targettimeframes/commit/8bf07a105b3c32b0c91be255e7be4da6f30b0145))
+
 # [1.4.0](https://github.com/BottlecapDave/homeassistant-targettimeframes/compare/v1.3.1...v1.4.0) (2025-10-20)
 
 
