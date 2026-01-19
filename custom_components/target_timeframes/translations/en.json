@@ -120,6 +120,7 @@
       },
       "error": {
         "value_greater_than_zero": "Value must be greater or equal to 1",
+        "invalid_data_source_data": "Invalid source data provided: {error}",
         "invalid_target_hours": "Hours must be in half hour increments (e.g. 0.5 = 30 minutes; 1 = 60 minutes).",
         "invalid_target_name": "Name must only include lower case alpha characters and underscore (e.g. my_target)",
         "invalid_target_time": "Must be in the format HH:MM",
