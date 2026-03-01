@@ -31,6 +31,7 @@
   },
   "config_subentries": {
     "target_time_period": {
+      "entry_type": "Target Timeframe",
       "initiate_flow": {
         "user": "Add Target Timeframe",
         "reconfigure": "Reconfigure Target Timeframe"
@@ -139,6 +140,7 @@
       }
     },
     "rolling_target_time_period": {
+      "entry_type": "Rolling Target Timeframe",
       "initiate_flow": {
         "user": "Add Rolling Target Timeframe",
         "reconfigure": "Reconfigure Rolling Target Timeframe"
