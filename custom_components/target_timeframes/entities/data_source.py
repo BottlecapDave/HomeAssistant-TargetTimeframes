@@ -17,7 +17,7 @@ from homeassistant.components.sensor import (
 from homeassistant.helpers.entity import generate_entity_id
 
 from ..utils.attributes import dict_to_typed_dict
-from ..const import DOMAIN, EVENT_DATA_SOURCE
+from ..const import DOMAIN, EVENT_DATA_SOURCE, EVENT_UPDATE_DATA_SOURCE
 from ..storage.data_source_data import async_save_cached_data_source_data
 from ..utils.data_source_data import DataSourceItem, merge_data_source_data, validate_data_source_data
 
@@ -67,6 +67,11 @@ class TargetTimePeriodDataSource(RestoreSensor):
   @property
   def native_value(self):
     return self._state
+  
+  @callback
+  async def _async_handle_event(self, event) -> None:
+    if event.data.get("data_source_id", '').lower() == self._source_id.lower():
+      await self.async_update_target_timeframe_data_source(event.data.get("data", []))
 
   async def async_added_to_hass(self):
     """Call when entity about to be added to hass."""
@@ -80,6 +85,10 @@ class TargetTimePeriodDataSource(RestoreSensor):
       self._attributes = dict_to_typed_dict(state.attributes)
     
       _LOGGER.debug(f'Restored state: {self._state}')
+
+    self.async_on_remove(
+      self._hass.bus.async_listen(EVENT_UPDATE_DATA_SOURCE, self._async_handle_event)
+    )
 
   @callback
   async def async_update_target_timeframe_data_source(self, data, replace_all_existing_data = False):

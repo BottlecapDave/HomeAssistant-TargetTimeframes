@@ -10,11 +10,15 @@ The name of the data source. This is for informative purposes.
 
 ### Id
 
-The unique identifier of the data source. This is used by internal events to ensure sensors use the correct data as well as part of the entity name of all related entities. For example, if you were using data provided by Octopus Energy, then this might be `octopus_energy`.
+The unique identifier of the data source. This is used by internal events to ensure sensors use the correct data as well as part of the entity name of all related entities.
 
-Once the data source has been created, you'll have the following entities created. You'll then need to use the [available service](../services.md#target_timeframesupdate_target_timeframe_data_source) to configure the underlying data. There are also a collection of [blueprints](../blueprints.md#data-sources) available for loading popular data sources.
+The data source will listen for the [update data source event](../events.md#update-data-source) where the `data source id` matches this id. This event might be raised by other integrations. If this data source is being used for this purpose, then the id will need to be set to a certain value which should be highlighted in that integrations guide.
+
+Alternatively, you can use the [available service](../services.md#target_timeframesupdate_target_timeframe_data_source) to configure the underlying data. There is a collection of [blueprints](../blueprints.md#data-sources) available for loading data from popular data sources.
 
 ## Entities
+
+Once the data source has been created, you'll have the following entities created.
 
 ### Data Source Last Updated
 

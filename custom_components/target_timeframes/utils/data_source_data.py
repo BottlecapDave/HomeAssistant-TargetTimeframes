@@ -1,3 +1,4 @@
+from copy import Error
 from datetime import datetime, timedelta
 from typing import Any
 
@@ -19,7 +20,7 @@ class ValidateDataSourceDataResult:
 
 def validate_data_source_data(items: list[dict], data_source_id: str):
   if items is None or len(items) < 1:
-    return ValidateDataSourceDataResult(True, [])
+    return ValidateDataSourceDataResult(True, data_source_id, [])
   
   processed_data_source = []
   for index in range(len(items)):
@@ -28,7 +29,14 @@ def validate_data_source_data(items: list[dict], data_source_id: str):
 
     start = None
     try:
-      start = datetime.fromisoformat(item["start"])
+      if "start" not in item:
+        error = f"start is missing at index {index}"
+        break
+      
+      if isinstance(item["start"], datetime):
+        start = item["start"]
+      else:
+        start = datetime.fromisoformat(item["start"])
     except:
       error = f"start was not a valid ISO datetime in string format at index {index}"
       break
@@ -39,7 +47,14 @@ def validate_data_source_data(items: list[dict], data_source_id: str):
 
     end = None
     try:
-      end = datetime.fromisoformat(item["end"])
+      if "end" not in item:
+        error = f"end is missing at index {index}"
+        break
+      
+      if isinstance(item["end"], datetime):
+        end = item["end"]
+      else:
+        end = datetime.fromisoformat(item["end"])
     except:
       error = f"end was not a valid ISO datetime in string format at index {index}"
       break
