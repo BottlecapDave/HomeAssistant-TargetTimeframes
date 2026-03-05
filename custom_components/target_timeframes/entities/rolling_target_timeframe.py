@@ -163,8 +163,7 @@ class TargetTimeframesRollingTargetRate(BinarySensorEntity, RestoreEntity):
         )
 
         if applicable_time_periods is not None:
-          number_of_slots = math.ceil(target_hours * 2)
-          weighting = create_weighting(self._config[CONFIG_TARGET_WEIGHTING] if CONFIG_TARGET_WEIGHTING in self._config else None, number_of_slots)
+          weighting = self._config[CONFIG_TARGET_WEIGHTING] if CONFIG_TARGET_WEIGHTING in self._config else None
 
           if (self._config[CONFIG_TARGET_TYPE] == CONFIG_TARGET_TYPE_CONTINUOUS):
             self._target_timeframes = calculate_continuous_times(

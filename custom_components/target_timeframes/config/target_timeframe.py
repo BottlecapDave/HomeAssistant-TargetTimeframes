@@ -9,6 +9,7 @@ from ..const import (
   CONFIG_TARGET_HOURS,
   CONFIG_TARGET_HOURS_MODE,
   CONFIG_TARGET_HOURS_MODE_EXACT,
+  CONFIG_TARGET_HOURS_MODE_MAXIMUM,
   CONFIG_TARGET_HOURS_MODE_MINIMUM,
   CONFIG_TARGET_MAX_VALUE,
   CONFIG_TARGET_MIN_VALUE,
@@ -146,14 +147,19 @@ def validate_target_timeframe_config(data):
       number_of_slots = int(data[CONFIG_TARGET_HOURS] * 2)
       weighting = create_weighting(data[CONFIG_TARGET_WEIGHTING], number_of_slots)
 
-      if (len(weighting) != number_of_slots):
-        errors[CONFIG_TARGET_WEIGHTING] = "invalid_weighting_slots"
+      if (weighting is None or len(weighting) != number_of_slots):
+        if CONFIG_TARGET_HOURS_MODE in data and data[CONFIG_TARGET_HOURS_MODE] == CONFIG_TARGET_HOURS_MODE_MINIMUM:
+          errors[CONFIG_TARGET_WEIGHTING] = "invalid_minimum_weighting_slots"
+        elif CONFIG_TARGET_HOURS_MODE in data and data[CONFIG_TARGET_HOURS_MODE] == CONFIG_TARGET_HOURS_MODE_MAXIMUM:
+          errors[CONFIG_TARGET_WEIGHTING] = "invalid_maximum_weighting_slots"
+        else:
+          errors[CONFIG_TARGET_WEIGHTING] = "invalid_weighting_slots"
+
+      if CONFIG_TARGET_HOURS_MODE in data and data[CONFIG_TARGET_HOURS_MODE] != CONFIG_TARGET_HOURS_MODE_EXACT and "*" not in data[CONFIG_TARGET_WEIGHTING]:
+        errors[CONFIG_TARGET_WEIGHTING] = "weighting_not_varied_for_hour_mode"
 
     if data[CONFIG_TARGET_TYPE] != CONFIG_TARGET_TYPE_CONTINUOUS:
       errors[CONFIG_TARGET_WEIGHTING] = "weighting_not_supported_for_type"
-    
-    if CONFIG_TARGET_HOURS_MODE in data and data[CONFIG_TARGET_HOURS_MODE] != CONFIG_TARGET_HOURS_MODE_EXACT:
-      errors[CONFIG_TARGET_WEIGHTING] = "weighting_not_supported_for_hour_mode"
 
   if CONFIG_TARGET_HOURS_MODE in data and data[CONFIG_TARGET_HOURS_MODE] == CONFIG_TARGET_HOURS_MODE_MINIMUM:
     if (CONFIG_TARGET_MIN_VALUE not in data or data[CONFIG_TARGET_MIN_VALUE] is None) and (CONFIG_TARGET_MAX_VALUE not in data or data[CONFIG_TARGET_MAX_VALUE] is None):

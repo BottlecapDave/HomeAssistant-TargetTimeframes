@@ -141,7 +141,7 @@ def calculate_continuous_times(
     find_latest_values = False,
     min_value = None,
     max_value = None,
-    weighting: list = None,
+    weighting: str = None,
     hours_mode = CONFIG_TARGET_HOURS_MODE_EXACT,
     context: str = None
   ):
@@ -150,9 +150,6 @@ def calculate_continuous_times(
   
   applicable_time_periods_count = len(applicable_time_periods)
   total_required_time_periods = math.ceil(target_hours * 2)
-
-  if weighting is not None and len(weighting) != total_required_time_periods:
-    raise ValueError(f"{context} - Weighting does not match target hours")
 
   best_continuous_time_periods = None
   best_continuous_time_periods_total = None
@@ -169,8 +166,6 @@ def calculate_continuous_times(
       continue
 
     continuous_time_periods = [time_period]
-    value_weight = Decimal(time_period["weighting"]) if "weighting" in time_period else 1
-    continuous_rates_total = Decimal(time_period["value"]) * value_weight * (weighting[0] if weighting is not None and len(weighting) > 0 else 1)
     
     for offset in range(1, total_required_time_periods if hours_mode != CONFIG_TARGET_HOURS_MODE_MINIMUM else applicable_time_periods_count):
       if (index + offset) < applicable_time_periods_count:
@@ -183,20 +178,11 @@ def calculate_continuous_times(
           break
 
         continuous_time_periods.append(offset_time_period)
-        value_weight = Decimal(offset_time_period["weighting"]) if "weighting" in offset_time_period else 1
-        continuous_rates_total += Decimal(offset_time_period["value"]) * value_weight * (weighting[offset] if weighting is not None else 1)
       else:
         break
 
     current_continuous_time_periods_length = len(continuous_time_periods)
     best_continuous_time_periods_length = len(best_continuous_time_periods) if best_continuous_time_periods is not None else 0
-
-    is_best_continuous_rates = False
-    if best_continuous_time_periods is not None:
-      if search_for_highest_value:
-        is_best_continuous_rates = (continuous_rates_total >= best_continuous_time_periods_total if find_latest_values else continuous_rates_total > best_continuous_time_periods_total)
-      else:
-        is_best_continuous_rates = (continuous_rates_total <= best_continuous_time_periods_total if find_latest_values else continuous_rates_total < best_continuous_time_periods_total)
 
     has_required_hours = False
     if hours_mode == CONFIG_TARGET_HOURS_MODE_EXACT:
@@ -206,12 +192,26 @@ def calculate_continuous_times(
     elif hours_mode == CONFIG_TARGET_HOURS_MODE_MAXIMUM:
       has_required_hours = current_continuous_time_periods_length <= total_required_time_periods and current_continuous_time_periods_length >= best_continuous_time_periods_length
     
-    if ((best_continuous_time_periods is None or is_best_continuous_rates) and has_required_hours):
-      best_continuous_time_periods = continuous_time_periods
-      best_continuous_time_periods_total = continuous_rates_total
-      _LOGGER.debug(f'{context} - New best block discovered {continuous_rates_total} ({continuous_time_periods[0]["start"] if len(continuous_time_periods) > 0 else None} - {continuous_time_periods[-1]["end"] if len(continuous_time_periods) > 0 else None})')
-    else:
-      _LOGGER.debug(f'{context} - Total rates for current block {continuous_rates_total} ({continuous_time_periods[0]["start"] if len(continuous_time_periods) > 0 else None} - {continuous_time_periods[-1]["end"] if len(continuous_time_periods) > 0 else None}). Total rates for best block {best_continuous_time_periods_total}')
+    if has_required_hours:
+      weighting_values = create_weighting(weighting, len(continuous_time_periods))
+      if weighting_values is not None:
+        continuous_rates_total = sum([Decimal(rate["value"]) * weighting_values[index] for index, rate in enumerate(continuous_time_periods)])
+      else:
+        continuous_rates_total = sum([Decimal(rate["value"]) for rate in continuous_time_periods])
+
+      is_best_continuous_rates = False
+      if best_continuous_time_periods is not None:
+        if search_for_highest_value:
+          is_best_continuous_rates = (continuous_rates_total >= best_continuous_time_periods_total if find_latest_values else continuous_rates_total > best_continuous_time_periods_total)
+        else:
+          is_best_continuous_rates = (continuous_rates_total <= best_continuous_time_periods_total if find_latest_values else continuous_rates_total < best_continuous_time_periods_total)
+
+      if is_best_continuous_rates or best_continuous_time_periods is None:
+        best_continuous_time_periods = continuous_time_periods
+        best_continuous_time_periods_total = continuous_rates_total
+        _LOGGER.debug(f'{context} - New best block discovered {continuous_rates_total} ({continuous_time_periods[0]["start"] if len(continuous_time_periods) > 0 else None} - {continuous_time_periods[-1]["end"] if len(continuous_time_periods) > 0 else None})')
+      else:
+        _LOGGER.debug(f'{context} - Total rates for current block {continuous_rates_total} ({continuous_time_periods[0]["start"] if len(continuous_time_periods) > 0 else None} - {continuous_time_periods[-1]["end"] if len(continuous_time_periods) > 0 else None}). Total rates for best block {best_continuous_time_periods_total}')
 
   if best_continuous_time_periods is not None:
     # Make sure our rates are in ascending order before returning
@@ -409,6 +409,9 @@ def create_weighting(config: str, number_of_slots: int):
   
   parts = config.split(',')
   parts_length = len(parts)
+  if parts_length > number_of_slots:
+    return None
+
   weighting = []
   for index in range(parts_length):
     if (parts[index] == "*"):

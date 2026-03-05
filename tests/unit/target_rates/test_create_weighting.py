@@ -50,6 +50,8 @@ from custom_components.target_timeframes.entities import create_weighting
   ("*,220", 4, [Decimal('1'), Decimal('1'), Decimal('1'), Decimal('220')]),
   ("220,30.3,*", 4, [Decimal('220'), Decimal('30.3'), Decimal('1'), Decimal('1')]),
   ("220,*", 4, [Decimal('220'), Decimal('1'), Decimal('1'), Decimal('1')]),
+
+  ("2,*,3,4", 1, None),
 ])
 async def test_when_create_weighting_called_then_valid_weighting_returned(config, number_of_slots, expected_weighting):
   actual_weighting = create_weighting(config, number_of_slots)

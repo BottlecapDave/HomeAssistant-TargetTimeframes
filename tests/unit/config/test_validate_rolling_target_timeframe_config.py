@@ -321,7 +321,7 @@ async def test_when_minimum_value_greater_to_maximum_value_is_specified_then_err
   (CONFIG_TARGET_HOURS_MODE_MINIMUM),
   (CONFIG_TARGET_HOURS_MODE_MAXIMUM),
 ])
-async def test_when_hour_mode_is_not_exact_and_weighting_specified_then_error_returned(hour_mode: str):
+async def test_when_hour_mode_is_not_exact_and_weighting_is_not_varied_then_error_returned(hour_mode: str):
   # Arrange
   data = {
     CONFIG_TARGET_TYPE: CONFIG_TARGET_TYPE_CONTINUOUS,
@@ -329,7 +329,7 @@ async def test_when_hour_mode_is_not_exact_and_weighting_specified_then_error_re
     CONFIG_TARGET_HOURS: "1.5",
     CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD: "2",
     CONFIG_TARGET_OFFSET: "-00:30:00",
-    CONFIG_TARGET_WEIGHTING: "2,*,2",
+    CONFIG_TARGET_WEIGHTING: "2,1,2,2",
     CONFIG_TARGET_MIN_VALUE: "0.18",
     CONFIG_TARGET_HOURS_MODE: hour_mode
   }
@@ -339,7 +339,51 @@ async def test_when_hour_mode_is_not_exact_and_weighting_specified_then_error_re
 
   # Assert
   assert CONFIG_TARGET_WEIGHTING in errors
-  assert errors[CONFIG_TARGET_WEIGHTING] == "weighting_not_supported_for_hour_mode"
+  assert errors[CONFIG_TARGET_WEIGHTING] == "weighting_not_varied_for_hour_mode"
+  assert_errors_not_present(errors, default_keys, CONFIG_TARGET_WEIGHTING)
+
+@pytest.mark.asyncio
+async def test_when_hour_mode_is_minimum_and_weighting_too_small_then_error_returned():
+  # Arrange
+  data = {
+    CONFIG_TARGET_TYPE: CONFIG_TARGET_TYPE_CONTINUOUS,
+    CONFIG_TARGET_NAME: "test",
+    CONFIG_TARGET_HOURS: "1.5",
+    CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD: "2",
+    CONFIG_TARGET_OFFSET: "-00:30:00",
+    CONFIG_TARGET_WEIGHTING: "2,*,2,2",
+    CONFIG_TARGET_MIN_VALUE: "0.18",
+    CONFIG_TARGET_HOURS_MODE: CONFIG_TARGET_HOURS_MODE_MINIMUM
+  }
+
+  # Act
+  errors = validate_rolling_target_timeframe_config(data)
+
+  # Assert
+  assert CONFIG_TARGET_WEIGHTING in errors
+  assert errors[CONFIG_TARGET_WEIGHTING] == "invalid_minimum_weighting_slots"
+  assert_errors_not_present(errors, default_keys, CONFIG_TARGET_WEIGHTING)
+
+@pytest.mark.asyncio
+async def test_when_hour_mode_is_maximum_and_weighting_too_large_then_error_returned():
+  # Arrange
+  data = {
+    CONFIG_TARGET_TYPE: CONFIG_TARGET_TYPE_CONTINUOUS,
+    CONFIG_TARGET_NAME: "test",
+    CONFIG_TARGET_HOURS: "1.5",
+    CONFIG_ROLLING_TARGET_HOURS_LOOK_AHEAD: "2",
+    CONFIG_TARGET_OFFSET: "-00:30:00",
+    CONFIG_TARGET_WEIGHTING: "2,1,*,2,2",
+    CONFIG_TARGET_MIN_VALUE: "0.18",
+    CONFIG_TARGET_HOURS_MODE: CONFIG_TARGET_HOURS_MODE_MAXIMUM
+  }
+
+  # Act
+  errors = validate_rolling_target_timeframe_config(data)
+
+  # Assert
+  assert CONFIG_TARGET_WEIGHTING in errors
+  assert errors[CONFIG_TARGET_WEIGHTING] == "invalid_maximum_weighting_slots"
   assert_errors_not_present(errors, default_keys, CONFIG_TARGET_WEIGHTING)
 
 @pytest.mark.asyncio
