@@ -428,6 +428,17 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Events
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -437,6 +448,34 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#update-data-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update Data Source
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -565,6 +604,26 @@
   
 
     
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://bottlecapdave.github.io/HomeAssistant-Integrations" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Other Integrations
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -585,6 +644,23 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#update-data-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update Data Source
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -602,7 +678,63 @@
 
 
 <h1 id="events">Events<a class="headerlink" href="#events" title="Permanent link">#</a></h1>
-<p>The following events are raised by the integration. These events power various entities and can also be used within automations.</p>
+<p>The following events are either raised or received by the integration. These events power various entities and can also be used within automations.</p>
+<h2 id="update-data-source">Update Data Source<a class="headerlink" href="#update-data-source" title="Permanent link">#</a></h2>
+<p><code>target_timeframe_update_data_source</code></p>
+<p>Data sources listen for this event and then update the data based on the provided data if the <code>data_source_id</code> matches the data source's id.</p>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>data_source_id</code></td>
+<td><code>string</code></td>
+<td>The id of the data source the data belongs to</td>
+</tr>
+<tr>
+<td><code>data</code></td>
+<td><code>array</code></td>
+<td>The data to update the data source with</td>
+</tr>
+</tbody>
+</table>
+<p>For each item in <code>data</code>, the following attributes should be present</p>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>start</code></td>
+<td><code>datetime</code></td>
+<td>The start timestamp the value is effective from</td>
+</tr>
+<tr>
+<td><code>end</code></td>
+<td><code>datetime</code></td>
+<td>The end timestamp the value is effective to</td>
+</tr>
+<tr>
+<td><code>value</code></td>
+<td><code>float</code></td>
+<td>The value that is applicable for the timeframe. This could be something like an electricity rate</td>
+</tr>
+<tr>
+<td><code>metadata</code></td>
+<td><code>object</code></td>
+<td>Additional metadata that might describe how the value was created</td>
+</tr>
+</tbody>
+</table>
 
 
 

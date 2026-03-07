@@ -654,6 +654,26 @@
   
 
     
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://bottlecapdave.github.io/HomeAssistant-Integrations" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Other Integrations
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -761,9 +781,11 @@
 <h3 id="name">Name<a class="headerlink" href="#name" title="Permanent link">#</a></h3>
 <p>The name of the data source. This is for informative purposes.</p>
 <h3 id="id">Id<a class="headerlink" href="#id" title="Permanent link">#</a></h3>
-<p>The unique identifier of the data source. This is used by internal events to ensure sensors use the correct data as well as part of the entity name of all related entities. For example, if you were using data provided by Octopus Energy, then this might be <code>octopus_energy</code>.</p>
-<p>Once the data source has been created, you'll have the following entities created. You'll then need to use the <a href="../../services/#target_timeframesupdate_target_timeframe_data_source">available service</a> to configure the underlying data. There are also a collection of <a href="../../blueprints/#data-sources">blueprints</a> available for loading popular data sources.</p>
+<p>The unique identifier of the data source. This is used by internal events to ensure sensors use the correct data as well as part of the entity name of all related entities.</p>
+<p>The data source will listen for the <a href="../../events/#update-data-source">update data source event</a> where the <code>data source id</code> matches this id. This event might be raised by other integrations. If this data source is being used for this purpose, then the id will need to be set to a certain value which should be highlighted in that integrations guide.</p>
+<p>Alternatively, you can use the <a href="../../services/#target_timeframesupdate_target_timeframe_data_source">available service</a> to configure the underlying data. There is a collection of <a href="../../blueprints/#data-sources">blueprints</a> available for loading data from popular data sources.</p>
 <h2 id="entities">Entities<a class="headerlink" href="#entities" title="Permanent link">#</a></h2>
+<p>Once the data source has been created, you'll have the following entities created.</p>
 <h3 id="data-source-last-updated">Data Source Last Updated<a class="headerlink" href="#data-source-last-updated" title="Permanent link">#</a></h3>
 <p><code>sensor.target_timeframes_{{DATA_SOURCE_ID}}_data_source_last_updated</code></p>
 <p>This entity represents when the data source data was last updated via the <a href="../../services/#target_timeframesupdate_target_timeframe_data_source">associated service</a>.</p>
