@@ -476,23 +476,23 @@ async def test_when_max_value_is_provided_then_result_does_not_include_any_rate_
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("weighting,possible_values,expected_first_valid_from,expected_values",[
-  ([1, 2, 1], [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T11:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [19.1, 15.1, 20]),
-  ([1, 2, 2], [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T10:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [18.9, 19.1, 15.1]),
-  ([1, 0, 0], [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T11:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [15.1, 20, 19.1]),
+  ("1,2,1", [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T11:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [19.1, 15.1, 20]),
+  ("1,2,2", [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T10:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [18.9, 19.1, 15.1]),
+  ("1,0,0", [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T11:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [15.1, 20, 19.1]),
   
-  ([Decimal('1.1'), Decimal('2.2'), Decimal('1.1')], [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T11:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [19.1, 15.1, 20]),
-  ([Decimal('1.1'), Decimal('2.2'), Decimal('2.2')], [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T10:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [18.9, 19.1, 15.1]),
-  ([Decimal('1.1'), Decimal('0.0'), Decimal('0.0')], [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T11:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [15.1, 20, 19.1]),
+  ("1.1,2.2,1.1", [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T11:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [19.1, 15.1, 20]),
+  ("1.1,2.2,2.2", [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T10:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [18.9, 19.1, 15.1]),
+  ("1.1,0.0,0.0", [19.1, 18.9, 19.1, 15.1, 20], datetime.strptime("2022-10-22T11:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [15.1, 20, 19.1]),
 
   # Examples defined in https://github.com/BottlecapDave/homeassistant-targettimeframes/issues/807
   (None, [14, 14, 10, 7, 15, 21], datetime.strptime("2022-10-22T09:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [14, 10, 7]),
-  ([1, 1, 2], [14, 14, 10, 7, 15, 21], datetime.strptime("2022-10-22T09:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [14, 10, 7]),
-  ([5, 1, 1], [14, 14, 10, 7, 15, 21], datetime.strptime("2022-10-22T10:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [7, 15, 21]),
+  ("1,1,2", [14, 14, 10, 7, 15, 21], datetime.strptime("2022-10-22T09:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [14, 10, 7]),
+  ("5,1,1", [14, 14, 10, 7, 15, 21], datetime.strptime("2022-10-22T10:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [7, 15, 21]),
 
-  ([Decimal('1.1'), Decimal('1.1'), Decimal('2.2')], [14, 14, 10, 7, 15, 21], datetime.strptime("2022-10-22T09:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [14, 10, 7]),
-  ([Decimal('5.5'), Decimal('1.1'), Decimal('1.1')], [14, 14, 10, 7, 15, 21], datetime.strptime("2022-10-22T10:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [7, 15, 21]),
+  ("1.1,1.1,2.2", [14, 14, 10, 7, 15, 21], datetime.strptime("2022-10-22T09:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [14, 10, 7]),
+  ("5.5,1.1,1.1", [14, 14, 10, 7, 15, 21], datetime.strptime("2022-10-22T10:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z"), [7, 15, 21]),
 ])
-async def test_when_weighting_specified_then_result_is_adjusted(weighting: list, possible_values: list, expected_first_valid_from: datetime, expected_values: list):
+async def test_when_weighting_specified_then_result_is_adjusted(weighting: str, possible_values: list, expected_first_valid_from: datetime, expected_values: list):
   # Arrange
   current_date = datetime.strptime("2022-10-22T09:10:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
   target_start_time = "09:00"
@@ -1016,7 +1016,7 @@ def test_when_weighting_present_with_find_latest_rate_then_latest_time_is_picked
     7.5,
     False,
     True,
-    weighting=[2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    weighting="2,*"
   )
 
   assert result is not None

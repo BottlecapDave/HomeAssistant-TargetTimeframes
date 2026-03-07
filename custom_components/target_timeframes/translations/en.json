@@ -4,7 +4,7 @@
     "step": {
       "user": {
         "title": "Add Data Source",
-        "description": "Setup a data source for your target timeframes. Full documentation can be found at https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/data_source",
+        "description": "Setup a data source for your target timeframes. Full documentation can be found at {setup_data_source_docs_url}",
         "data": {
           "source_name": "The name of the source",
           "source_id": "The id of the source"
@@ -15,7 +15,7 @@
       },
       "reconfigure": {
         "title": "Reconfigure Data Source",
-        "description": "Setup a data source for your target timeframes. Full documentation can be found at https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/data_source",
+        "description": "Setup a data source for your target timeframes. Full documentation can be found at {setup_data_source_docs_url}",
         "data": {
           "source_name": "The name of the source",
           "source_id": "The id of the source"
@@ -31,6 +31,7 @@
   },
   "config_subentries": {
     "target_time_period": {
+      "entry_type": "Target Timeframe",
       "initiate_flow": {
         "user": "Add Target Timeframe",
         "reconfigure": "Reconfigure Target Timeframe"
@@ -38,7 +39,7 @@
       "step": {
         "user": {
           "title": "Add Target Timeframe",
-          "description": "Setup a target time. Full documentation can be found at https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/target_timeframe",
+          "description": "Setup a target time. Full documentation can be found at {setup_target_timeframe_docs_url}",
           "data": {
             "name": "The name of your target",
             "hours": "The hours you require in decimal format.",
@@ -77,7 +78,7 @@
         },
         "reconfigure": {
           "title": "Reconfigure Target Timeframe",
-          "description": "Setup a target time. Full documentation can be found at https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/target_timeframe",
+          "description": "Setup a target time. Full documentation can be found at {setup_target_timeframe_docs_url}",
           "data": {
             "name": "The name of your target",
             "hours": "The hours you require in decimal format.",
@@ -120,6 +121,7 @@
       },
       "error": {
         "value_greater_than_zero": "Value must be greater or equal to 1",
+        "invalid_data_source_data": "Invalid source data provided: {error}",
         "invalid_target_hours": "Hours must be in half hour increments (e.g. 0.5 = 30 minutes; 1 = 60 minutes).",
         "invalid_target_name": "Name must only include lower case alpha characters and underscore (e.g. my_target)",
         "invalid_target_time": "Must be in the format HH:MM",
@@ -128,8 +130,10 @@
         "invalid_value": "Value must be in decimal format (e.g. 0.10)",
         "invalid_weighting": "The weighting format is not supported. Please consult documentation for more information.",
         "invalid_weighting_slots": "The number of weighting blocks does not equal the specified number of hours.",
+        "invalid_minimum_weighting_slots": "The number of weighting blocks is higher than the specified number of minimum hours.",
+        "invalid_maximum_weighting_slots": "The number of weighting blocks is higher than the specified number of maximum hours.",
+        "weighting_not_varied_for_hour_mode": "The weighting must include a variable block (*) if the hour mode is not exact",
         "weighting_not_supported_for_type": "Weighting is only supported for continuous target values",
-        "weighting_not_supported_for_hour_mode": "Weighting is not supported for this hour mode",
         "minimum_or_maximum_value_not_specified": "Either minimum and/or maximum value must be specified for minimum hours mode",
         "minimum_value_not_less_than_maximum_value": "Minimum value must be less or equal to the maximum value if both are specified",
         "invalid_integer": "Value must be a number with no decimal places",
@@ -138,6 +142,7 @@
       }
     },
     "rolling_target_time_period": {
+      "entry_type": "Rolling Target Timeframe",
       "initiate_flow": {
         "user": "Add Rolling Target Timeframe",
         "reconfigure": "Reconfigure Rolling Target Timeframe"
@@ -145,7 +150,7 @@
       "step": {
         "user": {
           "title": "Rolling Target Timeframe",
-          "description": "Setup a rolling target time. Full documentation can be found at https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/rolling_target_timeframe",
+          "description": "Setup a rolling target time. Full documentation can be found at {setup_rolling_target_timeframe_docs_url}",
           "data": {
             "name": "The name of your target",
             "hours": "The hours you require in decimal format.",
@@ -171,7 +176,7 @@
         },
         "reconfigure": {
           "title": "Reconfigure Rolling Target Timeframe",
-          "description": "Setup a rolling target time. Full documentation can be found at https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/rolling_target_timeframe",
+          "description": "Setup a rolling target time. Full documentation can be found at {setup_rolling_target_timeframe_docs_url}",
           "data": {
             "name": "The name of your target",
             "hours": "The hours you require in decimal format.",
@@ -209,8 +214,10 @@
         "invalid_value": "Value must be in decimal format (e.g. 0.10)",
         "invalid_weighting": "The weighting format is not supported. Please consult documentation for more information.",
         "invalid_weighting_slots": "The number of weighting blocks does not equal the specified number of hours.",
+        "invalid_minimum_weighting_slots": "The number of weighting blocks is higher than the specified number of minimum hours.",
+        "invalid_maximum_weighting_slots": "The number of weighting blocks is higher than the specified number of maximum hours.",
+        "weighting_not_varied_for_hour_mode": "The weighting must include a variable block (*) if the hour mode is not exact",
         "weighting_not_supported_for_type": "Weighting is only supported for continuous target values",
-        "weighting_not_supported_for_hour_mode": "Weighting is not supported for this hour mode",
         "minimum_or_maximum_value_not_specified": "Either minimum and/or maximum value must be specified for minimum hours mode",
         "minimum_value_not_less_than_maximum_value": "Minimum value must be less or equal to the maximum value if both are specified",
         "invalid_integer": "Value must be a number with no decimal places",

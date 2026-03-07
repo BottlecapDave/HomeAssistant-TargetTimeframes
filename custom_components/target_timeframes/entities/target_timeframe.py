@@ -195,8 +195,7 @@ class TargetTimeframesTargetRate(BinarySensorEntity, RestoreEntity):
         )
 
         if applicable_time_periods is not None and is_target_timeframe_complete == False:
-          number_of_slots = math.ceil(target_hours * 2)
-          weighting = create_weighting(self._config[CONFIG_TARGET_WEIGHTING] if CONFIG_TARGET_WEIGHTING in self._config else None, number_of_slots)
+          weighting = self._config[CONFIG_TARGET_WEIGHTING] if CONFIG_TARGET_WEIGHTING in self._config else None
 
           proposed_target_timeframes = None
           if (self._config[CONFIG_TARGET_TYPE] == CONFIG_TARGET_TYPE_CONTINUOUS):

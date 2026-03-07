@@ -128,7 +128,7 @@ There may be times that you want the target timeframe sensors to not take into a
 
 !!! info
 
-    This is only available for **continuous** target value sensors in **exact** hours mode.
+    This is only available for **continuous** target value sensors.
 
 There may be times when the device you're wanting the target value sensor to turn on doesn't have a consistent power draw. You can specify a weighting/multiplier which can be applied to the value of each discovered 30 minute slot. This can be specified in a few different ways. Take the following example weighting/multiplier for a required 2 hours.
 

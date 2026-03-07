@@ -22,6 +22,12 @@ from .const import (
 
 from .config.data_source import validate_source_config
 
+description_placeholders = {
+  "setup_data_source_docs_url": "https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/data_source",
+  "setup_target_timeframe_docs_url": "https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/target_timeframe",
+  "setup_rolling_target_timeframe_docs_url": "https://bottlecapdave.github.io/HomeAssistant-TargetTimeframes/setup/rolling_target_timeframe",
+}
+
 class TargetTimeframesConfigFlow(ConfigFlow, domain=DOMAIN): 
   """Config flow."""
 
@@ -48,7 +54,8 @@ class TargetTimeframesConfigFlow(ConfigFlow, domain=DOMAIN):
     return self.async_show_form(
       step_id="user",
       data_schema=DATA_SCHEMA_SOURCE,
-      errors=errors
+      errors=errors,
+      description_placeholders=description_placeholders
     )
   
   async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None):
@@ -76,7 +83,8 @@ class TargetTimeframesConfigFlow(ConfigFlow, domain=DOMAIN):
         DATA_SCHEMA_SOURCE,
         config
       ),
-      errors=errors
+      errors=errors,
+      description_placeholders=description_placeholders
     )
   
   @classmethod
@@ -112,7 +120,8 @@ class TargetTimePeriodSubentryFlowHandler(ConfigSubentryFlow):
         DATA_SCHEMA_TARGET_TIME_PERIOD,
         user_input if user_input is not None else {}
       ),
-      errors=errors
+      errors=errors,
+      description_placeholders=description_placeholders
     )
   
   async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None):
@@ -132,7 +141,8 @@ class TargetTimePeriodSubentryFlowHandler(ConfigSubentryFlow):
         DATA_SCHEMA_TARGET_TIME_PERIOD,
         config
       ),
-      errors=errors
+      errors=errors,
+      description_placeholders=description_placeholders
     )
 
 class RollingTargetTimePeriodSubentryFlowHandler(ConfigSubentryFlow):
@@ -157,7 +167,8 @@ class RollingTargetTimePeriodSubentryFlowHandler(ConfigSubentryFlow):
         DATA_SCHEMA_ROLLING_TARGET_TIME_PERIOD,
         user_input if user_input is not None else {}
       ),
-      errors=errors
+      errors=errors,
+      description_placeholders=description_placeholders
     )
   
   async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None):
@@ -177,5 +188,6 @@ class RollingTargetTimePeriodSubentryFlowHandler(ConfigSubentryFlow):
         DATA_SCHEMA_ROLLING_TARGET_TIME_PERIOD,
         config
       ),
-      errors=errors
+      errors=errors,
+      description_placeholders=description_placeholders
     )

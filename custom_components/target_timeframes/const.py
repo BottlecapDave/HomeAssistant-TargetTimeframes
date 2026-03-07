@@ -186,3 +186,4 @@ DATA_SCHEMA_ROLLING_TARGET_TIME_PERIOD = vol.Schema({
 })
 
 EVENT_DATA_SOURCE = "target_time_period_data_source_updated"
+EVENT_UPDATE_DATA_SOURCE = "target_timeframe_update_data_source"
