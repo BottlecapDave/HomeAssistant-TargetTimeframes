@@ -1,3 +1,16 @@
+# [1.5.0](https://github.com/BottlecapDave/homeassistant-targettimeframes/compare/v1.4.1...v1.5.0) (2026-03-07)
+
+
+### Bug Fixes
+
+* Fixed missing translation key (Thanks [@willemstuursma](https://github.com/willemstuursma)) ([8323e0a](https://github.com/BottlecapDave/homeassistant-targettimeframes/commit/8323e0ab433c37f3687e9a462987fae69d6f91c1))
+
+
+### Features
+
+* Added support for weighting for target timeframes not in minimum and maximum mode (3 hours dev time) ([2133b5f](https://github.com/BottlecapDave/homeassistant-targettimeframes/commit/2133b5febeaf18491e163aefbdc78ca597941659))
+* Added the ability to update data source data updates via raised events (2 hours dev time) ([f039ed7](https://github.com/BottlecapDave/homeassistant-targettimeframes/commit/f039ed76ab8f745a3b5f55ac3d5e07b2b892ba95))
+
 ## [1.4.1](https://github.com/BottlecapDave/homeassistant-targettimeframes/compare/v1.4.0...v1.4.1) (2025-11-02)
 
 
