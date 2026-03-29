@@ -89,7 +89,7 @@ def get_start_and_end_times(current_date: datetime, target_start_time: str, targ
     else:
       zone = None
     if zone:
-      _LOGGER.debug(f'{context} - Localizing target start and end to timezone: {zone}')
+      _LOGGER.debug(f'{context} - Localizing target start and end to timezone: {zone}; target start before localization: {target_start}; target end before localization: {target_end}')
       target_start = target_start.replace(tzinfo=None).astimezone(ZoneInfo(zone))
       target_end = target_end.replace(tzinfo=None).astimezone(ZoneInfo(zone))
     else:
