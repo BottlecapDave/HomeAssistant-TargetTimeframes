@@ -330,3 +330,43 @@ async def test_when_current_is_after_start_and_below_minimum_slot_minutes_presen
   
   assert target_start == expected_start
   assert target_end == expected_end
+
+@pytest.mark.asyncio
+async def test_when_moving_into_bst_then_correct_times_are_returned():
+  # Arrange
+  import pytz
+  tz = pytz.timezone("Europe/London")
+  current_date = datetime.strptime("2026-03-28T23:00:00", "%Y-%m-%dT%H:%M:%S").replace(tzinfo=tz)
+  target_start_time = "16:00"
+  target_end_time = "19:00"
+  minimum_slot_minutes = 29
+
+  # Act
+  target_start, target_end = get_start_and_end_times(current_date, target_start_time, target_end_time, minimum_slot_minutes)
+
+  # Assert
+  expected_start = datetime.strptime("2026-03-29T16:00:00+01:00", "%Y-%m-%dT%H:%M:%S%z")
+  expected_end = datetime.strptime("2026-03-29T19:00:00+01:00", "%Y-%m-%dT%H:%M:%S%z")
+  
+  assert target_start == expected_start
+  assert target_end == expected_end
+
+@pytest.mark.asyncio
+async def test_when_moving_out_of_bst_then_correct_times_are_returned():
+  # Arrange
+  import pytz
+  tz = pytz.timezone("Europe/London")
+  current_date = datetime.strptime("2026-10-24T23:00:00", "%Y-%m-%dT%H:%M:%S").replace(tzinfo=tz)
+  target_start_time = "16:00"
+  target_end_time = "19:00"
+  minimum_slot_minutes = 29
+
+  # Act
+  target_start, target_end = get_start_and_end_times(current_date, target_start_time, target_end_time, minimum_slot_minutes)
+
+  # Assert
+  expected_start = datetime.strptime("2026-10-25T16:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
+  expected_end = datetime.strptime("2026-10-25T19:00:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
+  
+  assert target_start == expected_start
+  assert target_end == expected_end

@@ -1061,3 +1061,104 @@ def test_when_weighting_present_in_rates_then_weighted_rate_is_picked():
     assert rate["start"] == current_start
     current_start = current_start + timedelta(minutes=30)
     assert rate["end"] == current_start
+
+def test_continuous_times_when_moving_into_bst():
+  # Arrange
+  import pytz
+  tz = pytz.timezone("Europe/London")
+  current_date = datetime.strptime("2026-03-28T23:00:00Z", "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=tz)
+  target_start_time = "16:00"
+  target_end_time = "19:00"
+  target_hours = 3
+  # Provided data (converted to datetime objects)
+  raw_periods = [
+    {"value_exc_vat": 1.53, "value": 1.6065, "start": "2026-03-29T23:30:00Z", "end": "2026-03-30T00:00:00Z"},
+    {"value_exc_vat": 1.83, "value": 1.9215, "start": "2026-03-29T23:00:00Z", "end": "2026-03-29T23:30:00Z"},
+    {"value_exc_vat": 2.1, "value": 2.205, "start": "2026-03-29T22:30:00Z", "end": "2026-03-29T23:00:00Z"},
+    {"value_exc_vat": 4.73, "value": 4.9665, "start": "2026-03-29T22:00:00Z", "end": "2026-03-29T22:30:00Z"},
+    {"value_exc_vat": 3.73, "value": 3.9165, "start": "2026-03-29T21:30:00Z", "end": "2026-03-29T22:00:00Z"},
+    {"value_exc_vat": 7.31, "value": 7.6755, "start": "2026-03-29T21:00:00Z", "end": "2026-03-29T21:30:00Z"},
+    {"value_exc_vat": 8.34, "value": 8.757, "start": "2026-03-29T20:30:00Z", "end": "2026-03-29T21:00:00Z"},
+    {"value_exc_vat": 11.55, "value": 12.1275, "start": "2026-03-29T20:00:00Z", "end": "2026-03-29T20:30:00Z"},
+    {"value_exc_vat": 10.69, "value": 11.2245, "start": "2026-03-29T19:30:00Z", "end": "2026-03-29T20:00:00Z"},
+    {"value_exc_vat": 11.68, "value": 12.264, "start": "2026-03-29T19:00:00Z", "end": "2026-03-29T19:30:00Z"},
+    {"value_exc_vat": 13.02, "value": 13.671, "start": "2026-03-29T18:30:00Z", "end": "2026-03-29T19:00:00Z"},
+    {"value_exc_vat": 12.96, "value": 13.608, "start": "2026-03-29T18:00:00Z", "end": "2026-03-29T18:30:00Z"},
+    {"value_exc_vat": 27.7, "value": 29.085, "start": "2026-03-29T17:30:00Z", "end": "2026-03-29T18:00:00Z"},
+    {"value_exc_vat": 26.63, "value": 27.9615, "start": "2026-03-29T17:00:00Z", "end": "2026-03-29T17:30:00Z"},
+    {"value_exc_vat": 26.86, "value": 28.203, "start": "2026-03-29T16:30:00Z", "end": "2026-03-29T17:00:00Z"},
+    {"value_exc_vat": 22.87, "value": 24.0135, "start": "2026-03-29T16:00:00Z", "end": "2026-03-29T16:30:00Z"},
+    {"value_exc_vat": 19.72, "value": 20.706, "start": "2026-03-29T15:30:00Z", "end": "2026-03-29T16:00:00Z"},
+    {"value_exc_vat": 17.57, "value": 18.4485, "start": "2026-03-29T15:00:00Z", "end": "2026-03-29T15:30:00Z"},
+    {"value_exc_vat": 0.3, "value": 0.315, "start": "2026-03-29T14:30:00Z", "end": "2026-03-29T15:00:00Z"},
+    {"value_exc_vat": 0.42, "value": 0.441, "start": "2026-03-29T14:00:00Z", "end": "2026-03-29T14:30:00Z"},
+    {"value_exc_vat": 0.36, "value": 0.378, "start": "2026-03-29T13:30:00Z", "end": "2026-03-29T14:00:00Z"},
+    {"value_exc_vat": 0.21, "value": 0.2205, "start": "2026-03-29T13:00:00Z", "end": "2026-03-29T13:30:00Z"},
+    {"value_exc_vat": -0.04, "value": -0.042, "start": "2026-03-29T12:30:00Z", "end": "2026-03-29T13:00:00Z"},
+    {"value_exc_vat": 0.08, "value": 0.084, "start": "2026-03-29T12:00:00Z", "end": "2026-03-29T12:30:00Z"},
+    {"value_exc_vat": 0.55, "value": 0.5775, "start": "2026-03-29T11:30:00Z", "end": "2026-03-29T12:00:00Z"},
+    {"value_exc_vat": 1.01, "value": 1.0605, "start": "2026-03-29T11:00:00Z", "end": "2026-03-29T11:30:00Z"},
+    {"value_exc_vat": 1.01, "value": 1.0605, "start": "2026-03-29T10:30:00Z", "end": "2026-03-29T11:00:00Z"},
+    {"value_exc_vat": 1.26, "value": 1.323, "start": "2026-03-29T10:00:00Z", "end": "2026-03-29T10:30:00Z"},
+    {"value_exc_vat": 3.03, "value": 3.1815, "start": "2026-03-29T09:30:00Z", "end": "2026-03-29T10:00:00Z"},
+    {"value_exc_vat": 4.11, "value": 4.3155, "start": "2026-03-29T09:00:00Z", "end": "2026-03-29T09:30:00Z"},
+    {"value_exc_vat": 8.4, "value": 8.82, "start": "2026-03-29T08:30:00Z", "end": "2026-03-29T09:00:00Z"},
+    {"value_exc_vat": 7.13, "value": 7.4865, "start": "2026-03-29T08:00:00Z", "end": "2026-03-29T08:30:00Z"},
+    {"value_exc_vat": 11.42, "value": 11.991, "start": "2026-03-29T07:30:00Z", "end": "2026-03-29T08:00:00Z"},
+    {"value_exc_vat": 11.05, "value": 11.6025, "start": "2026-03-29T07:00:00Z", "end": "2026-03-29T07:30:00Z"},
+    {"value_exc_vat": 13.79, "value": 14.4795, "start": "2026-03-29T06:30:00Z", "end": "2026-03-29T07:00:00Z"},
+    {"value_exc_vat": 16.8, "value": 17.64, "start": "2026-03-29T06:00:00Z", "end": "2026-03-29T06:30:00Z"},
+    {"value_exc_vat": 17.89, "value": 18.7845, "start": "2026-03-29T05:30:00Z", "end": "2026-03-29T06:00:00Z"},
+    {"value_exc_vat": 21.17, "value": 22.2285, "start": "2026-03-29T05:00:00Z", "end": "2026-03-29T05:30:00Z"},
+    {"value_exc_vat": 16.32, "value": 17.136, "start": "2026-03-29T04:30:00Z", "end": "2026-03-29T05:00:00Z"},
+    {"value_exc_vat": 20.58, "value": 21.609, "start": "2026-03-29T04:00:00Z", "end": "2026-03-29T04:30:00Z"},
+    {"value_exc_vat": 16.24, "value": 17.052, "start": "2026-03-29T03:30:00Z", "end": "2026-03-29T04:00:00Z"},
+    {"value_exc_vat": 18.27, "value": 19.1835, "start": "2026-03-29T03:00:00Z", "end": "2026-03-29T03:30:00Z"},
+    {"value_exc_vat": 17.99, "value": 18.8895, "start": "2026-03-29T02:30:00Z", "end": "2026-03-29T03:00:00Z"},
+    {"value_exc_vat": 21.16, "value": 22.218, "start": "2026-03-29T02:00:00Z", "end": "2026-03-29T02:30:00Z"},
+    {"value_exc_vat": 20.37, "value": 21.3885, "start": "2026-03-29T01:30:00Z", "end": "2026-03-29T02:00:00Z"},
+    {"value_exc_vat": 22.68, "value": 23.814, "start": "2026-03-29T01:00:00Z", "end": "2026-03-29T01:30:00Z"},
+    {"value_exc_vat": 23.52, "value": 24.696, "start": "2026-03-29T00:30:00Z", "end": "2026-03-29T01:00:00Z"},
+    {"value_exc_vat": 21.63, "value": 22.7115, "start": "2026-03-29T00:00:00Z", "end": "2026-03-29T00:30:00Z"},
+    {"value_exc_vat": 21.14, "value": 22.197, "start": "2026-03-28T23:30:00Z", "end": "2026-03-29T00:00:00Z"},
+    {"value_exc_vat": 25.2, "value": 26.46, "start": "2026-03-28T23:00:00Z", "end": "2026-03-28T23:30:00Z"},
+    {"value_exc_vat": 21.57, "value": 22.6485, "start": "2026-03-28T22:30:00Z", "end": "2026-03-28T23:00:00Z"},
+    {"value_exc_vat": 23.44, "value": 24.612, "start": "2026-03-28T22:00:00Z", "end": "2026-03-28T22:30:00Z"},
+    {"value_exc_vat": 23.94, "value": 25.137, "start": "2026-03-28T21:30:00Z", "end": "2026-03-28T22:00:00Z"},
+    {"value_exc_vat": 24.15, "value": 25.3575, "start": "2026-03-28T21:00:00Z", "end": "2026-03-28T21:30:00Z"},
+    {"value_exc_vat": 23.9, "value": 25.095, "start": "2026-03-28T20:30:00Z", "end": "2026-03-28T21:00:00Z"},
+    {"value_exc_vat": 26.06, "value": 27.363, "start": "2026-03-28T20:00:00Z", "end": "2026-03-28T20:30:00Z"}
+  ]
+  # Convert to datetime objects
+  values = [
+    {
+      "start": datetime.fromisoformat(x["start"]),
+      "end": datetime.fromisoformat(x["end"]),
+      "value": x["value"]
+    }
+    for x in raw_periods
+  ]
+
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, 30)
+  applicable_time_periods = get_fixed_applicable_time_periods(
+    target_start_datetime,
+    target_end_datetime,
+    values
+  )
+  # Act
+  result = calculate_continuous_times(
+    applicable_time_periods,
+    target_hours,
+    False,
+    False
+  )
+  # Assert
+  assert target_start_datetime == datetime.strptime("2026-03-29T15:00:00Z", "%Y-%m-%dT%H:%M:%S%z")
+  assert target_end_datetime == datetime.strptime("2026-03-29T18:00:00Z", "%Y-%m-%dT%H:%M:%S%z")
+
+  assert result is not None
+  assert len(result) == 6
+  # Check that the returned periods are within the expected window
+  for r in result:
+    assert r["start"] >= target_start_datetime
+    assert r["end"] <= target_end_datetime

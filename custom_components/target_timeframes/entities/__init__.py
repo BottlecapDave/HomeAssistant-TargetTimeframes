@@ -3,10 +3,11 @@ from decimal import Decimal
 import math
 import re
 import logging
+from zoneinfo import ZoneInfo
 
 from homeassistant.util.dt import (as_utc, parse_datetime)
 
-from ..const import CONFIG_TARGET_CALCULATE_WITH_INCOMPLETE_DATA, CONFIG_TARGET_DANGEROUS_SETTINGS, CONFIG_TARGET_DEFAULT_MINIMUM_REQUIRED_MINUTES_IN_SLOT, CONFIG_TARGET_MINIMUM_REQUIRED_MINUTES_IN_SLOT, CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALL_IN_FUTURE_OR_PAST, CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALL_IN_PAST, CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALWAYS, CONFIG_TARGET_HOURS_MODE_EXACT, CONFIG_TARGET_HOURS_MODE_MAXIMUM, CONFIG_TARGET_HOURS_MODE_MINIMUM, CONFIG_TARGET_KEYS, REGEX_OFFSET_PARTS, REGEX_WEIGHTING
+from ..const import CONFIG_TARGET_DEFAULT_MINIMUM_REQUIRED_MINUTES_IN_SLOT, CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALL_IN_FUTURE_OR_PAST, CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALL_IN_PAST, CONFIG_TARGET_TARGET_TIMES_EVALUATION_MODE_ALWAYS, CONFIG_TARGET_HOURS_MODE_EXACT, CONFIG_TARGET_HOURS_MODE_MAXIMUM, CONFIG_TARGET_HOURS_MODE_MINIMUM, CONFIG_TARGET_KEYS, REGEX_OFFSET_PARTS, REGEX_WEIGHTING
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -44,18 +45,16 @@ def is_target_timeframe_complete_in_period(current_date: datetime, start_time: d
   )
 
 def get_start_and_end_times(current_date: datetime, target_start_time: str, target_end_time: str, minimum_slot_minutes = None, context: str = None):
+  _LOGGER.debug(f'{context} - Current date: {current_date}; Target start time: {target_start_time}; Target end time: {target_end_time}; Minimum slot minutes: {minimum_slot_minutes}')
   if (target_start_time is not None):
-    target_start = parse_datetime(current_date.strftime(f"%Y-%m-%dT{target_start_time}:00%z"))
+    target_start = parse_datetime(current_date.strftime(f"%Y-%m-%dT{target_start_time}:00Z"))
   else:
-    target_start = parse_datetime(current_date.strftime(f"%Y-%m-%dT00:00:00%z"))
+    target_start = parse_datetime(current_date.strftime(f"%Y-%m-%dT00:00:00Z"))
 
   if (target_end_time is not None):
-    target_end = parse_datetime(current_date.strftime(f"%Y-%m-%dT{target_end_time}:00%z"))
+    target_end = parse_datetime(current_date.strftime(f"%Y-%m-%dT{target_end_time}:00Z"))
   else:
-    target_end = parse_datetime(current_date.strftime(f"%Y-%m-%dT00:00:00%z")) + timedelta(days=1)
-
-  target_start = as_utc(target_start)
-  target_end = as_utc(target_end)
+    target_end = parse_datetime(current_date.strftime(f"%Y-%m-%dT00:00:00Z")) + timedelta(days=1)
 
   if (target_start >= target_end):
     _LOGGER.debug(f'{context} - {target_start} is after {target_end}, so setting target end to tomorrow')
@@ -74,12 +73,33 @@ def get_start_and_end_times(current_date: datetime, target_start_time: str, targ
       target_start = current_date_start + timedelta(minutes=30)
       _LOGGER.debug(f'{context} - Current slot is not sufficient for minimum slot minutes, so using next slot start: {target_start}')
 
-  # If our start and end are both in the past, then look to the next day
+  # If our start and end are both in the past, then look to the next day and change the timezone to ensure that we're looking at the correct target timeframes
   if (target_start < current_date and target_end < current_date):
+    _LOGGER.debug(f'{context} - Both target start and end are in the past, so looking to the next day;')
     target_start = target_start + timedelta(days=1)
     target_end = target_end + timedelta(days=1)
 
-  return (target_start, target_end)
+  # Make sure we have the correct timezone, as our new dates might have shifted due to daylight savings
+  if current_date.tzinfo is not None:
+    tz = current_date.tzinfo
+    if hasattr(tz, 'key'):
+      zone = tz.key
+    elif hasattr(tz, 'zone'):
+      zone = tz.zone
+    else:
+      zone = None
+    if zone:
+      _LOGGER.debug(f'{context} - Localizing target start and end to timezone: {zone}')
+      target_start = target_start.replace(tzinfo=None).astimezone(ZoneInfo(zone))
+      target_end = target_end.replace(tzinfo=None).astimezone(ZoneInfo(zone))
+    else:
+      _LOGGER.debug(f'{context} - Unable to determine timezone from current date tzinfo, falling back to using current date tzinfo for target start and end')
+      target_start = target_start.replace(tzinfo=current_date.tzinfo)
+      target_end = target_end.replace(tzinfo=current_date.tzinfo)
+
+  _LOGGER.debug(f'{context} - current: {current_date}; Target start: {target_start}; Target end: {target_end}')
+
+  return (as_utc(target_start), as_utc(target_end))
 
 def get_fixed_applicable_time_periods(target_start: datetime, target_end: datetime, time_period_values: list, calculate_with_incomplete_data = False, context: str = None):
   _LOGGER.debug(f'{context} - Finding rates between {target_start} and {target_end}')
