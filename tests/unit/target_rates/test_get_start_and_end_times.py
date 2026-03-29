@@ -336,7 +336,7 @@ async def test_when_moving_into_bst_then_correct_times_are_returned():
   # Arrange
   import pytz
   tz = pytz.timezone("Europe/London")
-  current_date = datetime.strptime("2026-03-28T23:00:00", "%Y-%m-%dT%H:%M:%S").replace(tzinfo=tz)
+  current_date = tz.localize(datetime.strptime("2026-03-28T23:00:00", "%Y-%m-%dT%H:%M:%S"))
   target_start_time = "16:00"
   target_end_time = "19:00"
   minimum_slot_minutes = 29
@@ -356,7 +356,7 @@ async def test_when_moving_out_of_bst_then_correct_times_are_returned():
   # Arrange
   import pytz
   tz = pytz.timezone("Europe/London")
-  current_date = datetime.strptime("2026-10-24T23:00:00", "%Y-%m-%dT%H:%M:%S").replace(tzinfo=tz)
+  current_date = tz.localize(datetime.strptime("2026-10-24T23:00:00", "%Y-%m-%dT%H:%M:%S"))
   target_start_time = "16:00"
   target_end_time = "19:00"
   minimum_slot_minutes = 29

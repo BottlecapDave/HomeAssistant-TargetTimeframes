@@ -1066,7 +1066,7 @@ def test_continuous_times_when_moving_into_bst():
   # Arrange
   import pytz
   tz = pytz.timezone("Europe/London")
-  current_date = datetime.strptime("2026-03-28T23:00:00Z", "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=tz)
+  current_date = tz.localize(datetime.strptime("2026-03-28T23:00:00", "%Y-%m-%dT%H:%M:%S"))
   target_start_time = "16:00"
   target_end_time = "19:00"
   target_hours = 3
