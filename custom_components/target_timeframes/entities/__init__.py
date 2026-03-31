@@ -57,7 +57,7 @@ def get_start_and_end_times(current_date: datetime, target_start_time: str, targ
     target_end = parse_datetime(current_date.strftime(f"%Y-%m-%dT00:00:00Z")) + timedelta(days=1)
 
   if (target_start >= target_end):
-    _LOGGER.debug(f'{context} - {target_start} is after {target_end}, so setting target end to tomorrow')
+    _LOGGER.debug(f'{context} - {target_start} is equal or after {target_end}, so setting target end to tomorrow')
     if target_start > current_date:
       target_start = target_start - timedelta(days=1)
     else:
@@ -90,8 +90,8 @@ def get_start_and_end_times(current_date: datetime, target_start_time: str, targ
       zone = None
     if zone:
       _LOGGER.debug(f'{context} - Localizing target start and end to timezone: {zone}; target start before localization: {target_start}; target end before localization: {target_end}')
-      target_start = target_start.replace(tzinfo=None).astimezone(ZoneInfo(zone))
-      target_end = target_end.replace(tzinfo=None).astimezone(ZoneInfo(zone))
+      target_start = target_start.replace(tzinfo=ZoneInfo(zone))
+      target_end = target_end.replace(tzinfo=ZoneInfo(zone))
     else:
       _LOGGER.debug(f'{context} - Unable to determine timezone from current date tzinfo, falling back to using current date tzinfo for target start and end')
       target_start = target_start.replace(tzinfo=current_date.tzinfo)
