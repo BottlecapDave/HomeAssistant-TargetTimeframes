@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/BottlecapDave/homeassistant-targettimeframes/compare/v1.5.0...v1.5.1) (2026-04-04)
+
+
+### Bug Fixes
+
+* Fixed issue with calculations when moving from GMT to BST (2 hours dev time) ([1780ad6](https://github.com/BottlecapDave/homeassistant-targettimeframes/commit/1780ad6e079e19996b594e4d2bba23d38becb553))
+
 # [1.5.0](https://github.com/BottlecapDave/homeassistant-targettimeframes/compare/v1.4.1...v1.5.0) (2026-03-07)
 
 
