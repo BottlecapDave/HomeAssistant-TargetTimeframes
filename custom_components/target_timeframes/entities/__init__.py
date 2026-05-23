@@ -44,6 +44,24 @@ def is_target_timeframe_complete_in_period(current_date: datetime, start_time: d
     target_timeframes[-1]["end"] <= current_date
   )
 
+def _adjust_to_current_timezone(context: str, current_date: datetime, target_date: str):
+  if current_date.tzinfo is not None:
+    tz = current_date.tzinfo
+    if hasattr(tz, 'key'):
+      zone = tz.key
+    elif hasattr(tz, 'zone'):
+      zone = tz.zone
+    else:
+      zone = None
+    if zone:
+      _LOGGER.debug(f'{context} - Localizing target start and end to timezone: {zone}; target before localization: {target_date}')
+      return target_date.replace(tzinfo=ZoneInfo(zone))
+    else:
+      _LOGGER.debug(f'{context} - Unable to determine timezone from current date tzinfo, falling back to using current date tzinfo for target; target before localization: {target_date}')
+      return target_date.replace(tzinfo=current_date.tzinfo)
+    
+  return target_date
+
 def get_start_and_end_times(current_date: datetime, target_start_time: str, target_end_time: str, minimum_slot_minutes = None, context: str = None):
   _LOGGER.debug(f'{context} - Current date: {current_date}; Target start time: {target_start_time}; Target end time: {target_end_time}; Minimum slot minutes: {minimum_slot_minutes}')
   if (target_start_time is not None):
@@ -56,11 +74,15 @@ def get_start_and_end_times(current_date: datetime, target_start_time: str, targ
   else:
     target_end = parse_datetime(current_date.strftime(f"%Y-%m-%dT00:00:00Z")) + timedelta(days=1)
 
+  target_start = _adjust_to_current_timezone(context, current_date, target_start)
+  target_end = _adjust_to_current_timezone(context, current_date, target_end)
+
   if (target_start >= target_end):
-    _LOGGER.debug(f'{context} - {target_start} is equal or after {target_end}, so setting target end to tomorrow')
     if target_start > current_date:
+      _LOGGER.debug(f'{context} - {target_start} is after {current_date}, so setting target start to previous day')
       target_start = target_start - timedelta(days=1)
     else:
+      _LOGGER.debug(f'{context} - {target_start} is before {current_date}, so setting target end to next day')
       target_end = target_end + timedelta(days=1)
 
   if (minimum_slot_minutes is not None and target_start < current_date and current_date < target_end):
@@ -80,22 +102,8 @@ def get_start_and_end_times(current_date: datetime, target_start_time: str, targ
     target_end = target_end + timedelta(days=1)
 
   # Make sure we have the correct timezone, as our new dates might have shifted due to daylight savings
-  if current_date.tzinfo is not None:
-    tz = current_date.tzinfo
-    if hasattr(tz, 'key'):
-      zone = tz.key
-    elif hasattr(tz, 'zone'):
-      zone = tz.zone
-    else:
-      zone = None
-    if zone:
-      _LOGGER.debug(f'{context} - Localizing target start and end to timezone: {zone}; target start before localization: {target_start}; target end before localization: {target_end}')
-      target_start = target_start.replace(tzinfo=ZoneInfo(zone))
-      target_end = target_end.replace(tzinfo=ZoneInfo(zone))
-    else:
-      _LOGGER.debug(f'{context} - Unable to determine timezone from current date tzinfo, falling back to using current date tzinfo for target start and end')
-      target_start = target_start.replace(tzinfo=current_date.tzinfo)
-      target_end = target_end.replace(tzinfo=current_date.tzinfo)
+  target_start = _adjust_to_current_timezone(context, current_date, target_start)
+  target_end = _adjust_to_current_timezone(context, current_date, target_end)
 
   _LOGGER.debug(f'{context} - current: {current_date}; Target start: {target_start}; Target end: {target_end}')
 

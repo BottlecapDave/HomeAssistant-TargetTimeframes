@@ -1162,3 +1162,71 @@ def test_continuous_times_when_moving_into_bst():
   for r in result:
     assert r["start"] >= target_start_datetime
     assert r["end"] <= target_end_datetime
+
+# https://github.com/BottlecapDave/HomeAssistant-TargetTimeframes/issues/73
+def test_continuous_times_for_issue_73():
+  # Arrange
+  import pytz
+  tz = pytz.timezone("Europe/London")
+  current_date = tz.localize(datetime.strptime("2026-04-05T20:26:00", "%Y-%m-%dT%H:%M:%S"))
+  assert current_date == datetime.strptime("2026-04-05T20:26:00+01:00", "%Y-%m-%dT%H:%M:%S%z")
+  target_start_time = "20:00"
+  target_end_time = "19:30"
+  target_hours = 3
+  minimum_slot_minutes = 25
+  # Provided data (converted to datetime objects)
+  values = []
+  values.extend(
+    create_data_source_data(datetime.strptime("2026-04-05T00:00:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
+                            datetime.strptime("2026-04-05T05:30:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
+                            [7.99995])
+  )
+  values.extend(
+    create_data_source_data(datetime.strptime("2026-04-05T05:30:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
+                            datetime.strptime("2026-04-05T22:30:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
+                            [33.32238])
+  )
+  values.extend(
+    create_data_source_data(datetime.strptime("2026-04-05T22:30:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
+                            datetime.strptime("2026-04-06T05:30:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
+                            [7.99995])
+  )
+  values.extend(
+    create_data_source_data(datetime.strptime("2026-04-06T05:30:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
+                            datetime.strptime("2026-04-06T22:30:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
+                            [33.32238])
+  )
+  values.extend(
+    create_data_source_data(datetime.strptime("2026-04-06T22:30:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
+                            datetime.strptime("2026-04-07T00:00:00+01:00", "%Y-%m-%dT%H:%M:%S%z"),
+                            [7.99995])
+  )
+
+  (target_start_datetime, target_end_datetime) = get_start_and_end_times(current_date, target_start_time, target_end_time, minimum_slot_minutes)
+  applicable_time_periods = get_fixed_applicable_time_periods(
+    target_start_datetime,
+    target_end_datetime,
+    values
+  )
+
+  expected_start = datetime.strptime("2026-04-05T19:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
+  expected_end = datetime.strptime("2026-04-06T18:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
+
+  # Act
+  result = calculate_continuous_times(
+    applicable_time_periods,
+    target_hours,
+    False,
+    False
+  )
+
+  # Assert
+  assert target_start_datetime == expected_start
+  assert target_end_datetime == expected_end
+
+  assert result is not None
+  assert len(result) == 6
+  # Check that the returned periods are within the expected window
+  for r in result:
+    assert r["start"] >= target_start_datetime
+    assert r["end"] <= target_end_datetime
