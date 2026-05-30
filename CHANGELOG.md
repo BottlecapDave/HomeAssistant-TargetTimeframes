@@ -1,3 +1,10 @@
+## [1.5.2](https://github.com/BottlecapDave/homeassistant-targettimeframes/compare/v1.5.1...v1.5.2) (2026-05-30)
+
+
+### Bug Fixes
+
+* Fixed issue where incorrect times were picked during BST when end time comes after before time (1 hour dev time) ([140d2f6](https://github.com/BottlecapDave/homeassistant-targettimeframes/commit/140d2f66b5a86c8c9fd95de2dfa55d900601bb87))
+
 ## [1.5.1](https://github.com/BottlecapDave/homeassistant-targettimeframes/compare/v1.5.0...v1.5.1) (2026-04-04)
 
 
