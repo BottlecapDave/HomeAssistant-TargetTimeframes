@@ -370,3 +370,24 @@ async def test_when_moving_out_of_bst_then_correct_times_are_returned():
   
   assert target_start == expected_start
   assert target_end == expected_end
+
+@pytest.mark.asyncio
+async def test_for_issue_73():
+  # Arrange
+  import pytz
+  tz = pytz.timezone("Europe/London")
+  current_date = tz.localize(datetime.strptime("2026-04-05T20:26:00", "%Y-%m-%dT%H:%M:%S"))
+  assert current_date == datetime.strptime("2026-04-05T20:26:00+01:00", "%Y-%m-%dT%H:%M:%S%z")
+  target_start_time = "20:00"
+  target_end_time = "19:30"
+  minimum_slot_minutes = 25
+
+  expected_start = datetime.strptime("2026-04-05T19:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
+  expected_end = datetime.strptime("2026-04-06T18:30:00+00:00", "%Y-%m-%dT%H:%M:%S%z")
+
+  # Act
+  target_start, target_end = get_start_and_end_times(current_date, target_start_time, target_end_time, minimum_slot_minutes)
+
+  # Assert
+  assert target_start == expected_start
+  assert target_end == expected_end

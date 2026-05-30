@@ -29,7 +29,7 @@ jobs:
     name: Validate
     runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: "home-assistant/actions/hassfest@master"
       - name: HACS Action
         uses: "hacs/action@main"
@@ -45,7 +45,7 @@ jobs:
         python-version: ["3.13", "3.14"]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Setup
@@ -66,11 +66,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: asdf_install
-        uses: asdf-vm/actions/install@v3
+        uses: asdf-vm/actions/install@v4
       - name: Install dependencies
         run: npm ci
       - name: Release
@@ -79,7 +79,7 @@ jobs:
         run: npm run release
       - name: Merge main into develop
         if: ${{ github.repository_owner == 'BottlecapDave' && github.ref == 'refs/heads/main' }}
-        uses: devmasx/merge-branch@master
+        uses: devmasx/merge-branch@1.4.0
         with:
           type: now
           message: "chore: Merged main into develop"
@@ -88,7 +88,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Merge main into beta
         if: ${{ github.repository_owner == 'BottlecapDave' && github.ref == 'refs/heads/beta' }}
-        uses: devmasx/merge-branch@master
+        uses: devmasx/merge-branch@1.4.0
         with:
           type: now
           message: "chore: Merged main into beta"
