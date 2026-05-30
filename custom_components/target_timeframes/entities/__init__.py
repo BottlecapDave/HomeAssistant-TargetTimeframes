@@ -54,7 +54,7 @@ def _adjust_to_current_timezone(context: str, current_date: datetime, target_dat
     else:
       zone = None
     if zone:
-      _LOGGER.debug(f'{context} - Localizing target start and end to timezone: {zone}; target before localization: {target_date}')
+      _LOGGER.debug(f'{context} - Localizing target to timezone: {zone}; target before localization: {target_date}')
       return target_date.replace(tzinfo=ZoneInfo(zone))
     else:
       _LOGGER.debug(f'{context} - Unable to determine timezone from current date tzinfo, falling back to using current date tzinfo for target; target before localization: {target_date}')
